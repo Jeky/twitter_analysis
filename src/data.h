@@ -4,6 +4,10 @@
 #include "utils.h"
 
 
+static const SPAMMER_DATA_PATH = PATH + String("spammers.obj");
+static const NONSPAMMER_DATA_PATH = PATH + String("nonspammers.obj");
+
+
 class Tweet{
 public:
     static const String TWEET_PATH;

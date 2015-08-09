@@ -29,7 +29,7 @@ void FOREACH(Vector<T> container, function<void (int, T&)> elementHandler){
 }
 
 template <typename K, typename V>
-void FOREACH(Map<K, V> container, function<void (K, V&)> elementHandler){
+void FOREACH(Map<K, V> container, function<void (K&, V&)> elementHandler){
     for (auto &kv : container) {
         elementHandler(kv.first, kv.second);        
     }

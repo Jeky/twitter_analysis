@@ -2,16 +2,8 @@
 #include "data.h"
 
 int main(int argc, char const *argv[]){
-    Map<int, String> map = {
-        {1, String("aaa")},
-        {3, String("bbb")},
-        {5, String("cc")},
-    };
-
-    FOREACH<int, String>(map, [](int &k, String &v){
-        LOG() << k << " = " << v << endl; 
-    });
-
+    auto users = loadSpammers();
+    LOG() << "Total users: " << users.size() << endl;
 
     return 0;
 }

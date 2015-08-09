@@ -81,26 +81,40 @@ ostream& operator<< (ostream &out, User &u){
  * Data loading functions
  */
 
-Map<long, User> loadData(String &path, bool spammer){
-    Map<long, User> users;
-    readFile(path, [&](int index, String &line){
-        long id = stol(line);
-        users[id] = User(id, spammer);
-        return true;
-    });
+Map<long, User> loadData(String &dataPath, String &path, bool spammer){
+    ifstream infile(dataPath);
+
+    if(!infile.good()){
+        infile.close();
+
+        Map<long, User> users;
+        readFile(path, [&](int index, String &line){
+            long id = stol(line);
+            users[id] = User(id, spammer);
+            return true;
+        });
+
+        saveObject(users, dataPath);
+
+        return users;
+    }else{
+        infile.close();
+
+        return loadObject<Map<long, User>>(dataPath);
+    }
 
     return users;
 }
 
 
 Map<long, User> loadSpammers(){
-    String path = PATH + String("spammers.id.list");
-    return loadData(path, true);
+    return loadData(SPAMMER_DATA_PATH, 
+        PATH + String("spammers.id.list"), true);
 }
 
 
 Map<long, User> loadNonSpammers(){
-    String path = PATH + String("nonspammers.id.list");
-    return loadData(path, false);
+    return loadData(NONSPAMMER_DATA_PATH, 
+        PATH + String("nonspammers.id.list"), false);
 }
 
