@@ -6,8 +6,7 @@
 
 class Tweet{
 public:
-    static const String TWEET_PATH = PATH + "";
-
+    static const String TWEET_PATH;
     static Vector<Tweet> loadTweets(long id);
 
     Tweet();

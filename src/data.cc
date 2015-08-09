@@ -1,5 +1,5 @@
 #include "data.h"
-
+const String Tweet::TWEET_PATH = PATH + String("tweets/");
 
 Vector<Tweet> Tweet::loadTweets(long id){
     String filename = TWEET_PATH + to_string(id);

@@ -19,4 +19,6 @@
 
 using namespace std;
 
+static const String PATH = String("/Users/jeky/data/thesis/ctweets/");
+
 #endif
