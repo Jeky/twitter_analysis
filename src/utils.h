@@ -21,4 +21,18 @@ using namespace std;
 
 static const String PATH = String("/Users/jeky/data/thesis/ctweets/");
 
+template <typename T>
+void FOREACH(Vector<T> container, function<void (int, T&)> elementHandler){
+    for(int i = 0; i < container.size(); i++){
+        elementHandler(i, container[i]);
+    }
+}
+
+template <typename K, typename V>
+void FOREACH(Map<K, V> container, function<void (K, V&)> elementHandler){
+    for (auto &kv : container) {
+        elementHandler(kv.first, kv.second);        
+    }
+}
+
 #endif

@@ -15,11 +15,15 @@
 
 using namespace std;
 
-void readFile(string &filename, function<bool (int, string&)> lineHandler);
+void readFile(string &filename, bool log, 
+    function<bool (int, string&)> lineHandler);
+
+void readFile(string &filename, 
+    function<bool (int, string&)> lineHandler);
 
 template <typename T>
 void saveObject(T &t, string filename){
-    log() << "Start Saving Object to " << filename << endl;
+    LOG() << "Start Saving Object to " << filename << endl;
     ofstream os(filename, ios::binary);
     cereal::BinaryOutputArchive oarchive(os);
     oarchive(t);
@@ -28,7 +32,7 @@ void saveObject(T &t, string filename){
 
 template <typename T>
 T loadObject(string filename){
-    log() << "Start Loading Object from " << filename << endl;
+    LOG() << "Start Loading Object from " << filename << endl;
     ifstream is(filename, ios::binary);
     cereal::BinaryInputArchive iarchive(is);
 

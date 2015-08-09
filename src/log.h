@@ -8,13 +8,12 @@
 
 #include <cereal/types/string.hpp>
 
-static std::ostream *OUT = &std::cout;
-static bool DEBUG = false;
+static std::ostream *__OUT = &std::cout;
+static bool __DEBUG = false;
 
-void getTime();
-std::ostream &log();
-std::ostream &error();
-std::ostream &debug();
+std::ostream &LOG();
+std::ostream &ERROR();
+std::ostream &DEBUG();
 void setOutput(std::ostream &out);
 void setDebug(bool debug);
 

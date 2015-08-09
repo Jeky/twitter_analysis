@@ -29,9 +29,10 @@ private:
 class User{
 public:
     User();
-    User(long id);
+    User(long id, bool spammer);
     Vector<Tweet> getTweets();
     long getId();
+    bool isSpammer();
 
     friend ostream& operator<< (ostream &out, User &u);
 
@@ -42,8 +43,12 @@ public:
 
 private:
     long id;
+    bool spammer;
     Vector<Tweet> tweets;
 };
 
+
+Map<long, User> loadSpammers();
+Map<long, User> loadNonSpammers();
 
 #endif

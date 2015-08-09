@@ -2,9 +2,16 @@
 #include "data.h"
 
 int main(int argc, char const *argv[]){
-    User u(59195690);
+    Map<int, String> map = {
+        {1, String("aaa")},
+        {3, String("bbb")},
+        {5, String("cc")},
+    };
 
-    log() << u << endl;
+    FOREACH<int, String>(map, [](int &k, String &v){
+        LOG() << k << " = " << v << endl; 
+    });
+
 
     return 0;
 }

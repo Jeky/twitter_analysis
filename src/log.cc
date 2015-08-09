@@ -6,36 +6,36 @@ void getTime(){
   std::time_t tt = system_clock::to_time_t (system_clock::now());
 
   struct std::tm * ptm = std::localtime(&tt);
-  std::cout << "[" << std::put_time(ptm, "%F %T") << "]";
+  *__OUT << "[" << std::put_time(ptm, "%F %T") << "]";
 }
 
 
-std::ostream &log(){
+std::ostream &LOG(){
     getTime();
-    *OUT << "[INFO]  ";
-    return *OUT;
+    *__OUT << "[INFO]  ";
+    return *__OUT;
 }
 
 
-std::ostream &error(){
+std::ostream &ERROR(){
     getTime();
-    *OUT << "[ERROR]";
-    return *OUT;
+    *__OUT << "[ERROR]";
+    return *__OUT;
 }
 
 
-std::ostream &debug(){
+std::ostream &DEBUG(){
     getTime();
-    *OUT << "[DEBUG]";
-    return *OUT;
+    *__OUT << "[DEBUG]";
+    return *__OUT;
 }
 
 
 void setOutput(std::ostream &out){
-    OUT = &out;
+    __OUT = &out;
 }
 
 
 void setDebug(bool debug){
-    DEBUG = debug;
+    __DEBUG = debug;
 }

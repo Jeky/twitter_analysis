@@ -1,12 +1,18 @@
 #include "data.h"
+
+/*
+ * Tweet Member Functions
+ */
+
 const String Tweet::TWEET_PATH = PATH + String("tweets/");
 
 Vector<Tweet> Tweet::loadTweets(long id){
     String filename = TWEET_PATH + to_string(id);
     Vector<Tweet> tweets;
 
-    readFile(filename, [tweets](int index, string &line){
+    readFile(filename, false, [&tweets](int index, string &line){
         tweets.push_back(Tweet(line));
+        return true;
     });
 
     return tweets;
@@ -32,22 +38,31 @@ String Tweet::getText(){
 
 
 ostream& operator<< (ostream &out, Tweet &t){
-    out << "Tweet[" << t.getText() << "]" << endl;
+    out << "Tweet[" << t.getText() << "]";
     return out;
 }
 
+/*
+ * User Member Functions
+ */
 
 User::User(){};
 
 
-User::User(long id){
+User::User(long id, bool spammer){
     this->id = id;
+    this->spammer = spammer;
     this->tweets = Tweet::loadTweets(id);
 }
 
 
 long User::getId(){
     return id;
+}
+
+
+bool User::isSpammer(){
+    return spammer;
 }
 
 
@@ -58,6 +73,34 @@ Vector<Tweet> User::getTweets(){
 
 ostream& operator<< (ostream &out, User &u){
     out << "User[" << u.getId() << ", Tweets Count = " 
-        << u.getTweets().size() << "]" << endl;
+        << u.getTweets().size() << "]";
     return out;
 }
+
+/*
+ * Data loading functions
+ */
+
+Map<long, User> loadData(String &path, bool spammer){
+    Map<long, User> users;
+    readFile(path, [&](int index, String &line){
+        long id = stol(line);
+        users[id] = User(id, spammer);
+        return true;
+    });
+
+    return users;
+}
+
+
+Map<long, User> loadSpammers(){
+    String path = PATH + String("spammers.id.list");
+    return loadData(path, true);
+}
+
+
+Map<long, User> loadNonSpammers(){
+    String path = PATH + String("nonspammers.id.list");
+    return loadData(path, false);
+}
+
