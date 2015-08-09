@@ -10,26 +10,22 @@ void getTime(){
 }
 
 
-std::ostream &LOG(){
-    getTime();
-    *__OUT << "[INFO]  ";
-    return *__OUT;
+void LOG(bool start){
+    *__OUT << std::endl;
 }
 
 
-std::ostream &ERROR(){
-    getTime();
-    *__OUT << "[ERROR]";
-    return *__OUT;
+void ERROR(bool start){
+    *__OUT << std::endl;
+    exit(-1);
 }
 
 
-std::ostream &DEBUG(){
-    getTime();
-    *__OUT << "[DEBUG]";
-    return *__OUT;
+void DEBUG(bool start){
+    if(__DEBUG){
+        *__OUT << std::endl;
+    }
 }
-
 
 void setOutput(std::ostream &out){
     __OUT = &out;

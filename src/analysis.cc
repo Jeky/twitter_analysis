@@ -3,7 +3,7 @@
 
 int main(int argc, char const *argv[]){
     auto users = loadSpammers();
-    LOG() << "Total users: " << users.size() << endl;
-
+    LOG("Total users: ", users.size());
+    
     return 0;
 }
