@@ -5,3 +5,5 @@ CMakeCache.txt
 Makefile
 analysis
 *.obj
+cereal
+build
