@@ -2,7 +2,7 @@
 #include "data.h"
 
 int main(int argc, char const *argv[]){
-    auto users = loadSpammers();
+    auto users = loadNonSpammers();
     LOG("Total users: ", users.size());
     
     return 0;

@@ -1,6 +1,6 @@
 rm analysis
 echo "[Compiling Files]...................................."
 cmake .
-make
+make -j4
 echo "[Running]............................................"
 time ./analysis

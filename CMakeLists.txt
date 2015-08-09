@@ -3,6 +3,7 @@ project (Twitter_Analysis)
 add_definitions(-std=c++11)
 aux_source_directory(src/. src_list)
 include_directories("include")
+set(CMAKE_BUILD_TYPE Release)
 
 add_executable(analysis ${src_list}
     include/cereal/types/unordered_map.hpp
