@@ -1,0 +1,50 @@
+#ifndef _DATA_H_
+#define _DATA_H_
+
+#include "utils.h"
+
+
+class Tweet{
+public:
+    static const String TWEET_PATH = PATH + "";
+
+    static Vector<Tweet> loadTweets(long id);
+
+    Tweet();
+    Tweet(String &text);
+    Tweet(char const *text);
+    String getText();
+
+    friend ostream& operator<< (ostream &out, Tweet &t);
+
+    template <typename Archive>
+    void serialize(Archive &ar){
+        ar(text);
+    }
+
+private:
+    String text;
+};
+
+
+class User{
+public:
+    User();
+    User(long id);
+    Vector<Tweet> getTweets();
+    long getId();
+
+    friend ostream& operator<< (ostream &out, User &u);
+
+    template <typename Archive>
+    void serialize(Archive &ar){
+        ar(id, tweets);
+    }
+
+private:
+    long id;
+    Vector<Tweet> tweets;
+};
+
+
+#endif
