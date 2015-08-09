@@ -4,8 +4,8 @@
 #include "utils.h"
 
 
-static const SPAMMER_DATA_PATH = PATH + String("spammers.obj");
-static const NONSPAMMER_DATA_PATH = PATH + String("nonspammers.obj");
+static const String SPAMMER_DATA_PATH = PATH + String("spammers.obj");
+static const String NONSPAMMER_DATA_PATH = PATH + String("nonspammers.obj");
 
 
 class Tweet{

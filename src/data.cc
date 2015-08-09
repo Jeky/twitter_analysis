@@ -81,14 +81,14 @@ ostream& operator<< (ostream &out, User &u){
  * Data loading functions
  */
 
-Map<long, User> loadData(String &dataPath, String &path, bool spammer){
+Map<long, User> loadData(const String &dataPath, const String &path, bool spammer){
     ifstream infile(dataPath);
 
     if(!infile.good()){
         infile.close();
 
         Map<long, User> users;
-        readFile(path, [&](int index, String &line){
+        readFile(path, [&users, &spammer](int index, String &line){
             long id = stol(line);
             users[id] = User(id, spammer);
             return true;
@@ -102,8 +102,6 @@ Map<long, User> loadData(String &dataPath, String &path, bool spammer){
 
         return loadObject<Map<long, User>>(dataPath);
     }
-
-    return users;
 }
 
 
