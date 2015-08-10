@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.6)
-project(twitter)
+project(ml)
  
 set(PROJECT_INCLUDE_DIR 
     ${PROJECT_SOURCE_DIR}/include
@@ -7,16 +7,13 @@ set(PROJECT_INCLUDE_DIR
 )
 set(PROJECT_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
  
-set(TWITTER_SRCS
-    ${PROJECT_SOURCE_DIR}/analysis.cc 
-    ${PROJECT_SOURCE_DIR}/data.cc 
+set(ML_SRCS 
+    ${PROJECT_SOURCE_DIR}/ml.cc
 )
  
 include_directories("${PROJECT_BINARY_DIR}")
-include_directories("${PROJECT_INCLUDE_DIR}")
 include_directories(../cereal/include)
 include_directories(../utils/include)
-include_directories(../ml/include)
-
-add_executable(${PROJECT_NAME} ${TWITTER_SRCS})
-target_link_libraries(${PROJECT_NAME} utils ml)
+include_directories("${PROJECT_INCLUDE_DIR}")
+ 
+add_library(${PROJECT_NAME} STATIC ${ML_SRCS})

@@ -14,4 +14,5 @@ include_directories("${PROJECT_INCLUDE_DIR}")
 include_directories("${PROJECT_SOURCE_DIR}")
  
 add_subdirectory(utils)
+add_subdirectory(ml)
 add_subdirectory(twitter)

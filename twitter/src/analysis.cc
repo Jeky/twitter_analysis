@@ -1,9 +1,10 @@
 #include "utils.h"
-#include "data.h"
+#include "ml.h"
 
 int main(int argc, char const *argv[]){
-    auto users = loadNonSpammers();
-    LOG("Total users: ", users.size());
+    Instance ins;
+    ins["a"] = 1;
+    ins["b"] = 2;
     
     return 0;
 }
