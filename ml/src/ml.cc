@@ -8,26 +8,22 @@ void Instance::setClassValue(double value){
 }
 
 
-double Instance::getClassValue(double value){
+double Instance::getClassValue(){
     return classValue;
 }
 
 
-bool Instance::hasAttribute(String &name){
+bool Instance::hasAttribute(const String &name){
     return values.find(name) != values.end();
 }
 
 
-double& Instance::operator[](String &name){
+double& Instance::operator[](const String &name){
+    if(!hasAttribute(name)){
+        values[name] = 0.0;
+    }
     return values[name];
 }
-
-
-double& Instance::operator[](const char *name){
-    String key = name;
-    return values[key];
-}
-
 
 Dataset::Dataset(){}
 
@@ -49,4 +45,3 @@ void Dataset::shuffle(){
 Instance& Dataset::operator[](int index){
     return instances[index];
 }
-

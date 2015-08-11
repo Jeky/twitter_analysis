@@ -7,18 +7,18 @@ class Instance{
 public:
     Instance();
     void setClassValue(double value);
-    double getClassValue(double value);
-    bool hasAttribute(String &name);
-    double &operator[](String &name);
-    double &operator[](const char *name);
+    double getClassValue();
+    bool hasAttribute(const String &name);
+    double &operator[](const String &name);
     
     template <typename Archive>
     void serialize(Archive &ar){
         ar(values);
     }
+    
+    Map<String, double> values;
 private:
     double classValue;
-    Map<String, double> values;
 };
 
 
@@ -37,8 +37,5 @@ public:
 private:
     Vector<Instance> instances;
 };
-
-
-Dataset user2Dataset(Map<long, User> users);
 
 #endif

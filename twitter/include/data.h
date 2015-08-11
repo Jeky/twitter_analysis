@@ -2,10 +2,14 @@
 #define _DATA_H_
 
 #include "utils.h"
-
+#include "ml.h"
+#include "text.h"
 
 static const String SPAMMER_DATA_PATH = PATH + String("spammers.obj");
 static const String NONSPAMMER_DATA_PATH = PATH + String("nonspammers.obj");
+
+static const double SPAMMER_VALUE = 1.0;
+static const double NON_SPAMMER_VALUE = 0.0;
 
 
 class Tweet{
@@ -54,5 +58,7 @@ private:
 
 Map<long, User> loadSpammers();
 Map<long, User> loadNonSpammers();
+
+Dataset user2Dataset(Map<long, User> users, int gramLen);
 
 #endif

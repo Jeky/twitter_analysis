@@ -116,3 +116,23 @@ Map<long, User> loadNonSpammers(){
         PATH + String("nonspammers.id.list"), false);
 }
 
+
+Dataset user2Dataset(Map<long, User> users, int gramLen){
+    Dataset dataset;
+
+    FOREACH<long, User>(users, [&](long &id, User &u){
+        Instance ins;
+        ins.setClassValue(u.isSpammer()? SPAMMER_VALUE : NON_SPAMMER_VALUE);
+
+        FOREACH<Tweet>(u.getTweets(), [&](int i, Tweet &t){
+            Vector<String> grams = toGrams(t.getText(), gramLen);
+            FOREACH<String>(grams, [&](int i, String &g){
+                ins[g] += 1.0;
+            });
+        });
+
+        dataset.addInstance(ins);
+    });
+
+    return dataset;
+}

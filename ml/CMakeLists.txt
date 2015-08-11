@@ -9,6 +9,9 @@ set(PROJECT_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
  
 set(ML_SRCS 
     ${PROJECT_SOURCE_DIR}/ml.cc
+    ${PROJECT_SOURCE_DIR}/text.cc
+    ${PROJECT_SOURCE_DIR}/porter2_stemmer.cc
+    ${PROJECT_SOURCE_DIR}/classifier.cc
 )
  
 include_directories("${PROJECT_BINARY_DIR}")
