@@ -1,12 +1,14 @@
-#include "text.h"
+#include "ml.h"
 
 int main(int argc, char const *argv[]){
-    String s = "This is a single testsss!aaa";
-    auto words = toGrams(s, 2);
-    FOREACH<String>(words, [](int i, String &w){
-        LOG(w);
-    });
+    Instance ins;
 
+    ins["a"] = 1.0;
+    ins["b"] = 2.0;
+
+    for(auto &kv : ins){
+        LOG(kv.first, " = ", kv.second);
+    }
     
     return 0;
 }

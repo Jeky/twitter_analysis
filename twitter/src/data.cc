@@ -120,19 +120,21 @@ Map<long, User> loadNonSpammers(){
 Dataset user2Dataset(Map<long, User> users, int gramLen){
     Dataset dataset;
 
-    FOREACH<long, User>(users, [&](long &id, User &u){
+    for(auto &kv : users){
+        User u = kv.second;
+
         Instance ins;
         ins.setClassValue(u.isSpammer()? SPAMMER_VALUE : NON_SPAMMER_VALUE);
 
-        FOREACH<Tweet>(u.getTweets(), [&](int i, Tweet &t){
+        for(auto &t : u.getTweets()){
             Vector<String> grams = toGrams(t.getText(), gramLen);
-            FOREACH<String>(grams, [&](int i, String &g){
+            for(auto &g : grams){
                 ins[g] += 1.0;
-            });
-        });
+            };
+        };
 
         dataset.addInstance(ins);
-    });
+    };
 
     return dataset;
 }

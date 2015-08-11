@@ -19,23 +19,25 @@ void NaiveBayes::train(Dataset &dataset){
 
         mapAdd(clsProb, cls, 1.0);
 
-        FOREACH<String, double>(dataset[i].values, [&](String &f, double &v){
-            mapAdd(clsFeatureProb[cls], f, v);
-            mapAdd(clsWordCount, cls, v);
-            featureSet.insert(f);
-        });
+        for(auto &kv : dataset[i]){
+            mapAdd(clsFeatureProb[cls], kv.first, kv.second);
+            mapAdd(clsWordCount, cls, kv.second);
+            featureSet.insert(kv.first);
+        };
     };
 
     // compute class probability
-    FOREACH<double, double>(clsProb, [&](double &cls, double &v){
-        clsProb[cls] = log(v / dataset.size());
-    });
+    for(auto &kv : clsProb){
+        clsProb[kv.first] = log(kv.second / dataset.size());
+    };
 
     // compute class feature probability
     int featureSize = featureSet.size();
-    FOREACH<double, Map<String, double>>(clsFeatureProb, 
-        [&](double &cls, Map<String, double> &featureProb){
-        for(const String &k : featureSet){
+    for(auto &kv : clsFeatureProb){
+        double cls = kv.first;
+        Map<String, double> featureProb = kv.second;
+
+        for(auto &k : featureSet){
             double v = 0.0;
             if(featureProb.find(k) != featureProb.end()){
                 v = featureProb[k];
@@ -43,7 +45,7 @@ void NaiveBayes::train(Dataset &dataset){
 
             featureProb[k] = log((v + 1.0) / (clsWordCount[cls] + featureSize));
         };
-    });
+    };
 }
 
 
@@ -51,21 +53,25 @@ double NaiveBayes::classify(Instance &ins){
     double cls = 0.0;
     double prob = -1.0;
 
-    FOREACH<double, Map<String, double>>(clsFeatureProb, 
-        [&](double &thisCls, Map<String, double> &featureProb){
+    for(auto &kv : clsFeatureProb){
+        double thisCls = kv.first;
+        Map<String, double> featureProb = kv.second;
         double thisProb = clsProb[thisCls];
 
-        FOREACH<String, double>(ins.values, [&](String &f, double &v){
+        for(auto &kv : ins){
+            String f = kv.first;
+            double v = kv.second;
+
             if(clsFeatureProb[thisCls].find(f) != clsFeatureProb[thisCls].end()){
                 thisProb += clsFeatureProb[thisCls][f] * v;
             }
-        });
+        };
 
         if(thisProb > prob || prob == -1.0){
             cls = thisCls;
             prob = thisProb;
         }
-    });
+    };
 
     return cls;
 }

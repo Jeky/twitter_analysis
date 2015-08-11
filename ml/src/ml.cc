@@ -25,6 +25,19 @@ double& Instance::operator[](const String &name){
     return values[name];
 }
 
+
+Map<String, double>::iterator Instance::begin(){
+    return values.begin();
+}
+
+
+Map<String, double>::iterator Instance::end(){
+    return values.end();
+}
+
+
+
+
 Dataset::Dataset(){}
 
 
@@ -44,4 +57,14 @@ void Dataset::shuffle(){
 
 Instance& Dataset::operator[](int index){
     return instances[index];
+}
+
+
+Vector<Instance>::iterator Dataset::begin(){
+    return instances.begin();
+}
+
+
+Vector<Instance>::iterator Dataset::end(){
+    return instances.end();
 }
