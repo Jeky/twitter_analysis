@@ -1,9 +1,9 @@
 .DS_Store
-CMakeFIles
+.idea
+CMakeFiles
 cmake_install.cmake
 CMakeCache.txt
 Makefile
 analysis
 *.obj
-cereal
 build
