@@ -3,7 +3,7 @@
 
 #include <math.h>
 
-#include "utils.h"
+#include "../utils.h"
 #include "ml.h"
 
 class Classifier{

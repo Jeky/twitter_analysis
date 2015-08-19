@@ -6,7 +6,7 @@
 #include <algorithm>
 
 #include "porter2_stemmer.h"
-#include "utils.h"
+#include "../utils.h"
 
 
 Vector<String> splitWords(const String &text);

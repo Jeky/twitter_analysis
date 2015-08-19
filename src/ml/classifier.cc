@@ -1,25 +1,25 @@
-#include "classifier.h"
+#include "ml/classifier.h"
 
-void NaiveBayes::reset(){
+void NaiveBayes::reset() {
     clsProb.clear();
     clsFeatureProb.clear();
 }
 
 
-void NaiveBayes::train(Dataset &dataset){
+void NaiveBayes::train(Dataset &dataset) {
     Map<double, double> clsWordCount;
-    Set<String> featureSet;
+    Set <String> featureSet;
 
     // collect features and compute class probability
-    for(int i = 0; i < dataset.size(); i++){
+    for (int i = 0; i < dataset.size(); i++) {
         double cls = dataset[i].getClassValue();
-        if(clsProb.find(cls) == clsProb.end()){
+        if (clsProb.find(cls) == clsProb.end()) {
             clsFeatureProb[cls] = Map<String, double>();
         }
 
         mapAdd(clsProb, cls, 1.0);
 
-        for(auto &kv : dataset[i]){
+        for (auto &kv : dataset[i]) {
             mapAdd(clsFeatureProb[cls], kv.first, kv.second);
             mapAdd(clsWordCount, cls, kv.second);
             featureSet.insert(kv.first);
@@ -27,19 +27,19 @@ void NaiveBayes::train(Dataset &dataset){
     };
 
     // compute class probability
-    for(auto &kv : clsProb){
+    for (auto &kv : clsProb) {
         clsProb[kv.first] = log(kv.second / dataset.size());
     };
 
     // compute class feature probability
     int featureSize = featureSet.size();
-    for(auto &kv : clsFeatureProb){
+    for (auto &kv : clsFeatureProb) {
         double cls = kv.first;
         Map<String, double> featureProb = kv.second;
 
-        for(auto &k : featureSet){
+        for (auto &k : featureSet) {
             double v = 0.0;
-            if(featureProb.find(k) != featureProb.end()){
+            if (featureProb.find(k) != featureProb.end()) {
                 v = featureProb[k];
             }
 
@@ -49,25 +49,25 @@ void NaiveBayes::train(Dataset &dataset){
 }
 
 
-double NaiveBayes::classify(Instance &ins){
+double NaiveBayes::classify(Instance &ins) {
     double cls = 0.0;
     double prob = -1.0;
 
-    for(auto &kv : clsFeatureProb){
+    for (auto &kv : clsFeatureProb) {
         double thisCls = kv.first;
         Map<String, double> featureProb = kv.second;
         double thisProb = clsProb[thisCls];
 
-        for(auto &kv : ins){
+        for (auto &kv : ins) {
             String f = kv.first;
             double v = kv.second;
 
-            if(clsFeatureProb[thisCls].find(f) != clsFeatureProb[thisCls].end()){
+            if (clsFeatureProb[thisCls].find(f) != clsFeatureProb[thisCls].end()) {
                 thisProb += clsFeatureProb[thisCls][f] * v;
             }
         };
 
-        if(thisProb > prob || prob == -1.0){
+        if (thisProb > prob || prob == -1.0) {
             cls = thisCls;
             prob = thisProb;
         }

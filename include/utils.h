@@ -11,8 +11,8 @@
 #include <cereal/types/memory.hpp>
 #include <cereal/archives/binary.hpp>
 
-#include "log.h"
-#include "io.h"
+#include "utils/log.h"
+#include "utils/io.h"
 
 #define Map unordered_map
 #define Vector vector
