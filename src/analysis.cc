@@ -1,17 +1,26 @@
-#include "ml/ml.h"
-#include "ml/features.h"
+#include "data.h"
+#include "utils.h"
+
+void convertToDS() {
+    Map<long, User> *spammers = loadSpammers();
+    Map<long, User> *nonSpammers = loadNonSpammers();
+
+    Dataset *spammerDS = user2Dataset(spammers, 1);
+    delete spammers;
+    Dataset *nonSpammerDS = user2Dataset(nonSpammers, 1);
+    delete nonSpammers;
+
+    saveObject(spammerDS, PATH + "spammer.dat");
+    delete spammerDS;
+    saveObject(nonSpammerDS, PATH + "nonspammer.dat");
+    delete nonSpammerDS;
+}
+
+void printDatasetStatistic(Dataset *spammer, Dataset *nonSpammer) {
+
+}
 
 int main(int argc, char const *argv[]) {
-    Dataset *ds = Dataset::loadDatasetMatrix("/Users/jeky/Desktop/test.txt");
-
-    FeatureSelector *selector = new BiClassMutualInformation();
-
-    selector->train(ds);
-
-    LOG(*selector->getTopFeatureList());
-
-    delete selector;
-    delete ds;
-
+    convertToDS();
     return 0;
 }
