@@ -7,9 +7,7 @@ void readFile(const string &filename, bool log,
     string line;
 
     if (!infile.good()) {
-        if (log) {
-            ERROR("Cannot find file ", filename);
-        }
+        ERROR("Cannot find file ", filename);
         return;
     }
 

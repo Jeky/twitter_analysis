@@ -36,6 +36,32 @@ Map<String, double>::iterator Instance::end() {
 }
 
 
+Dataset *Dataset::loadDatasetMatrix(const String &filename) {
+    Dataset *ds = new Dataset();
+
+    readFile(filename, false, [ds](int i, String &line) {
+        stringstream ss(line);
+        double buf;
+        Instance instance;
+        int colCount = 0;
+        double cls;
+        ss >> cls;
+        instance.setClassValue(cls);
+
+        while (ss >> buf) {
+            instance[to_string(colCount)] = buf;
+            colCount++;
+        }
+
+        ds->addInstance(instance);
+
+        return true;
+    });
+
+
+    return ds;
+}
+
 Dataset::Dataset() { }
 
 

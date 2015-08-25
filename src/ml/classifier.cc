@@ -6,46 +6,48 @@ void NaiveBayes::reset() {
 }
 
 
-void NaiveBayes::train(Dataset &dataset) {
+void NaiveBayes::train(Dataset *dataset) {
     Map<double, double> clsWordCount;
-    Set <String> featureSet;
+    Set<String> featureSet;
 
     // collect features and compute class probability
-    for (int i = 0; i < dataset.size(); i++) {
-        double cls = dataset[i].getClassValue();
+    for (Instance &instance : *dataset) {
+        double cls = instance.getClassValue();
         if (clsProb.find(cls) == clsProb.end()) {
             clsFeatureProb[cls] = Map<String, double>();
         }
 
         mapAdd(clsProb, cls, 1.0);
 
-        for (auto &kv : dataset[i]) {
+        for (auto &kv : instance) {
             mapAdd(clsFeatureProb[cls], kv.first, kv.second);
             mapAdd(clsWordCount, cls, kv.second);
             featureSet.insert(kv.first);
         };
     };
 
+    LOG_VAR(featureSet.size());
+
     // compute class probability
     for (auto &kv : clsProb) {
-        clsProb[kv.first] = log(kv.second / dataset.size());
+        clsProb[kv.first] = log(kv.second / dataset->size());
     };
 
     // compute class feature probability
     int featureSize = featureSet.size();
     for (auto &kv : clsFeatureProb) {
-        double cls = kv.first;
-        Map<String, double> featureProb = kv.second;
-
         for (auto &k : featureSet) {
             double v = 0.0;
-            if (featureProb.find(k) != featureProb.end()) {
-                v = featureProb[k];
+            if (kv.second.find(k) != kv.second.end()) {
+                v = kv.second[k];
             }
 
-            featureProb[k] = log((v + 1.0) / (clsWordCount[cls] + featureSize));
+            kv.second[k] = log((v + 1.0) / (clsWordCount[kv.first] + featureSize));
         };
     };
+
+    LOG_VAR(clsProb);
+    LOG_VAR(clsFeatureProb);
 }
 
 

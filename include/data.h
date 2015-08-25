@@ -64,10 +64,10 @@ private:
 };
 
 
-Map<long, User> loadSpammers();
+Map<long, User> *loadSpammers();
 
-Map<long, User> loadNonSpammers();
+Map<long, User> *loadNonSpammers();
 
-Dataset user2Dataset(Map<long, User> users, int gramLen);
+Dataset *user2Dataset(Map<long, User> *users, int gramLen);
 
 #endif
