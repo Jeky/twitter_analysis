@@ -36,6 +36,7 @@ unordered_map<long, User> *loadData(const string &dataPath, const string &path, 
     ifstream infile(dataPath);
 
     if (!infile.good()) {
+        LOG("Cannot Find ", dataPath, ". Loading File from ", path);
         infile.close();
 
         unordered_map<long, User> *users = new unordered_map<long, User>();
@@ -51,6 +52,7 @@ unordered_map<long, User> *loadData(const string &dataPath, const string &path, 
 
         return users;
     } else {
+        LOG("Loading Data from ", path);
         infile.close();
 
         return loadObject<unordered_map<long, User >>(dataPath);
@@ -80,10 +82,11 @@ Dataset *user2Dataset(unordered_map<long, User> *users, int gramLen) {
         ins.setClassValue(u.isSpammer() ? SPAMMER_VALUE : NON_SPAMMER_VALUE);
 
         for (auto &t : u.getTweets()) {
-            vector<string> grams = toGrams(t.getText(), gramLen);
-            for (auto &g : grams) {
+            vector<string> *grams = toGrams(t.getText(), gramLen);
+            for (auto &g : *grams) {
                 ins[g] += 1.0;
             };
+            delete grams;
         };
 
         dataset->addInstance(ins);

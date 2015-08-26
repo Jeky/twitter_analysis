@@ -1,10 +1,10 @@
 #include "ml/text.h"
 
-vector <string> splitWords(const string &text) {
+vector<string> *splitWords(const string &text) {
     regex rgx("\\w+");
-    vector <string> words;
+    vector<string> *words = new vector<string>();
     for (sregex_iterator it(text.begin(), text.end(), rgx), it_end; it != it_end; ++it) {
-        words.push_back((*it)[0]);
+        words->push_back((*it)[0]);
     }
 
     return words;
@@ -22,23 +22,27 @@ void normalize(string &word) {
 }
 
 
-vector <string> toGrams(const string &text, const int gramLen) {
-    vector <string> words = splitWords(text);
+vector<string> *toGrams(const string &text, const int gramLen) {
+    vector<string> *words = splitWords(text);
+    vector<string> *grams = new vector<string>();
 
-    for (int i = 0; i < words.size(); i++) {
-        normalize(words[i]);
+    if (words->empty()){
+        delete words;
+        return grams;
     }
 
-    vector <string> grams;
+    for (int i = 0; i < words->size(); i++) {
+        normalize((*words)[i]);
+    }
 
-    for (int i = 0; i < words.size() - gramLen + 1; i++) {
+    for (int i = 0; i < words->size() - gramLen + 1; i++) {
         string g = string();
         for (int j = 0; j < gramLen; j++) {
-            g += words[i + j] + " ";
+            g += (*words)[i + j] + " ";
         }
-        grams.push_back(g);
+        grams->push_back(g);
     }
 
-
+    delete words;
     return grams;
 }

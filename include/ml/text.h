@@ -9,13 +9,13 @@
 #include "../utils.h"
 
 
-vector<string> splitWords(const string &text);
+vector<string> *splitWords(const string &text);
 
 void toLowerString(string &word);
 
 void normalize(string &word);
 
-vector<string> toGrams(const string &text, const int gram);
+vector<string> *toGrams(const string &text, const int gram);
 
 
 #endif
