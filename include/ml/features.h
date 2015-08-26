@@ -11,11 +11,11 @@ public:
 
     virtual void train(Dataset *dataset) = 0;
 
-    virtual Vector<Pair<String, double>> *getTopFeatureList();
+    virtual vector<pair<string, double>> *getTopFeatureList();
 
     virtual ~FeatureSelector() { };
 protected:
-    Map<String, double> featureScoreMap;
+    unordered_map<string, double> featureScoreMap;
 };
 
 

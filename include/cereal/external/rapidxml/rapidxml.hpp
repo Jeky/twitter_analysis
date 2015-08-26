@@ -1914,7 +1914,7 @@ namespace rapidxml
                     ++text;
                 }
 
-                // Set pi value (verbatim, no entity expansion or whitespace normalization)
+                // unordered_set pi value (verbatim, no entity expansion or whitespace normalization)
                 pi->value(value_, text - value_);
 
                 // Place zero terminator after name and value
@@ -2302,7 +2302,7 @@ namespace rapidxml
                 else
                     end = skip_and_expand_character_refs<attribute_value_pred<Ch('"')>, attribute_value_pure_pred<Ch('"')>, AttFlags>(text, false);
 
-                // Set attribute value
+                // unordered_set attribute value
                 attribute->value(value_, end - value_);
 
                 // Make sure that end quote is present

@@ -9,7 +9,7 @@ class Evaluator {
 public:
     void crossValidate(int foldN, Classifier *classifier, Dataset *ds1, Dataset *ds2);
 
-    Map<String, double> getConfusionMatrix();
+    unordered_map<string, double> getConfusionMatrix();
 
     double getAccuracy();
 
@@ -19,10 +19,10 @@ public:
 
     double getF1();
 
-    Vector<Map<String, double>> getConfusionMatrixVector();
+    vector<unordered_map<string, double>> getConfusionMatrixVector();
 
 private:
-    Vector<Map<String, double>> result;
+    vector<unordered_map<string, double>> result;
 };
 
 

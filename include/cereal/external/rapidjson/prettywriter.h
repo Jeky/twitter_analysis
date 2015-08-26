@@ -25,7 +25,7 @@ public:
 	PrettyWriter(Stream& stream, int precision = 20, Allocator* allocator = 0, size_t levelDepth = Base::kDefaultLevelDepth) :
 		Base(stream, precision, allocator, levelDepth), indentChar_(' '), indentCharCount_(4) {}
 
-	//! Set custom indentation.
+	//! unordered_set custom indentation.
 	/*! \param indentChar		Character for indentation. Must be whitespace character (' ', '\t', '\n', '\r').
 		\param indentCharCount	Number of indent characters for each indentation level.
 		\note The default indentation is 4 spaces.

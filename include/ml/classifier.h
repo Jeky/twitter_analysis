@@ -26,8 +26,8 @@ public:
     double classify(Instance &instance);
 
 private:
-    Map<double, double> clsProb;
-    Map<double, Map<String, double>> clsFeatureProb;
+    unordered_map<double, double> clsProb;
+    unordered_map<double, unordered_map<string, double>> clsFeatureProb;
 };
 
 #endif

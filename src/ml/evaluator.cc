@@ -62,7 +62,7 @@ void Evaluator::crossValidate(int foldN, Classifier *classifier, Dataset *ds1, D
         trainingDataset->shuffle();
         testingDataset->shuffle();
 
-        Map<String, double> confusionMatrix;
+        unordered_map<string, double> confusionMatrix;
 
         classifier->reset();
         classifier->train(trainingDataset);
@@ -71,15 +71,15 @@ void Evaluator::crossValidate(int foldN, Classifier *classifier, Dataset *ds1, D
             double cls = classifier->classify(instance);
             if (instance.getClassValue() == posCls) {
                 if (cls == posCls) {
-                    mapAdd<String>(confusionMatrix, "TP", 1);
+                    mapAdd<string>(confusionMatrix, "TP", 1);
                 } else {
-                    mapAdd<String>(confusionMatrix, "FP", 1);
+                    mapAdd<string>(confusionMatrix, "FP", 1);
                 }
             } else {
                 if (cls == posCls) {
-                    mapAdd<String>(confusionMatrix, "FN", 1);
+                    mapAdd<string>(confusionMatrix, "FN", 1);
                 } else {
-                    mapAdd<String>(confusionMatrix, "TN", 1);
+                    mapAdd<string>(confusionMatrix, "TN", 1);
                 }
             }
         }
@@ -94,39 +94,39 @@ void Evaluator::crossValidate(int foldN, Classifier *classifier, Dataset *ds1, D
     delete[] folds2;
 }
 
-Map<String, double> Evaluator::getConfusionMatrix() {
-    Map<String, double> cm;
+unordered_map<string, double> Evaluator::getConfusionMatrix() {
+    unordered_map<string, double> cm;
 
-    for (Map<String, double> &i: result) {
-        mapAdd<String>(cm, "TP", i["TP"]);
-        mapAdd<String>(cm, "FP", i["FP"]);
-        mapAdd<String>(cm, "FN", i["FN"]);
-        mapAdd<String>(cm, "TN", i["TN"]);
+    for (unordered_map<string, double> &i: result) {
+        mapAdd<string>(cm, "TP", i["TP"]);
+        mapAdd<string>(cm, "FP", i["FP"]);
+        mapAdd<string>(cm, "FN", i["FN"]);
+        mapAdd<string>(cm, "TN", i["TN"]);
     }
 
     return cm;
 }
 
 double Evaluator::getAccuracy() {
-    Map<String, double> cm = getConfusionMatrix();
+    unordered_map<string, double> cm = getConfusionMatrix();
     return (cm["TP"] + cm["TN"]) / (cm["TP"] + cm["FP"] + cm["FN"] + cm["TN"]);
 }
 
 double Evaluator::getRecall() {
-    Map<String, double> cm = getConfusionMatrix();
+    unordered_map<string, double> cm = getConfusionMatrix();
     return cm["TP"] / (cm["TP"] + cm["FN"]);
 }
 
 double Evaluator::getPrecision() {
-    Map<String, double> cm = getConfusionMatrix();
+    unordered_map<string, double> cm = getConfusionMatrix();
     return cm["TP"] / (cm["TP"] + cm["FP"]);
 }
 
 double Evaluator::getF1() {
-    Map<String, double> cm = getConfusionMatrix();
+    unordered_map<string, double> cm = getConfusionMatrix();
     return  2 * cm["TP"] / (2 * cm["TP"] + cm["FP"] + cm["FN"]);
 }
 
-Vector<Map<String, double>> Evaluator::getConfusionMatrixVector() {
+vector<unordered_map<string, double>> Evaluator::getConfusionMatrixVector() {
     return result;
 }

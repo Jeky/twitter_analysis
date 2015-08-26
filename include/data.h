@@ -5,8 +5,8 @@
 #include "ml/ml.h"
 #include "ml/text.h"
 
-static const String SPAMMER_DATA_PATH = PATH + String("spammers.obj");
-static const String NONSPAMMER_DATA_PATH = PATH + String("nonspammers.obj");
+static const string SPAMMER_DATA_PATH = PATH + string("spammers.obj");
+static const string NONSPAMMER_DATA_PATH = PATH + string("nonspammers.obj");
 
 static const double SPAMMER_VALUE = 1.0;
 static const double NON_SPAMMER_VALUE = 0.0;
@@ -14,17 +14,15 @@ static const double NON_SPAMMER_VALUE = 0.0;
 
 class Tweet {
 public:
-    static const String TWEET_PATH;
+    static const string TWEET_PATH;
 
-    static Vector <Tweet> loadTweets(long id);
+    Tweet() { }
 
-    Tweet();
+    Tweet(string const &text) { this->text = text; }
 
-    Tweet(String &text);
+    Tweet(char const *text) { this->text = text; }
 
-    Tweet(char const *text);
-
-    String getText();
+    string getText() const { return text; }
 
     friend ostream &operator<<(ostream &out, Tweet &t);
 
@@ -34,21 +32,40 @@ public:
     }
 
 private:
-    String text;
+    string text;
 };
 
 
 class User {
 public:
-    User();
+    User() { };
 
-    User(long id, bool spammer);
+    User(long id, bool spammer) {
+        this->id = id;
+        this->spammer = spammer;
+    }
 
-    Vector <Tweet> getTweets();
+    long getId() const {
+        return id;
+    }
 
-    long getId();
+    void setId(long id) {
+        User::id = id;
+    }
 
-    bool isSpammer();
+    bool isSpammer() const {
+        return spammer;
+    }
+
+    void setSpammer(bool spammer) {
+        User::spammer = spammer;
+    }
+
+    vector<Tweet> &getTweets() {
+        return tweets;
+    }
+
+    void loadTweets();
 
     friend ostream &operator<<(ostream &out, User &u);
 
@@ -60,14 +77,14 @@ public:
 private:
     long id;
     bool spammer;
-    Vector <Tweet> tweets;
+    vector<Tweet> tweets;
 };
 
 
-Map<long, User> *loadSpammers();
+unordered_map<long, User> *loadSpammers();
 
-Map<long, User> *loadNonSpammers();
+unordered_map<long, User> *loadNonSpammers();
 
-Dataset *user2Dataset(Map<long, User> *users, int gramLen);
+Dataset *user2Dataset(unordered_map<long, User> *users, int gramLen);
 
 #endif

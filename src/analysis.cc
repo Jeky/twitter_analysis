@@ -2,8 +2,8 @@
 #include "utils.h"
 
 void convertToDS() {
-    Map<long, User> *spammers = loadSpammers();
-    Map<long, User> *nonSpammers = loadNonSpammers();
+    unordered_map<long, User> *spammers = loadSpammers();
+    unordered_map<long, User> *nonSpammers = loadNonSpammers();
 
     Dataset *spammerDS = user2Dataset(spammers, 1);
     delete spammers;
@@ -21,6 +21,6 @@ void printDatasetStatistic(Dataset *spammer, Dataset *nonSpammer) {
 }
 
 int main(int argc, char const *argv[]) {
-    convertToDS();
+//    convertToDS();
     return 0;
 }

@@ -1,13 +1,13 @@
 #include "ml/features.h"
 
-Vector<Pair<String, double>> *FeatureSelector::getTopFeatureList() {
-    Vector<Pair<String, double>> *v = new Vector<Pair<String, double>>();
+vector<pair<string, double>> *FeatureSelector::getTopFeatureList() {
+    vector<pair<string, double>> *v = new vector<pair<string, double>>();
 
     for (auto &kv : featureScoreMap) {
         v->push_back(make_pair(kv.first, kv.second));
     }
 
-    sort(v->begin(), v->end(), [](const Pair<String, double> &left, const Pair<String, double> &right) {
+    sort(v->begin(), v->end(), [](const pair<string, double> &left, const pair<string, double> &right) {
         return left.second > right.second;
     });
 
@@ -18,8 +18,8 @@ Vector<Pair<String, double>> *FeatureSelector::getTopFeatureList() {
 void BiClassMutualInformation::train(Dataset *dataset) {
     LOG("Training Mutual Information Feature Selector");
 
-    Map<String, array<double, 4>> featureMatrix;
-    Set<double> clsSet;
+    unordered_map<string, array<double, 4>> featureMatrix;
+    unordered_set<double> clsSet;
 
     // initialize feature matrix
     // row    = number of features

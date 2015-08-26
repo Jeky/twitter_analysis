@@ -1,8 +1,8 @@
 #include "ml/text.h"
 
-Vector <String> splitWords(const String &text) {
+vector <string> splitWords(const string &text) {
     regex rgx("\\w+");
-    Vector <String> words;
+    vector <string> words;
     for (sregex_iterator it(text.begin(), text.end(), rgx), it_end; it != it_end; ++it) {
         words.push_back((*it)[0]);
     }
@@ -11,28 +11,28 @@ Vector <String> splitWords(const String &text) {
 }
 
 
-void toLowerString(String &word) {
+void toLowerString(string &word) {
     transform(word.begin(), word.end(), word.begin(), (int (*)(int)) tolower);
 }
 
 
-void normalize(String &word) {
+void normalize(string &word) {
     toLowerString(word);
     Porter2Stemmer::stem(word);
 }
 
 
-Vector <String> toGrams(const String &text, const int gramLen) {
-    Vector <String> words = splitWords(text);
+vector <string> toGrams(const string &text, const int gramLen) {
+    vector <string> words = splitWords(text);
 
     for (int i = 0; i < words.size(); i++) {
         normalize(words[i]);
     }
 
-    Vector <String> grams;
+    vector <string> grams;
 
     for (int i = 0; i < words.size() - gramLen + 1; i++) {
-        String g = String();
+        string g = string();
         for (int j = 0; j < gramLen; j++) {
             g += words[i + j] + " ";
         }

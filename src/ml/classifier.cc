@@ -7,14 +7,14 @@ void NaiveBayes::reset() {
 
 
 void NaiveBayes::train(Dataset *dataset) {
-    Map<double, double> clsWordCount;
-    Set<String> featureSet;
+    unordered_map<double, double> clsWordCount;
+    unordered_set<string> featureSet;
 
     // collect features and compute class probability
     for (Instance &instance : *dataset) {
         double cls = instance.getClassValue();
         if (clsProb.find(cls) == clsProb.end()) {
-            clsFeatureProb[cls] = Map<String, double>();
+            clsFeatureProb[cls] = unordered_map<string, double>();
         }
 
         mapAdd(clsProb, cls, 1.0);
@@ -57,11 +57,11 @@ double NaiveBayes::classify(Instance &ins) {
 
     for (auto &kv : clsFeatureProb) {
         double thisCls = kv.first;
-        Map<String, double> featureProb = kv.second;
+        unordered_map<string, double> featureProb = kv.second;
         double thisProb = clsProb[thisCls];
 
         for (auto &kv : ins) {
-            String f = kv.first;
+            string f = kv.first;
             double v = kv.second;
 
             if (clsFeatureProb[thisCls].find(f) != clsFeatureProb[thisCls].end()) {

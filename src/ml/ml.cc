@@ -13,12 +13,12 @@ double Instance::getClassValue() {
 }
 
 
-bool Instance::hasAttribute(const String &name) {
+bool Instance::hasAttribute(const string &name) {
     return values.find(name) != values.end();
 }
 
 
-double &Instance::operator[](const String &name) {
+double &Instance::operator[](const string &name) {
     if (!hasAttribute(name)) {
         values[name] = 0.0;
     }
@@ -26,20 +26,20 @@ double &Instance::operator[](const String &name) {
 }
 
 
-Map<String, double>::iterator Instance::begin() {
+unordered_map<string, double>::iterator Instance::begin() {
     return values.begin();
 }
 
 
-Map<String, double>::iterator Instance::end() {
+unordered_map<string, double>::iterator Instance::end() {
     return values.end();
 }
 
 
-Dataset *Dataset::loadDatasetMatrix(const String &filename) {
+Dataset *Dataset::loadDatasetMatrix(const string &filename) {
     Dataset *ds = new Dataset();
 
-    readFile(filename, false, [ds](int i, String &line) {
+    readFile(filename, false, [ds](int i, string &line) {
         stringstream ss(line);
         double buf;
         Instance instance;
@@ -79,16 +79,21 @@ void Dataset::shuffle() {
 }
 
 
+Instance &Dataset::at(int index) {
+    return instances[index];
+}
+
+
 Instance &Dataset::operator[](int index) {
     return instances[index];
 }
 
 
-Vector<Instance>::iterator Dataset::begin() {
+vector<Instance>::iterator Dataset::begin() {
     return instances.begin();
 }
 
 
-Vector<Instance>::iterator Dataset::end() {
+vector<Instance>::iterator Dataset::end() {
     return instances.end();
 }

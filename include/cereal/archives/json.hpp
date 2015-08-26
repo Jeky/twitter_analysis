@@ -300,7 +300,7 @@ namespace cereal
 
           The general workflow of saving to the JSON archive is:
 
-            1. (optional) Set the name for the next node to be created, usually done by an NVP
+            1. (optional) unordered_set the name for the next node to be created, usually done by an NVP
             2. Start the node
             3. (if there is data to save) Write the name of the node (this function)
             4. (if there is data to save) Save the data (with saveValue)

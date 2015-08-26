@@ -10,14 +10,26 @@ set(SOURCE_FILES
         include/utils/io.h include/utils/log.h include/utils.h
         src/utils/io.cc src/utils/log.cc
 # ml package
-        include/ml/ml.h include/ml/classifier.h include/ml/porter2_stemmer.h include/ml/text.h include/ml/evaluator.h
-        src/ml/ml.cc src/ml/classifier.cc src/ml/porter2_stemmer.cc src/ml/text.cc src/ml/evaluator.cc
+        include/ml/ml.h include/ml/classifier.h include/ml/porter2_stemmer.h include/ml/text.h include/ml/evaluator.h include/ml/features.h
+        src/ml/ml.cc src/ml/classifier.cc src/ml/porter2_stemmer.cc src/ml/text.cc src/ml/evaluator.cc src/ml/features.cc
 # analysis pacakge
         include/data.h
-        src/data.cc
-# executable file
-        src/analysis.cc include/ml/features.h src/ml/features.cc)
+        src/data.cc)
 
 include_directories("${PROJECT_INCLUDE_DIR}")
+if (test)
+    enable_testing()
+    ##############
+    # Unit Tests
+    ##############
+    add_executable(runUnitTest ${SOURCE_FILES} test/unittest.cc)
 
-add_executable(analysis ${SOURCE_FILES})
+    # Standard linking to gtest stuff.
+    target_link_libraries(runUnitTest ${CMAKE_SOURCE_DIR}/lib/libgtest.a ${CMAKE_SOURCE_DIR}/lib/libgtest_main.a)
+
+    # This is so you can do 'make test' to see all your tests run, instead of
+    # manually running the executable runUnitTests to see those specific tests.
+    add_test(runUnitTest ${EXECUTABLE_OUTPUT_PATH}/runUnitTest)
+else()
+    add_executable(analysis ${SOURCE_FILES} src/analysis.cc)
+endif ()

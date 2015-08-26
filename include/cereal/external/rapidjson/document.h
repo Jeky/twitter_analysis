@@ -225,7 +225,7 @@ public:
 	//!@name Object
 	//@{
 
-	//! Set this value as an empty object.
+	//! unordered_set this value as an empty object.
 	GenericValue& SetObject() { this->~GenericValue(); new (this) GenericValue(kObjectType); return *this; }
 
 	//! Get the value associated with the object's name.
@@ -326,7 +326,7 @@ public:
 	//!@name Array
 	//@{
 
-	//! Set this value as an empty array.
+	//! unordered_set this value as an empty array.
 	GenericValue& SetArray() {	this->~GenericValue(); new (this) GenericValue(kArrayType); return *this; }
 
 	//! Get the number of elements in array.
@@ -451,7 +451,7 @@ int z = a[0u].GetInt();				// This works too.
 	*/
 	SizeType GetStringLength() const { RAPIDJSON_ASSERT(IsString()); return data_.s.length; }
 
-	//! Set this value as a string without copying source string.
+	//! unordered_set this value as a string without copying source string.
 	/*! This version has better performance with supplied length, and also support string containing null character.
 		\param s source string pointer.
 		\param length The length of source string, excluding the trailing null terminator.
@@ -459,13 +459,13 @@ int z = a[0u].GetInt();				// This works too.
 	*/
 	GenericValue& SetString(const Ch* s, SizeType length) { this->~GenericValue(); SetStringRaw(s, length); return *this; }
 
-	//! Set this value as a string without copying source string.
+	//! unordered_set this value as a string without copying source string.
 	/*! \param s source string pointer.
 		\return The value itself for fluent API.
 	*/
 	GenericValue& SetString(const Ch* s) { return SetString(s, internal::StrLen(s)); }
 
-	//! Set this value as a string by copying from source string.
+	//! unordered_set this value as a string by copying from source string.
 	/*! This version has better performance with supplied length, and also support string containing null character.
 		\param s source string.
 		\param length The length of source string, excluding the trailing null terminator.
@@ -474,7 +474,7 @@ int z = a[0u].GetInt();				// This works too.
 	*/
 	GenericValue& SetString(const Ch* s, SizeType length, Allocator& allocator) { this->~GenericValue(); SetStringRaw(s, length, allocator); return *this; }
 
-	//! Set this value as a string by copying from source string.
+	//! unordered_set this value as a string by copying from source string.
 	/*!	\param s source string.
 		\param allocator Allocator for allocating copied buffer. Commonly use document.GetAllocator().
 		\return The value itself for fluent API.

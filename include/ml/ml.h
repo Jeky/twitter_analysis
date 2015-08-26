@@ -13,20 +13,20 @@ public:
 
     double getClassValue();
 
-    bool hasAttribute(const String &name);
+    bool hasAttribute(const string &name);
 
-    double &operator[](const String &name);
+    double &operator[](const string &name);
 
-    Map<String, double>::iterator begin();
+    unordered_map<string, double>::iterator begin();
 
-    Map<String, double>::iterator end();
+    unordered_map<string, double>::iterator end();
 
     template<typename Archive>
     void serialize(Archive &ar) {
         ar(values);
     }
 
-    Map<String, double> values;
+    unordered_map<string, double> values;
 private:
     double classValue;
 };
@@ -34,7 +34,7 @@ private:
 
 class Dataset {
 public:
-    static Dataset *loadDatasetMatrix(const String &filename);
+    static Dataset *loadDatasetMatrix(const string &filename);
 
     Dataset();
 
@@ -44,11 +44,13 @@ public:
 
     void shuffle();
 
-    Instance &operator[](int index);
+    Instance &at(const int index);
 
-    Vector<Instance>::iterator begin();
+    Instance &operator[](const int index);
 
-    Vector<Instance>::iterator end();
+    vector<Instance>::iterator begin();
+
+    vector<Instance>::iterator end();
 
     template<typename Archive>
     void serialize(Archive &ar) {
@@ -56,7 +58,7 @@ public:
     }
 
 private:
-    Vector<Instance> instances;
+    vector<Instance> instances;
 };
 
 #endif

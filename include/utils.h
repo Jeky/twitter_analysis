@@ -17,20 +17,13 @@
 #include "utils/log.h"
 #include "utils/io.h"
 
-#define Map unordered_map
-#define Vector vector
-#define String string
-#define Set unordered_set
-#define Pair pair
-#define Array array;
-
 using namespace std;
 
-static const String PATH = String("/Users/jeky/data/thesis/ctweets/");
+static const string PATH = string("/Users/jeky/data/thesis/ctweets/");
 
 
 template <typename K>
-void mapAdd(Map<K, double> &m, const K &key, double value){
+void mapAdd(unordered_map<K, double> &m, const K &key, double value){
     if(m.find(key) == m.end()){
         m[key] = 0.0;
     }
