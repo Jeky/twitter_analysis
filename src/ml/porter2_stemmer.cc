@@ -477,6 +477,10 @@ bool Porter2Stemmer::internal::replaceIfExists(std::string &word,
     if (idx < start)
         return false;
 
+    if (idx < 0){
+        std::cout << word << std::endl << suffix << std::endl << replacement << std::endl << start << std::endl;
+    }
+
     if (std::equal(word.begin() + idx, word.end(), suffix.begin())) {
         word = word.substr(0, word.size() - suffix.size()) + replacement;
         return true;
