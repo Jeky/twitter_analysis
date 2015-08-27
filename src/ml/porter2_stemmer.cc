@@ -257,7 +257,7 @@ void Porter2Stemmer::internal::step1C(std::string &word) {
   li:                   delete if preceded by a valid li-ending
 */
 void Porter2Stemmer::internal::step2(std::string &word, size_t startR1) {
-    static const std::vector <std::pair<std::string, std::string>> subs
+    static const std::vector<std::pair<std::string, std::string>> subs
             = {{"ational", "ate"},
                {"tional",  "tion"},
                {"enci",    "ence"},
@@ -313,7 +313,7 @@ void Porter2Stemmer::internal::step2(std::string &word, size_t startR1) {
 */
 void Porter2Stemmer::internal::step3(std::string &word, size_t startR1,
                                      size_t startR2) {
-    static const std::vector <std::pair<std::string, std::string>> subs
+    static const std::vector<std::pair<std::string, std::string>> subs
             = {{"ational", "ate"},
                {"tional",  "tion"},
                {"alize",   "al"},
@@ -342,7 +342,7 @@ void Porter2Stemmer::internal::step3(std::string &word, size_t startR1,
                               delete if preceded by s or t
 */
 void Porter2Stemmer::internal::step4(std::string &word, size_t startR2) {
-    static const std::vector <std::pair<std::string, std::string>> subs
+    static const std::vector<std::pair<std::string, std::string>> subs
             = {{"al",    ""},
                {"ance",  ""},
                {"ence",  ""},
@@ -415,7 +415,7 @@ bool Porter2Stemmer::internal::isShort(const std::string &word) {
 }
 
 bool Porter2Stemmer::internal::special(std::string &word) {
-    static const std::unordered_map <std::string, std::string> exceptions
+    static const std::unordered_map<std::string, std::string> exceptions
             = {{"skis",   "ski"},
                {"skies",  "sky"},
                {"dying",  "die"},
@@ -477,12 +477,12 @@ bool Porter2Stemmer::internal::replaceIfExists(std::string &word,
     if (idx < start)
         return false;
 
-    if (idx < 0){
-        std::cout << word << std::endl << suffix << std::endl << replacement << std::endl << start << std::endl;
-    }
-
     if (std::equal(word.begin() + idx, word.end(), suffix.begin())) {
-        word = word.substr(0, word.size() - suffix.size()) + replacement;
+        if (idx == 0) {
+            word = replacement;
+        } else {
+            word = word.substr(0, word.size() - suffix.size()) + replacement;
+        }
         return true;
     }
     return false;
