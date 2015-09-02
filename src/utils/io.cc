@@ -34,3 +34,12 @@ void readFile(const string &filename,
               function<bool(int, string &)> lineHandler) {
     return readFile(filename, true, lineHandler);
 }
+
+
+void writeFile(const string &filename,
+               function<void(ofstream &)> writer) {
+    ofstream out(filename);
+    writer(out);
+
+    out.close();
+}

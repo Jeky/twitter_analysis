@@ -3,7 +3,7 @@
 
 void convertToDS() {
     unordered_map<long, User> *spammers = loadSpammers();
-    unordered_map<long, User> *nonSpammers = loadNonSpammers();
+    unordered_map<long, User> *nonSpammers = loadSampledNonSpammers();
 
     LOG("User loaded. Convert users to Dataset...");
 
@@ -16,25 +16,43 @@ void convertToDS() {
     LOG("Save datasets...");
     saveObject(spammerDS, PATH + "spammer.dat");
     delete spammerDS;
+
     saveObject(nonSpammerDS, PATH + "nonspammer.dat");
     delete nonSpammerDS;
 }
 
-void printDatasetStatistic(Dataset *spammer, Dataset *nonSpammer) {
 
+void printDatasetStatistic() {
+    unordered_map<long, User> *spammers = loadSpammers();
+    unordered_map<long, User> *nonSpammers = loadSampledNonSpammers();
+
+    int spammerTweet = 0;
+    for (auto &kv: *spammers) {
+        spammerTweet += kv.second.getTweets().size();
+    }
+    int nonSpammerTweet = 0;
+    for (auto &kv: *nonSpammers) {
+        nonSpammerTweet += kv.second.getTweets().size();
+    }
+
+    LOG_VAR(spammers->size());
+    LOG_VAR(nonSpammers->size());
+    LOG_VAR(spammerTweet);
+    LOG_VAR(nonSpammerTweet);
+
+    delete spammers;
+    delete nonSpammers;
 }
 
 int main(int argc, char const *argv[]) {
-    unordered_map<long, User> *nonSpammers = loadNonSpammers();
+    unordered_map<long, User> *nonSpammers = loadSampledNonSpammers();
 
     int count = 0;
     for (auto &kv : *nonSpammers) {
-        if(kv.second.getTweets().size() < 50){
-            count += 1;
-        }
+        count += kv.second.getTweets().size();
     }
-
-    LOG(count);
+    LOG_VAR(nonSpammers->size());
+    LOG_VAR(count);
 
     delete nonSpammers;
     return 0;

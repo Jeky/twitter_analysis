@@ -1,21 +1,14 @@
 #ifndef _DATA_H_
 #define _DATA_H_
 
+#include <algorithm>
+
 #include "utils.h"
 #include "ml/ml.h"
 #include "ml/text.h"
 
-static const string SPAMMER_DATA_PATH = PATH + string("spammers.obj");
-static const string NONSPAMMER_DATA_PATH = PATH + string("nonspammers.obj");
-
-static const double SPAMMER_VALUE = 1.0;
-static const double NON_SPAMMER_VALUE = 0.0;
-
-
 class Tweet {
 public:
-    static const string TWEET_PATH;
-
     Tweet() { }
 
     Tweet(string const &text) { this->text = text; }
@@ -83,7 +76,9 @@ private:
 
 unordered_map<long, User> *loadSpammers();
 
-unordered_map<long, User> *loadNonSpammers();
+unordered_map<long, User> *loadSampledNonSpammers();
+
+void sampleNonSpammers();
 
 Dataset *user2Dataset(unordered_map<long, User> *users, int gramLen);
 
