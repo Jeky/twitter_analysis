@@ -26,38 +26,53 @@ void convertToDS() {
 }
 
 
-Counter<string> *countTokens(unordered_map<long, User> *users){
-    Counter<string> *tokenCounter = new Counter<string>();
-    for (auto &kv: *users) {
-        for(auto &t : kv.second.getTweets()){
-            vector<string> *words = toGrams(t.getText());
-            tokenCounter->count(words);
-            delete words;
-        }
-    }
+Counter<string> *countTokens(unordered_map<long, User> *users, const string &path) {
+    ifstream infile(path);
 
-    return tokenCounter;
+    if (!infile.good()) {
+        LOG("Cannot Find ", path, ". Counting Tokens...");
+        infile.close();
+
+        Counter<string> *tokenCounter = new Counter<string>();
+        int i = 0;
+        for (auto &kv: *users) {
+            if (i % 1000 == 0) {
+                LOG("Process ", i, " users");
+            }
+            for (auto &t : kv.second.getTweets()) {
+                vector<string> *words = toGrams(t.getText());
+                tokenCounter->count(words);
+                delete words;
+            }
+            i++;
+        }
+
+        saveObject(tokenCounter, path);
+        return tokenCounter;
+    }else{
+        LOG("Loading Data from ", path);
+        infile.close();
+
+        return loadObject<Counter<string>>(path);
+    }
 }
 
 
 void printDatasetStatistic() {
     unordered_map<long, User> *spammers = loadSpammers();
-//    unordered_map<long, User> *nonSpammers = loadSampledNonSpammers();
+    unordered_map<long, User> *nonSpammers = loadSampledNonSpammers();
 
     LOG("Counting Tokens in Tweets from Spammers");
-    Counter<string> *spammerTokenCounter = countTokens(spammers);
-//
-//    LOG("Counting Tokens in Tweets from NonSpammers");
-//    Counter<string> *nonSpammerTokenCounter = countTokens(nonSpammers);
+    Counter<string> *spammerTokenCounter = countTokens(spammers, SPAMMER_TOKEN_COUNTER);
+
+    LOG("Counting Tokens in Tweets from NonSpammers");
+    Counter<string> *nonSpammerTokenCounter = countTokens(nonSpammers, NON_SPAMMER_TOKEN_COUNTER);
 
     LOG_VAR(spammerTokenCounter->size());
-//    LOG_VAR(nonSpammerTokenCounter->size());
-
-    saveObject(spammerTokenCounter, SPAMMER_TOKEN_COUNTER);
-//    saveObject(nonSpammerTokenCounter, NON_SPAMMER_TOKEN_COUNTER);
+    LOG_VAR(nonSpammerTokenCounter->size());
 
     delete spammers;
-//    delete nonSpammers;
+    delete nonSpammers;
 }
 
 void countGramsInTweets(Counter<string> &counter, User &u, int gramLen) {
@@ -69,9 +84,6 @@ void countGramsInTweets(Counter<string> &counter, User &u, int gramLen) {
 }
 
 int main(int argc, char const *argv[]) {
-//    printDatasetStatistic();
-    string s = "noth";
-    Porter2Stemmer::internal::step2(s, 3);
-    LOG_VAR(s);
+    printDatasetStatistic();
     return 0;
 }
