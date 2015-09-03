@@ -2,6 +2,7 @@
 
 #include "data.h"
 #include "ml/ml.h"
+#include "utils.h"
 
 TEST(DataTest, User2DatasetTest) {
     // construct user list
@@ -32,4 +33,23 @@ TEST(DataTest, User2DatasetTest) {
 
     delete users;
     delete ds;
+}
+
+
+TEST(UtilsTest, Counter){
+    vector<string> words = {"a", "b", "c", "a", "a", "c"};
+    Counter<string> c;
+    c.count(words);
+
+    vector<pair<string, int>> *result = c.getTop();
+
+    LOG_VAR(*result);
+
+    EXPECT_EQ(result->size(), 3);
+    EXPECT_EQ((*result)[0].first, "a");
+    EXPECT_EQ((*result)[0].second, 3);
+    EXPECT_EQ((*result)[1].first, "c");
+    EXPECT_EQ((*result)[1].second, 2);
+    EXPECT_EQ((*result)[2].first, "b");
+    EXPECT_EQ((*result)[2].second, 1);
 }

@@ -1,5 +1,7 @@
 #include "data.h"
+#include "ml/text.h"
 #include "utils.h"
+#include <iterator>
 
 void convertToDS() {
     unordered_map<long, User> *spammers = loadSpammers();
@@ -7,10 +9,10 @@ void convertToDS() {
 
     LOG("User loaded. Convert users to Dataset...");
 
-    Dataset *spammerDS = user2Dataset(spammers, 1);
+    Dataset *spammerDS = user2Dataset(spammers);
     delete spammers;
 
-    Dataset *nonSpammerDS = user2Dataset(nonSpammers, 1);
+    Dataset *nonSpammerDS = user2Dataset(nonSpammers);
     delete nonSpammers;
 
     LOG("Save datasets...");
@@ -20,7 +22,6 @@ void convertToDS() {
     saveObject(nonSpammerDS, PATH + "nonspammer.dat");
     delete nonSpammerDS;
 }
-
 
 void printDatasetStatistic() {
     unordered_map<long, User> *spammers = loadSpammers();

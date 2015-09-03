@@ -25,7 +25,8 @@ ostream &operator<<(ostream &out, User &u) {
  * Data loading functions
  */
 
-unordered_map<long, User> *loadData(const string &dataPath, const string &path, const bool spammer) {
+unordered_map<long, User> *loadData(const string &dataPath, const string &path, const bool spammer,
+                                    function<void(unordered_map<long, User> *)> postDataHandler) {
     ifstream infile(dataPath);
 
     if (!infile.good()) {
@@ -41,6 +42,7 @@ unordered_map<long, User> *loadData(const string &dataPath, const string &path, 
             return true;
         });
 
+        postDataHandler(users);
         saveObject(users, dataPath);
 
         return users;
@@ -52,6 +54,10 @@ unordered_map<long, User> *loadData(const string &dataPath, const string &path, 
     }
 }
 
+unordered_map<long, User> *loadData(const string &dataPath, const string &path, const bool spammer) {
+    return loadData(dataPath, path, spammer, [](unordered_map<long, User> *users) { });
+}
+
 
 unordered_map<long, User> *loadSpammers() {
     return loadData(SPAMMER_DATA_PATH, SPAMMER_ID_LIST, true);
@@ -59,13 +65,15 @@ unordered_map<long, User> *loadSpammers() {
 
 
 unordered_map<long, User> *loadSampledNonSpammers() {
-    unordered_map<long, User> *users = loadData(NON_SPAMMER_DATA_PATH, SAMPLED_NON_SPAMMER_ID_LIST, false);
-    for(auto &kv : *users){
-        random_shuffle(kv.second.getTweets().begin(), kv.second.getTweets().end());
-        kv.second.getTweets().erase(kv.second.getTweets().begin() + 55, kv.second.getTweets().end());
-    }
-
-    return users;
+    return loadData(NON_SPAMMER_DATA_PATH, SAMPLED_NON_SPAMMER_ID_LIST, false,
+                    [](unordered_map<long, User> *users) {
+                        for (auto &kv : *users) {
+                            random_shuffle(kv.second.getTweets().begin(),
+                                           kv.second.getTweets().end());
+                            kv.second.getTweets().erase(kv.second.getTweets().begin() + 55,
+                                                        kv.second.getTweets().end());
+                        }
+                    });
 }
 
 
@@ -88,7 +96,7 @@ void sampleNonSpammers() {
                 nonSpammerIds.push_back(id);
             }
         }
-        if(nonSpammerIds.size() % 100 == 0 && nonSpammerIds.size() != 0){
+        if (nonSpammerIds.size() % 100 == 0 && nonSpammerIds.size() != 0) {
             LOG("Sampled ", nonSpammerIds.size(), " users");
         }
         return true;

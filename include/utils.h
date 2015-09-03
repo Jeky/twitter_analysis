@@ -41,4 +41,62 @@ void mapAdd(unordered_map<K, double> &m, const K &key, double value) {
     m[key] += value;
 }
 
+
+template<typename T>
+class Counter {
+public:
+    void count(const T &t, int number) {
+        if (counterMap.find(t) == counterMap.end()) {
+            counterMap[t] = 0;
+        }
+        counterMap[t] += number;
+    }
+
+    void count(const T &t) {
+        count(t, 1);
+    }
+
+    void count(const vector<T> &v) {
+        for (auto &t : v) {
+            count(t);
+        }
+    }
+
+    void count(const vector<T> *vp) {
+        for (auto &t : *vp) {
+            count(t);
+        }
+    }
+
+    int &operator[](const T &t) {
+        if (counterMap.find(t) == counterMap.end()) {
+            counterMap[t] = 0;
+        }
+        return counterMap[t];
+    }
+
+    vector<pair<T, int>> *getTop(int n) {
+        vector<pair<T, int>> *v = getTop();
+        v->erase(v->begin() + n, v->end());
+        return v;
+    }
+
+    vector<pair<T, int>> *getTop() {
+        vector<pair<T, int>> *v = new vector<pair<T, int>>();
+
+        for (auto &kv : counterMap) {
+            v->push_back(make_pair(kv.first, kv.second));
+        }
+
+        sort(v->begin(), v->end(), [](const pair<string, double> &left, const pair<string, double> &right) {
+            return left.second > right.second;
+        });
+
+        return v;
+    }
+
+private:
+    unordered_map<T, int> counterMap;
+};
+
 #endif

@@ -60,7 +60,7 @@ public:
 
     void loadTweets();
 
-    friend ostream &operator<<(ostream &out, User &u);
+    friend ostream &operator<<(ostream &out, const User &u);
 
     template<typename Archive>
     void serialize(Archive &ar) {
@@ -80,6 +80,6 @@ unordered_map<long, User> *loadSampledNonSpammers();
 
 void sampleNonSpammers();
 
-Dataset *user2Dataset(unordered_map<long, User> *users, int gramLen);
+Dataset *user2Dataset(unordered_map<long, User> *users, int gramLen = 1);
 
 #endif

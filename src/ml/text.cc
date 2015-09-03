@@ -1,7 +1,7 @@
 #include "ml/text.h"
 
 vector<string> *splitWords(const string &text) {
-    regex rgx("\\w+");
+    regex rgx("(http://(\\w+|\\.)+)|\\w+");
     vector<string> *words = new vector<string>();
     for (sregex_iterator it(text.begin(), text.end(), rgx), it_end; it != it_end; ++it) {
         words->push_back((*it)[0]);
@@ -18,7 +18,9 @@ void toLowerString(string &word) {
 
 void normalize(string &word) {
     toLowerString(word);
-    Porter2Stemmer::stem(word);
+    if (word.find("http://") != 0){
+        Porter2Stemmer::stem(word);
+    }
 }
 
 
@@ -40,9 +42,19 @@ vector<string> *toGrams(const string &text, const int gramLen) {
         for (int j = 0; j < gramLen; j++) {
             g += (*words)[i + j] + " ";
         }
+        trim(g);
         grams->push_back(g);
     }
 
     delete words;
     return grams;
+}
+
+
+void countGramsInTweets(Counter &counter, const User &u, int gramLen) {
+    for(auto &t : u.getTweets()){
+        vector<string> *grams = toGrams(t.getText(), gramLen);
+        counter.count(grams);
+        delete grams;
+    }
 }
