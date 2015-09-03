@@ -3,6 +3,8 @@
 #include "utils.h"
 #include <iterator>
 
+#include "ml/porter2_stemmer.h"
+
 void convertToDS() {
     unordered_map<long, User> *spammers = loadSpammers();
     unordered_map<long, User> *nonSpammers = loadSampledNonSpammers();
@@ -40,22 +42,22 @@ Counter<string> *countTokens(unordered_map<long, User> *users){
 
 void printDatasetStatistic() {
     unordered_map<long, User> *spammers = loadSpammers();
-    unordered_map<long, User> *nonSpammers = loadSampledNonSpammers();
+//    unordered_map<long, User> *nonSpammers = loadSampledNonSpammers();
 
     LOG("Counting Tokens in Tweets from Spammers");
     Counter<string> *spammerTokenCounter = countTokens(spammers);
-
-    LOG("Counting Tokens in Tweets from NonSpammers");
-    Counter<string> *nonSpammerTokenCounter = countTokens(nonSpammers);
+//
+//    LOG("Counting Tokens in Tweets from NonSpammers");
+//    Counter<string> *nonSpammerTokenCounter = countTokens(nonSpammers);
 
     LOG_VAR(spammerTokenCounter->size());
-    LOG_VAR(nonSpammerTokenCounter->size());
+//    LOG_VAR(nonSpammerTokenCounter->size());
 
     saveObject(spammerTokenCounter, SPAMMER_TOKEN_COUNTER);
-    saveObject(nonSpammerTokenCounter, NON_SPAMMER_TOKEN_COUNTER);
+//    saveObject(nonSpammerTokenCounter, NON_SPAMMER_TOKEN_COUNTER);
 
     delete spammers;
-    delete nonSpammers;
+//    delete nonSpammers;
 }
 
 void countGramsInTweets(Counter<string> &counter, User &u, int gramLen) {
@@ -67,6 +69,9 @@ void countGramsInTweets(Counter<string> &counter, User &u, int gramLen) {
 }
 
 int main(int argc, char const *argv[]) {
-    printDatasetStatistic();
+//    printDatasetStatistic();
+    string s = "noth";
+    Porter2Stemmer::internal::step2(s, 3);
+    LOG_VAR(s);
     return 0;
 }

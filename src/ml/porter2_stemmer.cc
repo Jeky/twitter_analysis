@@ -481,7 +481,7 @@ bool Porter2Stemmer::internal::replaceIfExists(std::string &word,
         if (idx == 0) {
             word = replacement;
         } else {
-            word = word.substr(0, word.size() - suffix.size()) + replacement;
+            word = word.substr(0, idx) + replacement;
         }
         return true;
     }
