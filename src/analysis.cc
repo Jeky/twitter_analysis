@@ -45,24 +45,15 @@ void printDatasetStatistic() {
     delete nonSpammers;
 }
 
- void countGramsInTweets(Counter<string> &counter, User &u, int gramLen) {
-          for(auto &t : u.getTweets()){
-                       vector<string> *grams = toGrams(t.getText(), gramLen);
-                                counter.count(grams);
-                                         delete grams;
+void countGramsInTweets(Counter<string> &counter, User &u, int gramLen) {
+    for (auto &t : u.getTweets()) {
+        vector<string> *grams = toGrams(t.getText(), gramLen);
+        counter.count(grams);
+        delete grams;
     }
 }
 
 int main(int argc, char const *argv[]) {
-    unordered_map<long, User> *nonSpammers = loadSampledNonSpammers();
-
-    int count = 0;
-    for (auto &kv : *nonSpammers) {
-        count += kv.second.getTweets().size();
-    }
-    LOG_VAR(nonSpammers->size());
-    LOG_VAR(count);
-
-    delete nonSpammers;
+    printDatasetStatistic();
     return 0;
 }
