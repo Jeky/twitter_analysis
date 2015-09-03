@@ -27,19 +27,37 @@ void printDatasetStatistic() {
     unordered_map<long, User> *spammers = loadSpammers();
     unordered_map<long, User> *nonSpammers = loadSampledNonSpammers();
 
+    Counter<string> spammerTokenCounter;
+    Counter<string> nonSpammerTokenCounter;
+
     int spammerTweet = 0;
     for (auto &kv: *spammers) {
         spammerTweet += kv.second.getTweets().size();
+        for(auto &t : kv.second.getTweets()){
+            vector<string> *words = toGrams(t.getText());
+            spammerTokenCounter.count(words);
+            delete words;
+        }
     }
     int nonSpammerTweet = 0;
     for (auto &kv: *nonSpammers) {
         nonSpammerTweet += kv.second.getTweets().size();
+        for(auto &t : kv.second.getTweets()){
+            vector<string> *words = toGrams(t.getText());
+            nonSpammerTokenCounter.count(words);
+            delete words;
+        }
     }
 
     LOG_VAR(spammers->size());
     LOG_VAR(nonSpammers->size());
     LOG_VAR(spammerTweet);
     LOG_VAR(nonSpammerTweet);
+    LOG_VAR(spammerTokenCounter.size());
+    LOG_VAR(nonSpammerTokenCounter.size());
+
+    saveObject(&spammerTokenCounter, PATH + string("spammer-token-counter.obj"));
+    saveObject(&nonSpammerTokenCounter, PATH + string("non-spammer-token-counter.obj"));
 
     delete spammers;
     delete nonSpammers;

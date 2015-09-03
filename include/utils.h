@@ -97,6 +97,24 @@ public:
         return v;
     }
 
+    int size(){
+        return counterMap.size();
+    }
+
+    unordered_set<T> *getKeySet(){
+        unordered_set<T> *keySet = new unordered_set<T>();
+        keySet->reserve(counterMap.size());
+        for(auto &kv : counterMap){
+            keySet->insert(kv.first);
+        }
+
+        return keySet;
+    }
+
+    template<typename Archive>
+    void serialize(Archive &ar) {
+        ar(counterMap);
+    }
 private:
     unordered_map<T, int> counterMap;
 };
