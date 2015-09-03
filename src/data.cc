@@ -70,23 +70,30 @@ unordered_map<long, User> *loadSampledNonSpammers() {
 
 
 void sampleNonSpammers() {
+    LOG("Start Sampling Normal Users...");
     unordered_set<long> spammerIds;
     readFile(SPAMMER_ID_LIST, [&](int i, string &line) {
         spammerIds.insert(stol(line));
         return true;
     });
+    LOG_VAR(spammerIds.size());
 
     vector<long> nonSpammerIds;
     readFile(NON_SPAMMER_ID_LIST, [&](int i, string &line) {
         long id = stol(line);
         if (spammerIds.find(id) == spammerIds.end()) {
             User u(id, false);
+            u.loadTweets();
             if (u.getTweets().size() >= 55) {
                 nonSpammerIds.push_back(id);
             }
         }
+        if(nonSpammerIds.size() % 100 == 0 && nonSpammerIds.size() != 0){
+            LOG("Sampled ", nonSpammerIds.size(), " users");
+        }
         return true;
     });
+    LOG_VAR(nonSpammerIds.size());
 
     random_shuffle(nonSpammerIds.begin(), nonSpammerIds.end());
 

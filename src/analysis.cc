@@ -45,6 +45,7 @@ void printDatasetStatistic() {
 }
 
 int main(int argc, char const *argv[]) {
+    sampleNonSpammers();
     unordered_map<long, User> *nonSpammers = loadSampledNonSpammers();
 
     int count = 0;
