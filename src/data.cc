@@ -47,7 +47,7 @@ unordered_map<long, User> *loadData(const string &dataPath, const string &path, 
 
         return users;
     } else {
-        LOG("Loading Data from ", path);
+        LOG("Loading Data from ", dataPath);
         infile.close();
 
         return loadObject<unordered_map<long, User >>(dataPath);

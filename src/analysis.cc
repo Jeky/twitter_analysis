@@ -23,41 +23,36 @@ void convertToDS() {
     delete nonSpammerDS;
 }
 
+
+Counter<string> *countTokens(unordered_map<long, User> *users){
+    Counter<string> *tokenCounter = new Counter<string>();
+    for (auto &kv: *users) {
+        for(auto &t : kv.second.getTweets()){
+            vector<string> *words = toGrams(t.getText());
+            tokenCounter->count(words);
+            delete words;
+        }
+    }
+
+    return tokenCounter;
+}
+
+
 void printDatasetStatistic() {
     unordered_map<long, User> *spammers = loadSpammers();
     unordered_map<long, User> *nonSpammers = loadSampledNonSpammers();
 
-    Counter<string> spammerTokenCounter;
-    Counter<string> nonSpammerTokenCounter;
+    LOG("Counting Tokens in Tweets from Spammers");
+    Counter<string> *spammerTokenCounter = countTokens(spammers);
 
-    int spammerTweet = 0;
-    for (auto &kv: *spammers) {
-        spammerTweet += kv.second.getTweets().size();
-        for(auto &t : kv.second.getTweets()){
-            vector<string> *words = toGrams(t.getText());
-            spammerTokenCounter.count(words);
-            delete words;
-        }
-    }
-    int nonSpammerTweet = 0;
-    for (auto &kv: *nonSpammers) {
-        nonSpammerTweet += kv.second.getTweets().size();
-        for(auto &t : kv.second.getTweets()){
-            vector<string> *words = toGrams(t.getText());
-            nonSpammerTokenCounter.count(words);
-            delete words;
-        }
-    }
+    LOG("Counting Tokens in Tweets from NonSpammers");
+    Counter<string> *nonSpammerTokenCounter = countTokens(nonSpammers);
 
-    LOG_VAR(spammers->size());
-    LOG_VAR(nonSpammers->size());
-    LOG_VAR(spammerTweet);
-    LOG_VAR(nonSpammerTweet);
-    LOG_VAR(spammerTokenCounter.size());
-    LOG_VAR(nonSpammerTokenCounter.size());
+    LOG_VAR(spammerTokenCounter->size());
+    LOG_VAR(nonSpammerTokenCounter->size());
 
-    saveObject(&spammerTokenCounter, PATH + string("spammer-token-counter.obj"));
-    saveObject(&nonSpammerTokenCounter, PATH + string("non-spammer-token-counter.obj"));
+    saveObject(spammerTokenCounter, SPAMMER_TOKEN_COUNTER);
+    saveObject(nonSpammerTokenCounter, NON_SPAMMER_TOKEN_COUNTER);
 
     delete spammers;
     delete nonSpammers;
