@@ -7,7 +7,7 @@ set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/build)
 set(PROJECT_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/include)
 set(SOURCE_FILES
 # utils package
-        include/utils/io.h include/utils/log.h include/utils.h
+        include/utils/io.h include/utils/log.h include/utils.h include/utils/hash.h include/utils/string_view.h
         src/utils/io.cc src/utils/log.cc
 # ml package
         include/ml/ml.h include/ml/classifier.h include/ml/porter2_stemmer.h include/ml/text.h include/ml/evaluator.h include/ml/features.h
