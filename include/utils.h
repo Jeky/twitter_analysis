@@ -27,7 +27,9 @@ static const string NON_SPAMMER_ID_LIST = PATH + string("non-spammer-id.txt");
 static const string SPAMMER_ID_LIST = PATH + string("spammer-id.txt");
 
 static const string SPAMMER_DATA_PATH = PATH + string("spammers.obj");
-static const string NON_SPAMMER_DATA_PATH = PATH + string("nonspammers.obj");
+static const string NON_SPAMMER_DATA_PATH = PATH + string("non-spammers.obj");
+
+static const int SAMPLE_TWEET_SIZE = 61;
 
 static const double SPAMMER_VALUE = 1.0;
 static const double NON_SPAMMER_VALUE = 0.0;

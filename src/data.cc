@@ -7,7 +7,7 @@ ostream &operator<<(ostream &out, Tweet &t) {
 
 
 void User::loadTweets() {
-    string filename = spammer ? SPAMMER_TWEET_PATH : NON_SPAMMER_TWEET_PATH + to_string(id);
+    string filename = (spammer ? SPAMMER_TWEET_PATH : NON_SPAMMER_TWEET_PATH) + to_string(id);
 
     readFile(filename, false, [&](int index, string &line) {
         tweets.push_back(Tweet(line));
@@ -70,7 +70,7 @@ unordered_map<long, User> *loadSampledNonSpammers() {
                         for (auto &kv : *users) {
                             random_shuffle(kv.second.getTweets().begin(),
                                            kv.second.getTweets().end());
-                            kv.second.getTweets().erase(kv.second.getTweets().begin() + 55,
+                            kv.second.getTweets().erase(kv.second.getTweets().begin() + SAMPLE_TWEET_SIZE,
                                                         kv.second.getTweets().end());
                         }
                     });
@@ -92,7 +92,7 @@ void sampleNonSpammers() {
         if (spammerIds.find(id) == spammerIds.end()) {
             User u(id, false);
             u.loadTweets();
-            if (u.getTweets().size() >= 55) {
+            if (u.getTweets().size() >= SAMPLE_TWEET_SIZE) {
                 nonSpammerIds.push_back(id);
             }
         }
