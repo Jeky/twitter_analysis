@@ -51,10 +51,3 @@ vector<string> *toGrams(const string &text, const int gramLen) {
 }
 
 
-void countGramsInTweets(Counter &counter, const User &u, int gramLen) {
-    for(auto &t : u.getTweets()){
-        vector<string> *grams = toGrams(t.getText(), gramLen);
-        counter.count(grams);
-        delete grams;
-    }
-}

@@ -37,6 +37,5 @@ void normalize(string &word);
 
 vector<string> *toGrams(const string &text, int gram = 1);
 
-void countGramsInTweets(Counter &counter, const User &u, int gramLen = 1);
 
 #endif
