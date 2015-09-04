@@ -1,4 +1,0 @@
-runUnitTest 1 0
-DataTest 6 0
----
-runUnitTest
