@@ -5,7 +5,6 @@ void NaiveBayes::reset() {
     clsFeatureProb.clear();
 }
 
-
 void NaiveBayes::train(Dataset *dataset) {
     unordered_map<double, double> clsWordCount;
     unordered_set<string> featureSet;
@@ -49,7 +48,6 @@ void NaiveBayes::train(Dataset *dataset) {
     LOG_VAR(clsProb);
     LOG_VAR(clsFeatureProb);
 }
-
 
 double NaiveBayes::classify(Instance &ins) {
     double cls = 0.0;

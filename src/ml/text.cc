@@ -10,25 +10,20 @@ vector<string> *splitWords(const string &text) {
     return words;
 }
 
-
-void toLowerString(string &word) {
-    transform(word.begin(), word.end(), word.begin(), (int (*)(int)) tolower);
-}
-
+void toLowerString(string &word) { transform(word.begin(), word.end(), word.begin(), (int (*)(int))tolower); }
 
 void normalize(string &word) {
     toLowerString(word);
-    if (word.find("http://") != 0){
+    if (word.find("http://") != 0) {
         Porter2Stemmer::stem(word);
     }
 }
-
 
 vector<string> *toGrams(const string &text, const int gramLen) {
     vector<string> *words = splitWords(text);
     vector<string> *grams = new vector<string>();
 
-    if (words->empty()){
+    if (words->empty()) {
         delete words;
         return grams;
     }
@@ -49,5 +44,3 @@ vector<string> *toGrams(const string &text, const int gramLen) {
     delete words;
     return grams;
 }
-
-

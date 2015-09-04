@@ -14,7 +14,6 @@ vector<pair<string, double>> *FeatureSelector::getTopFeatureList() {
     return v;
 }
 
-
 void BiClassMutualInformation::train(Dataset *dataset) {
     LOG("Training Mutual Information Feature Selector");
 

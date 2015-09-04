@@ -6,22 +6,22 @@
 #include "math.h"
 
 class FeatureSelector {
-public:
+  public:
     virtual void reset() { featureScoreMap.clear(); };
 
     virtual void train(Dataset *dataset) = 0;
 
     virtual vector<pair<string, double>> *getTopFeatureList();
 
-    virtual ~FeatureSelector() { };
-protected:
+    virtual ~FeatureSelector(){};
+
+  protected:
     unordered_map<string, double> featureScoreMap;
 };
 
-
 class BiClassMutualInformation : public FeatureSelector {
-public:
+  public:
     void train(Dataset *dataset);
 };
 
-#endif //TWITTER_ANALYSIS_FEATURES_H
+#endif // TWITTER_ANALYSIS_FEATURES_H

@@ -7,7 +7,7 @@
 #include "ml.h"
 
 class Classifier {
-public:
+  public:
     virtual void reset() = 0;
 
     virtual void train(Dataset *dataset) = 0;
@@ -18,14 +18,14 @@ public:
 };
 
 class NaiveBayes : public Classifier {
-public:
+  public:
     void reset();
 
     void train(Dataset *dataset);
 
     double classify(Instance &instance);
 
-private:
+  private:
     unordered_map<double, double> clsProb;
     unordered_map<double, unordered_map<string, double>> clsFeatureProb;
 };

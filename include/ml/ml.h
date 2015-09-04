@@ -6,7 +6,7 @@
 #include "../utils.h"
 
 class Instance {
-public:
+  public:
     Instance();
 
     void setClassValue(double value);
@@ -21,19 +21,16 @@ public:
 
     unordered_map<string, double>::iterator end();
 
-    template<typename Archive>
-    void serialize(Archive &ar) {
-        ar(values);
-    }
+    template <typename Archive> void serialize(Archive &ar) { ar(values); }
 
     unordered_map<string, double> values;
-private:
+
+  private:
     double classValue;
 };
 
-
 class Dataset {
-public:
+  public:
     static Dataset *loadDatasetMatrix(const string &filename);
 
     Dataset();
@@ -52,12 +49,9 @@ public:
 
     vector<Instance>::iterator end();
 
-    template<typename Archive>
-    void serialize(Archive &ar) {
-        ar(instances);
-    }
+    template <typename Archive> void serialize(Archive &ar) { ar(instances); }
 
-private:
+  private:
     vector<Instance> instances;
 };
 

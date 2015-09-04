@@ -25,9 +25,7 @@ static inline std::string &rtrim(std::string &s) {
 }
 
 // trim from both ends
-static inline std::string &trim(std::string &s) {
-    return ltrim(rtrim(s));
-}
+static inline std::string &trim(std::string &s) { return ltrim(rtrim(s)); }
 
 vector<string> *splitWords(const string &text);
 
@@ -36,6 +34,5 @@ void toLowerString(string &word);
 void normalize(string &word);
 
 vector<string> *toGrams(const string &text, int gram = 1);
-
 
 #endif

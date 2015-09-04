@@ -97,7 +97,7 @@ void Evaluator::crossValidate(int foldN, Classifier *classifier, Dataset *ds1, D
 unordered_map<string, double> Evaluator::getConfusionMatrix() {
     unordered_map<string, double> cm;
 
-    for (unordered_map<string, double> &i: result) {
+    for (unordered_map<string, double> &i : result) {
         mapAdd<string>(cm, "TP", i["TP"]);
         mapAdd<string>(cm, "FP", i["FP"]);
         mapAdd<string>(cm, "FN", i["FN"]);
@@ -124,9 +124,7 @@ double Evaluator::getPrecision() {
 
 double Evaluator::getF1() {
     unordered_map<string, double> cm = getConfusionMatrix();
-    return  2 * cm["TP"] / (2 * cm["TP"] + cm["FP"] + cm["FN"]);
+    return 2 * cm["TP"] / (2 * cm["TP"] + cm["FP"] + cm["FN"]);
 }
 
-vector<unordered_map<string, double>> Evaluator::getConfusionMatrixVector() {
-    return result;
-}
+vector<unordered_map<string, double>> Evaluator::getConfusionMatrixVector() { return result; }

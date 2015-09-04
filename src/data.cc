@@ -5,7 +5,6 @@ ostream &operator<<(ostream &out, Tweet &t) {
     return out;
 }
 
-
 void User::loadTweets() {
     string filename = (spammer ? SPAMMER_TWEET_PATH : NON_SPAMMER_TWEET_PATH) + to_string(id);
 
@@ -14,7 +13,6 @@ void User::loadTweets() {
         return true;
     });
 }
-
 
 ostream &operator<<(ostream &out, User &u) {
     out << "User[" << u.getId() << ", Tweets Count = " << u.getTweets().size() << "]";
@@ -50,32 +48,24 @@ unordered_map<long, User> *loadData(const string &dataPath, const string &path, 
         LOG("Loading Data from ", dataPath);
         infile.close();
 
-        return loadObject<unordered_map<long, User >>(dataPath);
+        return loadObject<unordered_map<long, User>>(dataPath);
     }
 }
 
 unordered_map<long, User> *loadData(const string &dataPath, const string &path, const bool spammer) {
-    return loadData(dataPath, path, spammer, [](unordered_map<long, User> *users) { });
+    return loadData(dataPath, path, spammer, [](unordered_map<long, User> *users) {});
 }
 
-
-unordered_map<long, User> *loadSpammers() {
-    return loadData(SPAMMER_DATA_PATH, SPAMMER_ID_LIST, true);
-}
-
+unordered_map<long, User> *loadSpammers() { return loadData(SPAMMER_DATA_PATH, SPAMMER_ID_LIST, true); }
 
 unordered_map<long, User> *loadSampledNonSpammers() {
-    return loadData(NON_SPAMMER_DATA_PATH, SAMPLED_NON_SPAMMER_ID_LIST, false,
-                    [](unordered_map<long, User> *users) {
-                        for (auto &kv : *users) {
-                            random_shuffle(kv.second.getTweets().begin(),
-                                           kv.second.getTweets().end());
-                            kv.second.getTweets().erase(kv.second.getTweets().begin() + SAMPLE_TWEET_SIZE,
-                                                        kv.second.getTweets().end());
-                        }
-                    });
+    return loadData(NON_SPAMMER_DATA_PATH, SAMPLED_NON_SPAMMER_ID_LIST, false, [](unordered_map<long, User> *users) {
+        for (auto &kv : *users) {
+            random_shuffle(kv.second.getTweets().begin(), kv.second.getTweets().end());
+            kv.second.getTweets().erase(kv.second.getTweets().begin() + SAMPLE_TWEET_SIZE, kv.second.getTweets().end());
+        }
+    });
 }
-
 
 void sampleNonSpammers() {
     LOG("Start Sampling Normal Users...");
@@ -111,7 +101,6 @@ void sampleNonSpammers() {
         }
     });
 }
-
 
 Dataset *user2Dataset(unordered_map<long, User> *users, int gramLen) {
     Dataset *dataset = new Dataset();

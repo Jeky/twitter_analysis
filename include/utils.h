@@ -40,50 +40,39 @@ static const int SAMPLE_TWEET_SIZE = 61;
 static const double SPAMMER_VALUE = 1.0;
 static const double NON_SPAMMER_VALUE = 0.0;
 
-
-template<typename K>
-void mapAdd(unordered_map<K, double> &m, const K &key, double value) {
+template <typename K> void mapAdd(unordered_map<K, double> &m, const K &key, double value) {
     if (m.find(key) == m.end()) {
         m[key] = 0.0;
     }
     m[key] += value;
 }
 
-
-template<typename T>
-unordered_set<T> *setIntersection(unordered_set<T> *s1, unordered_set<T> *s2){
+template <typename T> unordered_set<T> *setIntersection(unordered_set<T> *s1, unordered_set<T> *s2) {
     unordered_set<T> *intersect = new unordered_set<T>();
-    set_intersection(s1->begin(), s1->end(), s2->begin(), s2->end(),
-                     inserter(*intersect, intersect->begin()));
+    set_intersection(s1->begin(), s1->end(), s2->begin(), s2->end(), inserter(*intersect, intersect->begin()));
 
     return intersect;
 }
 
-
-template<typename T>
-unordered_set<T> *setUnion(unordered_set<T> *s1, unordered_set<T> *s2){
+template <typename T> unordered_set<T> *setUnion(unordered_set<T> *s1, unordered_set<T> *s2) {
     unordered_set<T> *unionSet = new unordered_set<T>();
-    set_union(s1->begin(), s1->end(), s2->begin(), s2->end(),
-              inserter(*unionSet, unionSet->begin()));
+    set_union(s1->begin(), s1->end(), s2->begin(), s2->end(), inserter(*unionSet, unionSet->begin()));
 
     return unionSet;
 }
 
-template<typename K, typename V>
-vector<pair<K, V>> *mapToVector(unordered_map<K, V> *map) {
+template <typename K, typename V> vector<pair<K, V>> *mapToVector(unordered_map<K, V> *map) {
     vector<pair<K, V>> *v = new vector<pair<K, V>>();
 
-    for(auto &kv : *map) {
+    for (auto &kv : *map) {
         v->push_back(make_pair(kv.first, kv.second));
     }
 
     return v;
 }
 
-
-template<typename T>
-class Counter {
-public:
+template <typename T> class Counter {
+  public:
     void count(const T &t, int number) {
         if (counterMap.find(t) == counterMap.end()) {
             counterMap[t] = 0;
@@ -91,9 +80,7 @@ public:
         counterMap[t] += number;
     }
 
-    void count(const T &t) {
-        count(t, 1);
-    }
+    void count(const T &t) { count(t, 1); }
 
     void count(const vector<T> &v) {
         for (auto &t : v) {
@@ -130,24 +117,22 @@ public:
         return v;
     }
 
-    int size(){
-        return counterMap.size();
-    }
+    int size() { return counterMap.size(); }
 
-    unordered_set<T> *getKeySet(){
+    unordered_set<T> *getKeySet() {
         unordered_set<T> *keySet = new unordered_set<T>();
         keySet->reserve(counterMap.size());
-        for(auto &kv : counterMap) {
+        for (auto &kv : counterMap) {
             keySet->insert(kv.first);
         }
 
         return keySet;
     }
 
-    void saveFrequency(const string &path){
+    void saveFrequency(const string &path) {
         unordered_map<int, int> freq;
-        for(auto &kv : counterMap) {
-            if(freq.find(kv.second) == freq.end()) {
+        for (auto &kv : counterMap) {
+            if (freq.find(kv.second) == freq.end()) {
                 freq[kv.second] = 0;
             }
             freq[kv.second]++;
@@ -155,12 +140,11 @@ public:
 
         vector<pair<int, int>> *v = mapToVector(&freq);
 
-        sort(v->begin(), v->end(), [](const pair<int, int> &left, const pair<int, int> &right) {
-            return left.second > right.second;
-        });
+        sort(v->begin(), v->end(),
+             [](const pair<int, int> &left, const pair<int, int> &right) { return left.second > right.second; });
 
-        writeFile(path, [&](ofstream &out){
-            for(auto &i : *v){
+        writeFile(path, [&](ofstream &out) {
+            for (auto &i : *v) {
                 out << i.first << "\t" << i.second << endl;
             }
         });
@@ -168,11 +152,9 @@ public:
         delete v;
     }
 
-    template<typename Archive>
-    void serialize(Archive &ar) {
-        ar(counterMap);
-    }
-private:
+    template <typename Archive> void serialize(Archive &ar) { ar(counterMap); }
+
+  private:
     unordered_map<T, int> counterMap;
 };
 

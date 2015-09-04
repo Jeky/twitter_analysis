@@ -5,7 +5,7 @@ for d in $DIRS
 do
     for f in $d/*
     do
-        echo "Formatting $f..."
-        clang-format -i f
+        echo "Formatting $f ..."
+        clang-format -i $f
     done
 done

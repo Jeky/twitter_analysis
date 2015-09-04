@@ -6,7 +6,7 @@
 #include "utils.h"
 
 class Evaluator {
-public:
+  public:
     void crossValidate(int foldN, Classifier *classifier, Dataset *ds1, Dataset *ds2);
 
     unordered_map<string, double> getConfusionMatrix();
@@ -21,9 +21,8 @@ public:
 
     vector<unordered_map<string, double>> getConfusionMatrixVector();
 
-private:
+  private:
     vector<unordered_map<string, double>> result;
 };
-
 
 #endif

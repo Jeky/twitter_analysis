@@ -1,22 +1,12 @@
 #include "ml/ml.h"
 
-Instance::Instance() { }
+Instance::Instance() {}
 
+void Instance::setClassValue(double value) { classValue = value; }
 
-void Instance::setClassValue(double value) {
-    classValue = value;
-}
+double Instance::getClassValue() { return classValue; }
 
-
-double Instance::getClassValue() {
-    return classValue;
-}
-
-
-bool Instance::hasAttribute(const string &name) {
-    return values.find(name) != values.end();
-}
-
+bool Instance::hasAttribute(const string &name) { return values.find(name) != values.end(); }
 
 double &Instance::operator[](const string &name) {
     if (!hasAttribute(name)) {
@@ -25,16 +15,9 @@ double &Instance::operator[](const string &name) {
     return values[name];
 }
 
+unordered_map<string, double>::iterator Instance::begin() { return values.begin(); }
 
-unordered_map<string, double>::iterator Instance::begin() {
-    return values.begin();
-}
-
-
-unordered_map<string, double>::iterator Instance::end() {
-    return values.end();
-}
-
+unordered_map<string, double>::iterator Instance::end() { return values.end(); }
 
 Dataset *Dataset::loadDatasetMatrix(const string &filename) {
     Dataset *ds = new Dataset();
@@ -58,42 +41,21 @@ Dataset *Dataset::loadDatasetMatrix(const string &filename) {
         return true;
     });
 
-
     return ds;
 }
 
-Dataset::Dataset() { }
+Dataset::Dataset() {}
 
+void Dataset::addInstance(Instance &instance) { instances.push_back(instance); }
 
-void Dataset::addInstance(Instance &instance) {
-    instances.push_back(instance);
-}
+int Dataset::size() { return instances.size(); }
 
+void Dataset::shuffle() {}
 
-int Dataset::size() {
-    return instances.size();
-}
+Instance &Dataset::at(int index) { return instances[index]; }
 
+Instance &Dataset::operator[](int index) { return instances[index]; }
 
-void Dataset::shuffle() {
-}
+vector<Instance>::iterator Dataset::begin() { return instances.begin(); }
 
-
-Instance &Dataset::at(int index) {
-    return instances[index];
-}
-
-
-Instance &Dataset::operator[](int index) {
-    return instances[index];
-}
-
-
-vector<Instance>::iterator Dataset::begin() {
-    return instances.begin();
-}
-
-
-vector<Instance>::iterator Dataset::end() {
-    return instances.end();
-}
+vector<Instance>::iterator Dataset::end() { return instances.end(); }

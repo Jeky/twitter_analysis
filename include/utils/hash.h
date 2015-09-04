@@ -13,32 +13,21 @@
 #include <cstdint>
 #include <random>
 
-namespace meta
-{
-namespace util
-{
+namespace meta {
+namespace util {
 
 /**
  * Implementation of MurmurHash3. Depending on the template parameter, it
  * will return a 32-bit or 64-bit hash value.
  */
-template <std::size_t = sizeof(std::size_t)>
-class murmur_hash;
+template <std::size_t = sizeof(std::size_t)> class murmur_hash;
 
-namespace detail
-{
-inline uint32_t rotl(uint32_t x, int8_t r)
-{
-    return (x << r) | (x >> (32 - r));
-}
+namespace detail {
+inline uint32_t rotl(uint32_t x, int8_t r) { return (x << r) | (x >> (32 - r)); }
 
-inline uint64_t rotl(uint64_t x, int8_t r)
-{
-    return (x << r) | (x >> (64 - r));
-}
+inline uint64_t rotl(uint64_t x, int8_t r) { return (x << r) | (x >> (64 - r)); }
 
-inline uint32_t fmix(uint32_t h)
-{
+inline uint32_t fmix(uint32_t h) {
     h ^= h >> 16;
     h *= 0x85ebca6b;
     h ^= h >> 13;
@@ -48,8 +37,7 @@ inline uint32_t fmix(uint32_t h)
     return h;
 }
 
-inline uint64_t fmix(uint64_t h)
-{
+inline uint64_t fmix(uint64_t h) {
     h ^= h >> 33;
     h *= 0xff51afd7ed558ccdLLU;
     h ^= h >> 33;
@@ -63,20 +51,13 @@ inline uint64_t fmix(uint64_t h)
 /**
  * Murmur3Hash for 32-bit outputs. Based on MurmurHash3_x86_32.
  */
-template <>
-class murmur_hash<4>
-{
+template <> class murmur_hash<4> {
   public:
-    murmur_hash() : seed_{std::random_device{}()}
-    {
-    }
+    murmur_hash() : seed_{std::random_device{}()} {}
 
-    murmur_hash(std::size_t seed) : seed_{seed}
-    {
-    }
+    murmur_hash(std::size_t seed) : seed_{seed} {}
 
-    std::size_t operator()(const uint8_t* data, int len) const
-    {
+    std::size_t operator()(const uint8_t *data, int len) const {
         // this *has* to be uint32_t for OS X clang to correctly resolve
         // between the two versions of rotl/fmix in namespace detail above.
         uint32_t out = seed_;
@@ -86,10 +67,9 @@ class murmur_hash<4>
         const uint32_t c1 = 0xcc9e2d51;
         const uint32_t c2 = 0x1b873593;
 
-        auto blocks = reinterpret_cast<const uint32_t*>(data + nblocks * 4);
+        auto blocks = reinterpret_cast<const uint32_t *>(data + nblocks * 4);
 
-        for (int i = -nblocks; i; ++i)
-        {
+        for (int i = -nblocks; i; ++i) {
             auto k1 = blocks[i];
 
             k1 *= c1;
@@ -101,21 +81,20 @@ class murmur_hash<4>
             out = out * 5 + 0xe6546b64;
         }
 
-        const uint8_t* tail = data + nblocks * 4;
+        const uint8_t *tail = data + nblocks * 4;
 
         uint32_t k1 = 0;
-        switch (len & 3)
-        {
-            case 3:
-                k1 ^= tail[2] << 16;
-            case 2:
-                k1 ^= tail[1] << 8;
-            case 1:
-                k1 ^= tail[0];
-                k1 *= c1;
-                k1 = detail::rotl(k1, 15);
-                k1 *= c2;
-                out ^= k1;
+        switch (len & 3) {
+        case 3:
+            k1 ^= tail[2] << 16;
+        case 2:
+            k1 ^= tail[1] << 8;
+        case 1:
+            k1 ^= tail[0];
+            k1 *= c1;
+            k1 = detail::rotl(k1, 15);
+            k1 *= c2;
+            out ^= k1;
         }
 
         out ^= len;
@@ -130,20 +109,13 @@ class murmur_hash<4>
 /**
  * MurmurHash3 for 64-bit outputs. Based on MurmurHash3_x64_128.
  */
-template <>
-class murmur_hash<8>
-{
+template <> class murmur_hash<8> {
   public:
-    murmur_hash() : seed_{std::random_device{}()}
-    {
-    }
+    murmur_hash() : seed_{std::random_device{}()} {}
 
-    murmur_hash(uint64_t seed) : seed_{seed}
-    {
-    }
+    murmur_hash(uint64_t seed) : seed_{seed} {}
 
-    std::size_t operator()(const uint8_t* data, int len) const
-    {
+    std::size_t operator()(const uint8_t *data, int len) const {
         const auto nblocks = len / 16;
 
         auto h1 = seed_;
@@ -152,10 +124,9 @@ class murmur_hash<8>
         const uint64_t c1 = 0x87c37b91114253d5LLU;
         const uint64_t c2 = 0x4cf5ad432745937fLLU;
 
-        auto blocks = reinterpret_cast<const uint64_t*>(data);
+        auto blocks = reinterpret_cast<const uint64_t *>(data);
 
-        for (int i = 0; i < nblocks; ++i)
-        {
+        for (int i = 0; i < nblocks; ++i) {
             auto k1 = blocks[i * 2];
             auto k2 = blocks[i * 2 + 1];
 
@@ -183,47 +154,46 @@ class murmur_hash<8>
         uint64_t k1 = 0;
         uint64_t k2 = 0;
 
-        switch (len & 15)
-        {
-            case 15:
-                k2 ^= static_cast<uint64_t>(tail[14]) << 48;
-            case 14:
-                k2 ^= static_cast<uint64_t>(tail[13]) << 40;
-            case 13:
-                k2 ^= static_cast<uint64_t>(tail[12]) << 32;
-            case 12:
-                k2 ^= static_cast<uint64_t>(tail[11]) << 24;
-            case 11:
-                k2 ^= static_cast<uint64_t>(tail[10]) << 16;
-            case 10:
-                k2 ^= static_cast<uint64_t>(tail[9]) << 8;
-            case 9:
-                k2 ^= static_cast<uint64_t>(tail[8]);
-                k2 *= c2;
-                k2 = detail::rotl(k2, 33);
-                k2 *= c1;
-                h2 ^= k2;
+        switch (len & 15) {
+        case 15:
+            k2 ^= static_cast<uint64_t>(tail[14]) << 48;
+        case 14:
+            k2 ^= static_cast<uint64_t>(tail[13]) << 40;
+        case 13:
+            k2 ^= static_cast<uint64_t>(tail[12]) << 32;
+        case 12:
+            k2 ^= static_cast<uint64_t>(tail[11]) << 24;
+        case 11:
+            k2 ^= static_cast<uint64_t>(tail[10]) << 16;
+        case 10:
+            k2 ^= static_cast<uint64_t>(tail[9]) << 8;
+        case 9:
+            k2 ^= static_cast<uint64_t>(tail[8]);
+            k2 *= c2;
+            k2 = detail::rotl(k2, 33);
+            k2 *= c1;
+            h2 ^= k2;
 
-            case 8:
-                k1 ^= static_cast<uint64_t>(tail[7]) << 56;
-            case 7:
-                k1 ^= static_cast<uint64_t>(tail[6]) << 48;
-            case 6:
-                k1 ^= static_cast<uint64_t>(tail[5]) << 40;
-            case 5:
-                k1 ^= static_cast<uint64_t>(tail[4]) << 32;
-            case 4:
-                k1 ^= static_cast<uint64_t>(tail[3]) << 24;
-            case 3:
-                k1 ^= static_cast<uint64_t>(tail[2]) << 16;
-            case 2:
-                k1 ^= static_cast<uint64_t>(tail[1]) << 8;
-            case 1:
-                k1 ^= static_cast<uint64_t>(tail[0]);
-                k1 *= c1;
-                k1 = detail::rotl(k1, 31);
-                k1 *= c2;
-                h1 ^= k1;
+        case 8:
+            k1 ^= static_cast<uint64_t>(tail[7]) << 56;
+        case 7:
+            k1 ^= static_cast<uint64_t>(tail[6]) << 48;
+        case 6:
+            k1 ^= static_cast<uint64_t>(tail[5]) << 40;
+        case 5:
+            k1 ^= static_cast<uint64_t>(tail[4]) << 32;
+        case 4:
+            k1 ^= static_cast<uint64_t>(tail[3]) << 24;
+        case 3:
+            k1 ^= static_cast<uint64_t>(tail[2]) << 16;
+        case 2:
+            k1 ^= static_cast<uint64_t>(tail[1]) << 8;
+        case 1:
+            k1 ^= static_cast<uint64_t>(tail[0]);
+            k1 *= c1;
+            k1 = detail::rotl(k1, 31);
+            k1 *= c2;
+            h1 ^= k1;
         }
 
         h1 ^= len;

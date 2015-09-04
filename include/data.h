@@ -8,8 +8,8 @@
 #include "ml/text.h"
 
 class Tweet {
-public:
-    Tweet() { }
+  public:
+    Tweet() {}
 
     Tweet(string const &text) { this->text = text; }
 
@@ -19,60 +19,42 @@ public:
 
     friend ostream &operator<<(ostream &out, Tweet &t);
 
-    template<typename Archive>
-    void serialize(Archive &ar) {
-        ar(text);
-    }
+    template <typename Archive> void serialize(Archive &ar) { ar(text); }
 
-private:
+  private:
     string text;
 };
 
-
 class User {
-public:
-    User() { };
+  public:
+    User(){};
 
     User(long id, bool spammer) {
         this->id = id;
         this->spammer = spammer;
     }
 
-    long getId() const {
-        return id;
-    }
+    long getId() const { return id; }
 
-    void setId(long id) {
-        User::id = id;
-    }
+    void setId(long id) { User::id = id; }
 
-    bool isSpammer() const {
-        return spammer;
-    }
+    bool isSpammer() const { return spammer; }
 
-    void setSpammer(bool spammer) {
-        User::spammer = spammer;
-    }
+    void setSpammer(bool spammer) { User::spammer = spammer; }
 
-    vector<Tweet> &getTweets() {
-        return tweets;
-    }
+    vector<Tweet> &getTweets() { return tweets; }
 
     void loadTweets();
 
     friend ostream &operator<<(ostream &out, const User &u);
 
-    template<typename Archive>
-    void serialize(Archive &ar) {
-        ar(id, tweets);
-    }
+    template <typename Archive> void serialize(Archive &ar) { ar(id, tweets); }
 
-private:
+  private:
     long id;
     bool spammer;
     vector<Tweet> tweets;
 };
-
 
 unordered_map<long, User> *loadSpammers();
 

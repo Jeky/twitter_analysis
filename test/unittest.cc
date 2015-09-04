@@ -22,11 +22,11 @@ TEST(DataTest, User2DatasetTest) {
     EXPECT_EQ(ds->size(), 20);
 
     Instance instance = ds->at(0);
-    if (instance.hasAttribute("aaaaaa")){
+    if (instance.hasAttribute("aaaaaa")) {
         EXPECT_EQ(instance["aaaaaa"], 1);
         EXPECT_FALSE(instance.hasAttribute("bbbbbb"));
     }
-    if (instance.hasAttribute("bbbbbb")){
+    if (instance.hasAttribute("bbbbbb")) {
         EXPECT_EQ(instance["bbbbbb"], 1);
         EXPECT_FALSE(instance.hasAttribute("aaaaaa"));
     }
@@ -35,8 +35,7 @@ TEST(DataTest, User2DatasetTest) {
     delete ds;
 }
 
-
-TEST(UtilsTest, Counter){
+TEST(UtilsTest, Counter) {
     vector<string> words = {"a", "b", "c", "a", "a", "c"};
     Counter<string> c;
     c.count(words);
