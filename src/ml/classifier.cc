@@ -53,16 +53,12 @@ double NaiveBayes::classify(Instance &ins) {
 
     for (auto &kv : clsFeatureProb) {
         double thisCls = kv.first;
-        unordered_map<string, double> featureProb = kv.second;
         double thisProb = clsProb[thisCls];
 
-        for (auto &kv : ins) {
-            string f = kv.first;
-            double v = kv.second;
-
-            if (clsFeatureProb[thisCls].find(f) !=
+        for (auto &insKV : ins) {
+            if (clsFeatureProb[thisCls].find(insKV.first) !=
                 clsFeatureProb[thisCls].end()) {
-                thisProb += clsFeatureProb[thisCls][f] * v;
+                thisProb += clsFeatureProb[thisCls][insKV.first] * insKV.second;
             }
         };
 

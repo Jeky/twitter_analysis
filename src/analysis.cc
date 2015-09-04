@@ -103,6 +103,34 @@ void testClassification() {
     Dataset *spammerDS = Dataset::loadDataset(PATH + "spammer.dat");
     Dataset *nonSpammerDS =
         Dataset::loadDataset(PATH + "nonspammer.dat");
+    
+    int sCount = 0;
+    int nsCount = 0;
+        for(Instance &ins: *spammerDS){
+            ins.setClassValue(SPAMMER_VALUE);
+            if(ins.getClassValue() == SPAMMER_VALUE){
+                sCount++;
+            }else if(ins.getClassValue() == NON_SPAMMER_VALUE){
+                nsCount++;
+            }else{
+                ERROR("Class Value Error: ", ins.getClassValue());
+            }
+        }
+        LOG_VAR(sCount);
+        LOG_VAR(nsCount);
+
+        for(Instance &ins: *nonSpammerDS){
+            ins.setClassValue(NON_SPAMMER_VALUE);
+            if(ins.getClassValue() == SPAMMER_VALUE){
+                sCount++;
+            }else if(ins.getClassValue() == NON_SPAMMER_VALUE){
+                nsCount++;
+            }else{
+                ERROR("Class Value Error: ", ins.getClassValue());
+            }
+        }
+        LOG_VAR(sCount);
+        LOG_VAR(nsCount);
 
     Classifier *cls = new NaiveBayes();
     Evaluator eval;
@@ -118,6 +146,6 @@ void testClassification() {
 }
 
 int main(int argc, char const *argv[]) {
-    testClassification();
+    convertToDS();
     return 0;
 }

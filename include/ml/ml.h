@@ -23,12 +23,11 @@ class Instance {
     unordered_map<string, double>::iterator end();
 
     template <typename Archive> void serialize(Archive &ar) {
-        ar(values);
+        ar(classValue, values);
     }
 
-    unordered_map<string, double> values;
-
   private:
+    unordered_map<string, double> values;
     double classValue;
 };
 
