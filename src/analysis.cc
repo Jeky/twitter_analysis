@@ -25,7 +25,6 @@ void convertToDS() {
     delete nonSpammerDS;
 }
 
-
 Counter<string> *countTokens(unordered_map<long, User> *users, const string &path) {
     ifstream infile(path);
 
@@ -35,7 +34,7 @@ Counter<string> *countTokens(unordered_map<long, User> *users, const string &pat
 
         Counter<string> *tokenCounter = new Counter<string>();
         int i = 0;
-        for (auto &kv: *users) {
+        for (auto &kv : *users) {
             if (i % 1000 == 0) {
                 LOG("Process ", i, " users");
             }
@@ -49,14 +48,13 @@ Counter<string> *countTokens(unordered_map<long, User> *users, const string &pat
 
         saveObject(tokenCounter, path);
         return tokenCounter;
-    }else{
+    } else {
         LOG("Loading Data from ", path);
         infile.close();
 
         return loadObject<Counter<string>>(path);
     }
 }
-
 
 void printDatasetStatistic() {
     unordered_map<long, User> *spammers = loadSpammers();
@@ -68,19 +66,26 @@ void printDatasetStatistic() {
     LOG("Counting Tokens in Tweets from NonSpammers");
     Counter<string> *nonSpammerTokenCounter = countTokens(nonSpammers, NON_SPAMMER_TOKEN_COUNTER);
 
-    LOG_VAR(spammerTokenCounter->size());
-    LOG_VAR(nonSpammerTokenCounter->size());
-
     delete spammers;
     delete nonSpammers;
-}
 
-void countGramsInTweets(Counter<string> &counter, User &u, int gramLen) {
-    for (auto &t : u.getTweets()) {
-        vector<string> *grams = toGrams(t.getText(), gramLen);
-        counter.count(grams);
-        delete grams;
-    }
+    unordered_set<string> *spammerTokens = spammerTokenCounter->getKeySet();
+    unordered_set<string> *nonSpammerTokens = nonSpammerTokenCounter->getKeySet();
+    unordered_set<string> *sharedTokens = setIntersection(spammerTokens, nonSpammerTokens);
+    unordered_set<string> *allTokens = setUnion(spammerTokens, nonSpammerTokens);
+
+    LOG_VAR(spammerTokens->size());
+    LOG_VAR(nonSpammerTokens->size());
+    LOG_VAR(sharedTokens->size());
+    LOG_VAR(allTokens->size());
+
+    spammerTokenCounter->saveFrequency(SPAMMER_TOKEN_FREQ);
+    nonSpammerTokenCounter->saveFrequency(NON_SPAMMER_TOKEN_FREQ);
+
+    delete spammerTokenCounter;
+    delete nonSpammerTokenCounter;
+    delete sharedTokens;
+    delete allTokens;
 }
 
 int main(int argc, char const *argv[]) {

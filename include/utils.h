@@ -32,6 +32,9 @@ static const string NON_SPAMMER_DATA_PATH = PATH + string("non-spammers.obj");
 static const string SPAMMER_TOKEN_COUNTER = PATH + string("spammer-token-counter.obj");
 static const string NON_SPAMMER_TOKEN_COUNTER = PATH + string("non-spammer-token-counter.obj");
 
+static const string SPAMMER_TOKEN_FREQ = PATH + string("spammer-token-frequency.txt");
+static const string NON_SPAMMER_TOKEN_FREQ = PATH + string("non-spammer-token-frequency.txt");
+
 static const int SAMPLE_TWEET_SIZE = 61;
 
 static const double SPAMMER_VALUE = 1.0;
@@ -44,6 +47,37 @@ void mapAdd(unordered_map<K, double> &m, const K &key, double value) {
         m[key] = 0.0;
     }
     m[key] += value;
+}
+
+
+template<typename T>
+unordered_set<T> *setIntersection(unordered_set<T> *s1, unordered_set<T> *s2){
+    unordered_set<T> *intersect = new unordered_set<T>();
+    set_intersection(s1->begin(), s1->end(), s2->begin(), s2->end(),
+                     inserter(*intersect, intersect->begin()));
+
+    return intersect;
+}
+
+
+template<typename T>
+unordered_set<T> *setUnion(unordered_set<T> *s1, unordered_set<T> *s2){
+    unordered_set<T> *unionSet = new unordered_set<T>();
+    set_union(s1->begin(), s1->end(), s2->begin(), s2->end(),
+              inserter(*unionSet, unionSet->begin()));
+
+    return unionSet;
+}
+
+template<typename K, typename V>
+vector<pair<K, V>> *mapToVector(unordered_map<K, V> *map) {
+    vector<pair<K, V>> *v = new vector<pair<K, V>>();
+
+    for(auto &kv : *map) {
+        v->push_back(make_pair(kv.first, kv.second));
+    }
+
+    return v;
 }
 
 
@@ -87,11 +121,7 @@ public:
     }
 
     vector<pair<T, int>> *getTop() {
-        vector<pair<T, int>> *v = new vector<pair<T, int>>();
-
-        for (auto &kv : counterMap) {
-            v->push_back(make_pair(kv.first, kv.second));
-        }
+        vector<pair<T, int>> *v = mapToVector(&counterMap);
 
         sort(v->begin(), v->end(), [](const pair<string, double> &left, const pair<string, double> &right) {
             return left.second > right.second;
@@ -107,11 +137,35 @@ public:
     unordered_set<T> *getKeySet(){
         unordered_set<T> *keySet = new unordered_set<T>();
         keySet->reserve(counterMap.size());
-        for(auto &kv : counterMap){
+        for(auto &kv : counterMap) {
             keySet->insert(kv.first);
         }
 
         return keySet;
+    }
+
+    void saveFrequency(const string &path){
+        unordered_map<int, int> freq;
+        for(auto &kv : counterMap) {
+            if(freq.find(kv.second) == freq.end()) {
+                freq[kv.second] = 0;
+            }
+            freq[kv.second]++;
+        }
+
+        vector<pair<int, int>> *v = mapToVector(&freq);
+
+        sort(v->begin(), v->end(), [](const pair<int, int> &left, const pair<int, int> &right) {
+            return left.second > right.second;
+        });
+
+        writeFile(path, [&](ofstream &out){
+            for(auto &i : *v){
+                out << i.first << "\t" << i.second << endl;
+            }
+        });
+
+        delete v;
     }
 
     template<typename Archive>
