@@ -45,9 +45,6 @@ void NaiveBayes::train(Dataset *dataset) {
                 (v + 1.0) / (clsWordCount[kv.first] + featureSize));
         };
     };
-
-    LOG_VAR(clsProb);
-    LOG_VAR(clsFeatureProb);
 }
 
 double NaiveBayes::classify(Instance &ins) {

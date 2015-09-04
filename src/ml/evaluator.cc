@@ -60,6 +60,7 @@ void Evaluator::crossValidate(int foldN, Classifier *classifier,
     double posCls = (*ds1)[0].getClassValue();
 
     for (int i = 0; i < foldN; i++) {
+        LOG("Evaluate ", i, " Time");
         Dataset *trainingDataset =
             mergeTrainingDataset(ds1, ds2, folds1, folds2, i);
         Dataset *testingDataset =
@@ -69,9 +70,11 @@ void Evaluator::crossValidate(int foldN, Classifier *classifier,
 
         unordered_map<string, double> confusionMatrix;
 
+        LOG("Training Classifier...");
         classifier->reset();
         classifier->train(trainingDataset);
 
+        LOG("Testing...");
         for (Instance instance : *testingDataset) {
             double cls = classifier->classify(instance);
             if (instance.getClassValue() == posCls) {

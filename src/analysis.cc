@@ -118,6 +118,6 @@ void testClassification() {
 }
 
 int main(int argc, char const *argv[]) {
-    printDatasetStatistic();
+    testClassification();
     return 0;
 }
