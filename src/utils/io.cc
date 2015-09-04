@@ -34,8 +34,10 @@ void readFile(const string &filename, function<bool(int, string &)> lineHandler)
 }
 
 void writeFile(const string &filename, function<void(ofstream &)> writer) {
+    LOG("Writing To ", filename);
     ofstream out(filename);
     writer(out);
 
     out.close();
+    LOG("Finish.");
 }

@@ -82,6 +82,9 @@ void printDatasetStatistic() {
     spammerTokenCounter->saveFrequency(SPAMMER_TOKEN_FREQ);
     nonSpammerTokenCounter->saveFrequency(NON_SPAMMER_TOKEN_FREQ);
 
+    spammerTokenCounter->addCounter(*nonSpammerTokenCounter);
+    spammerTokenCounter->saveFrequency(ALL_TOKEN_FREQ);
+
     delete spammerTokenCounter;
     delete nonSpammerTokenCounter;
     delete sharedTokens;

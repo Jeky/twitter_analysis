@@ -34,6 +34,7 @@ static const string NON_SPAMMER_TOKEN_COUNTER = PATH + string("non-spammer-token
 
 static const string SPAMMER_TOKEN_FREQ = PATH + string("spammer-token-frequency.txt");
 static const string NON_SPAMMER_TOKEN_FREQ = PATH + string("non-spammer-token-frequency.txt");
+static const string ALL_TOKEN_FREQ = PATH + string("all-token-frequency.txt");
 
 static const int SAMPLE_TWEET_SIZE = 61;
 
@@ -51,8 +52,8 @@ template <typename T> unordered_set<T> *setIntersection(unordered_set<T> *s1, un
     unordered_set<T> *r = new unordered_set<T>();
     unordered_set<T> *sp = s1->size() < s2->size() ? s1 : s2;
     unordered_set<T> *sc = s1->size() < s2->size() ? s2 : s1;
-    for(auto &item : *sp){
-        if(sc->find(item) != sc->end()){
+    for (auto &item : *sp) {
+        if (sc->find(item) != sc->end()) {
             r->insert(item);
         }
     }
@@ -61,10 +62,10 @@ template <typename T> unordered_set<T> *setIntersection(unordered_set<T> *s1, un
 
 template <typename T> unordered_set<T> *setUnion(unordered_set<T> *s1, unordered_set<T> *s2) {
     unordered_set<T> *r = new unordered_set<T>();
-    for(auto &item : *s1){
+    for (auto &item : *s1) {
         r->insert(item);
     }
-    for(auto &item : *s2){
+    for (auto &item : *s2) {
         r->insert(item);
     }
     return r;
@@ -159,6 +160,21 @@ template <typename T> class Counter {
         });
 
         delete v;
+    }
+
+    void addCounter(const Counter<T> &c) {
+        for (auto &kv : c.counterMap) {
+            if (counterMap.find(kv.first) != counterMap.end()) {
+                counterMap[kv.first] += kv.second;
+            } else {
+                counterMap[kv.first] = kv.second;
+            }
+        }
+    }
+
+    Counter<T> &operator+=(const Counter<T> &c) {
+        addCounter(c);
+        return *this;
     }
 
     template <typename Archive> void serialize(Archive &ar) { ar(counterMap); }
