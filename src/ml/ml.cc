@@ -44,6 +44,8 @@ Dataset *Dataset::loadDatasetMatrix(const string &filename) {
     return ds;
 }
 
+Dataset *Dataset::loadDataset(const string &filename) { return loadObject<Dataset>(filename); }
+
 Dataset::Dataset() {}
 
 void Dataset::addInstance(Instance &instance) { instances.push_back(instance); }

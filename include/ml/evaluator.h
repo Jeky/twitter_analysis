@@ -1,5 +1,5 @@
-#ifndef _EVALUATOR_H_
-#define _EVALUATOR_H_
+#ifndef TWITTER_ANALYSIS_ML_EVALUATOR_H
+#define TWITTER_ANALYSIS_ML_EVALUATOR_H
 
 #include "ml.h"
 #include "classifier.h"

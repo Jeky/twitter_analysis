@@ -1,5 +1,5 @@
-#ifndef _TEXT_H_
-#define _TEXT_H_
+#ifndef TWITTER_ANALYSIS_ML_TEXT_H
+#define TWITTER_ANALYSIS_ML_TEXT_H
 
 #include <regex>
 #include <iterator>

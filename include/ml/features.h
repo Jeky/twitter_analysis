@@ -1,5 +1,5 @@
-#ifndef TWITTER_ANALYSIS_FEATURES_H
-#define TWITTER_ANALYSIS_FEATURES_H
+#ifndef TWITTER_ANALYSIS_ML_FEATURES_H
+#define TWITTER_ANALYSIS_ML_FEATURES_H
 
 #include "ml.h"
 #include "utils.h"
@@ -24,4 +24,4 @@ class BiClassMutualInformation : public FeatureSelector {
     void train(Dataset *dataset);
 };
 
-#endif // TWITTER_ANALYSIS_FEATURES_H
+#endif

@@ -41,6 +41,24 @@ static const int SAMPLE_TWEET_SIZE = 61;
 static const double SPAMMER_VALUE = 1.0;
 static const double NON_SPAMMER_VALUE = 0.0;
 
+/*
+#define LOAD_OR_COLLECT(T, NAME, COLLECT_FUN) \
+        T *NAME(const string &dataPath, const string &path){\
+            ifstream infile(dataPath);\
+            if (!infile.good()) { \
+                LOG("Cannot Find ", dataPath, ". Loading File from ", path);\
+                infile.close();\
+                T *data = new T();\
+                saveObject(data, dataPath);\
+                return data;\
+            } else {\
+                LOG("Loading Data from ", dataPath);\
+                infile.close();\
+                return loadObject<T>(dataPath);\
+            }\
+        }
+*/
+
 template <typename K> void mapAdd(unordered_map<K, double> &m, const K &key, double value) {
     if (m.find(key) == m.end()) {
         m[key] = 0.0;

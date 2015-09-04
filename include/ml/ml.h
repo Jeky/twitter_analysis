@@ -1,5 +1,5 @@
-#ifndef _ML_H_
-#define _ML_H_
+#ifndef TWITTER_ANALYSIS_ML_H
+#define TWITTER_ANALYSIS_ML_H
 
 #include <sstream>
 
@@ -31,7 +31,23 @@ class Instance {
 
 class Dataset {
   public:
+    /**
+     * Load dataset from a matrix file. In this file, each line contains several numbers.
+     * Each Line in this file will be converted into an Instance and the whole file will be converted into a dataset.
+     *
+     * @param the filename of matrix data
+     * @return the dataset pointer
+     */
     static Dataset *loadDatasetMatrix(const string &filename);
+
+    /**
+     * Load dataset from saved file. This dataset should be saved by saveObject() function.
+     *
+     * @param the filename of saved dataset
+     * @see saveObject()
+     * @return the dataset pointer
+     */
+    static Dataset *loadDataset(const string &filename);
 
     Dataset();
 

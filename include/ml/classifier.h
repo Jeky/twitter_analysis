@@ -1,5 +1,5 @@
-#ifndef _CLASSIFIER_H_
-#define _CLASSIFIER_H_
+#ifndef TWITTER_ANALYSIS_ML_CLASSIFIER_H
+#define TWITTER_ANALYSIS_ML_CLASSIFIER_H
 
 #include <math.h>
 

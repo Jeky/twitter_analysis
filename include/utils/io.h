@@ -1,5 +1,5 @@
-#ifndef _UTILS__IO_H_
-#define _UTILS__IO_H_
+#ifndef TWITTER_ANALYSIS_UTILS_IO_H
+#define TWITTER_ANALYSIS_UTILS_UTILS_IO_H
 
 #include <functional>
 #include <fstream>

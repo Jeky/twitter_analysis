@@ -1,5 +1,5 @@
-#ifndef _DATA_H_
-#define _DATA_H_
+#ifndef TWITTER_ANALYSIS_DATA_H
+#define TWITTER_ANALYSIS_DATA_H
 
 #include <algorithm>
 

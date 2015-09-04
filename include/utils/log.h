@@ -1,5 +1,5 @@
-#ifndef _UTILS__LOG_H_
-#define _UTILS__LOG_H_
+#ifndef TWITTER_ANALYSIS_UTILS_UTILS_LOG_H
+#define TWITTER_ANALYSIS_UTILS_UTILS_LOG_H
 
 #include <iostream>
 #include <iomanip>
