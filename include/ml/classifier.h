@@ -27,7 +27,8 @@ class NaiveBayes : public Classifier {
 
   private:
     unordered_map<double, double> clsProb;
-    unordered_map<double, unordered_map<string, double>> clsFeatureProb;
+    unordered_map<double, unordered_map<string, double>>
+        clsFeatureProb;
 };
 
 #endif

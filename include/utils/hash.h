@@ -2,8 +2,10 @@
  * @file hash.h
  * @author Chase Geigle
  *
- * All files in META are dual-licensed under the MIT and NCSA licenses. For more
- * details, consult the file LICENSE.mit and LICENSE.ncsa in the root of the
+ * All files in META are dual-licensed under the MIT and NCSA
+ *licenses. For more
+ * details, consult the file LICENSE.mit and LICENSE.ncsa in the root
+ *of the
  * project.
  */
 
@@ -17,15 +19,20 @@ namespace meta {
 namespace util {
 
 /**
- * Implementation of MurmurHash3. Depending on the template parameter, it
+ * Implementation of MurmurHash3. Depending on the template parameter,
+ * it
  * will return a 32-bit or 64-bit hash value.
  */
 template <std::size_t = sizeof(std::size_t)> class murmur_hash;
 
 namespace detail {
-inline uint32_t rotl(uint32_t x, int8_t r) { return (x << r) | (x >> (32 - r)); }
+inline uint32_t rotl(uint32_t x, int8_t r) {
+    return (x << r) | (x >> (32 - r));
+}
 
-inline uint64_t rotl(uint64_t x, int8_t r) { return (x << r) | (x >> (64 - r)); }
+inline uint64_t rotl(uint64_t x, int8_t r) {
+    return (x << r) | (x >> (64 - r));
+}
 
 inline uint32_t fmix(uint32_t h) {
     h ^= h >> 16;
@@ -58,8 +65,10 @@ template <> class murmur_hash<4> {
     murmur_hash(std::size_t seed) : seed_{seed} {}
 
     std::size_t operator()(const uint8_t *data, int len) const {
-        // this *has* to be uint32_t for OS X clang to correctly resolve
-        // between the two versions of rotl/fmix in namespace detail above.
+        // this *has* to be uint32_t for OS X clang to correctly
+        // resolve
+        // between the two versions of rotl/fmix in namespace detail
+        // above.
         uint32_t out = seed_;
 
         const auto nblocks = len / 4;
@@ -67,7 +76,8 @@ template <> class murmur_hash<4> {
         const uint32_t c1 = 0xcc9e2d51;
         const uint32_t c2 = 0x1b873593;
 
-        auto blocks = reinterpret_cast<const uint32_t *>(data + nblocks * 4);
+        auto blocks =
+            reinterpret_cast<const uint32_t *>(data + nblocks * 4);
 
         for (int i = -nblocks; i; ++i) {
             auto k1 = blocks[i];

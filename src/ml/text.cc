@@ -3,14 +3,18 @@
 vector<string> *splitWords(const string &text) {
     regex rgx("(http://(\\w+|\\.)+)|\\w+");
     vector<string> *words = new vector<string>();
-    for (sregex_iterator it(text.begin(), text.end(), rgx), it_end; it != it_end; ++it) {
+    for (sregex_iterator it(text.begin(), text.end(), rgx), it_end;
+         it != it_end; ++it) {
         words->push_back((*it)[0]);
     }
 
     return words;
 }
 
-void toLowerString(string &word) { transform(word.begin(), word.end(), word.begin(), (int (*)(int))tolower); }
+void toLowerString(string &word) {
+    transform(word.begin(), word.end(), word.begin(),
+              (int (*)(int))tolower);
+}
 
 void normalize(string &word) {
     toLowerString(word);

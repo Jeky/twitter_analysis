@@ -1,5 +1,5 @@
 #ifndef TWITTER_ANALYSIS_UTILS_IO_H
-#define TWITTER_ANALYSIS_UTILS_UTILS_IO_H
+#define TWITTER_ANALYSIS_UTILS_IO_H
 
 #include <functional>
 #include <fstream>
@@ -15,11 +15,14 @@
 
 using namespace std;
 
-void readFile(const string &filename, bool log, function<bool(int, string &)> lineHandler);
+void readFile(const string &filename, bool log,
+              function<bool(int, string &)> lineHandler);
 
-void readFile(const string &filename, function<bool(int, string &)> lineHandler);
+void readFile(const string &filename,
+              function<bool(int, string &)> lineHandler);
 
-void writeFile(const string &filename, function<void(ofstream &)> writer);
+void writeFile(const string &filename,
+               function<void(ofstream &)> writer);
 
 template <typename T> void saveObject(T *t, const string filename) {
     LOG("Start Saving Object to ", filename);

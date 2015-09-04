@@ -1,6 +1,7 @@
 #include "utils/io.h"
 
-void readFile(const string &filename, bool log, function<bool(int, string &)> lineHandler) {
+void readFile(const string &filename, bool log,
+              function<bool(int, string &)> lineHandler) {
     int i = 0;
     ifstream infile(filename);
     string line;
@@ -29,11 +30,13 @@ void readFile(const string &filename, bool log, function<bool(int, string &)> li
     infile.close();
 }
 
-void readFile(const string &filename, function<bool(int, string &)> lineHandler) {
+void readFile(const string &filename,
+              function<bool(int, string &)> lineHandler) {
     return readFile(filename, true, lineHandler);
 }
 
-void writeFile(const string &filename, function<void(ofstream &)> writer) {
+void writeFile(const string &filename,
+               function<void(ofstream &)> writer) {
     LOG("Writing To ", filename);
     ofstream out(filename);
     writer(out);

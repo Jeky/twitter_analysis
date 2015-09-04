@@ -6,7 +6,9 @@ ostream &operator<<(ostream &out, Tweet &t) {
 }
 
 void User::loadTweets() {
-    string filename = (spammer ? SPAMMER_TWEET_PATH : NON_SPAMMER_TWEET_PATH) + to_string(id);
+    string filename =
+        (spammer ? SPAMMER_TWEET_PATH : NON_SPAMMER_TWEET_PATH) +
+        to_string(id);
 
     readFile(filename, false, [&](int index, string &line) {
         tweets.push_back(Tweet(line));
@@ -15,7 +17,8 @@ void User::loadTweets() {
 }
 
 ostream &operator<<(ostream &out, User &u) {
-    out << "User[" << u.getId() << ", Tweets Count = " << u.getTweets().size() << "]";
+    out << "User[" << u.getId()
+        << ", Tweets Count = " << u.getTweets().size() << "]";
     return out;
 }
 
@@ -23,15 +26,17 @@ ostream &operator<<(ostream &out, User &u) {
  * Data loading functions
  */
 
-unordered_map<long, User> *loadData(const string &dataPath, const string &path, const bool spammer,
-                                    function<void(unordered_map<long, User> *)> postDataHandler) {
+unordered_map<long, User> *loadData(
+    const string &dataPath, const string &path, const bool spammer,
+    function<void(unordered_map<long, User> *)> postDataHandler) {
     ifstream infile(dataPath);
 
     if (!infile.good()) {
         LOG("Cannot Find ", dataPath, ". Loading File from ", path);
         infile.close();
 
-        unordered_map<long, User> *users = new unordered_map<long, User>();
+        unordered_map<long, User> *users =
+            new unordered_map<long, User>();
         readFile(path, true, [&](int index, string &line) {
             long id = stol(line);
             User u(id, spammer);
@@ -52,17 +57,27 @@ unordered_map<long, User> *loadData(const string &dataPath, const string &path, 
     }
 }
 
-unordered_map<long, User> *loadData(const string &dataPath, const string &path, const bool spammer) {
-    return loadData(dataPath, path, spammer, [](unordered_map<long, User> *users) {});
+unordered_map<long, User> *loadData(const string &dataPath,
+                                    const string &path,
+                                    const bool spammer) {
+    return loadData(dataPath, path, spammer,
+                    [](unordered_map<long, User> *users) {});
 }
 
-unordered_map<long, User> *loadSpammers() { return loadData(SPAMMER_DATA_PATH, SPAMMER_ID_LIST, true); }
+unordered_map<long, User> *loadSpammers() {
+    return loadData(SPAMMER_DATA_PATH, SPAMMER_ID_LIST, true);
+}
 
 unordered_map<long, User> *loadSampledNonSpammers() {
-    return loadData(NON_SPAMMER_DATA_PATH, SAMPLED_NON_SPAMMER_ID_LIST, false, [](unordered_map<long, User> *users) {
+    return loadData(NON_SPAMMER_DATA_PATH,
+                    SAMPLED_NON_SPAMMER_ID_LIST, false,
+                    [](unordered_map<long, User> *users) {
         for (auto &kv : *users) {
-            random_shuffle(kv.second.getTweets().begin(), kv.second.getTweets().end());
-            kv.second.getTweets().erase(kv.second.getTweets().begin() + SAMPLE_TWEET_SIZE, kv.second.getTweets().end());
+            random_shuffle(kv.second.getTweets().begin(),
+                           kv.second.getTweets().end());
+            kv.second.getTweets().erase(
+                kv.second.getTweets().begin() + SAMPLE_TWEET_SIZE,
+                kv.second.getTweets().end());
         }
     });
 }
@@ -86,7 +101,8 @@ void sampleNonSpammers() {
                 nonSpammerIds.push_back(id);
             }
         }
-        if (nonSpammerIds.size() % 100 == 0 && nonSpammerIds.size() != 0) {
+        if (nonSpammerIds.size() % 100 == 0 &&
+            nonSpammerIds.size() != 0) {
             LOG("Sampled ", nonSpammerIds.size(), " users");
         }
         return true;
@@ -107,7 +123,8 @@ Dataset *user2Dataset(unordered_map<long, User> *users, int gramLen) {
 
     for (auto &kv : *users) {
         Instance ins;
-        ins.setClassValue(kv.second.isSpammer() ? SPAMMER_VALUE : NON_SPAMMER_VALUE);
+        ins.setClassValue(kv.second.isSpammer() ? SPAMMER_VALUE
+                                                : NON_SPAMMER_VALUE);
 
         for (auto &t : kv.second.getTweets()) {
             vector<string> *grams = toGrams(t.getText(), gramLen);

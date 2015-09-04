@@ -20,21 +20,31 @@
 using namespace std;
 
 static const string PATH = string("/Users/jeky/data/thesis/ctweets/");
-static const string SPAMMER_TWEET_PATH = PATH + string("spammer-tweets/");
-static const string NON_SPAMMER_TWEET_PATH = PATH + string("non-spammer-tweets/");
-static const string SAMPLED_NON_SPAMMER_ID_LIST = PATH + string("sampled-non-spammer-id.txt");
-static const string NON_SPAMMER_ID_LIST = PATH + string("non-spammer-id.txt");
+static const string SPAMMER_TWEET_PATH =
+    PATH + string("spammer-tweets/");
+static const string NON_SPAMMER_TWEET_PATH =
+    PATH + string("non-spammer-tweets/");
+static const string SAMPLED_NON_SPAMMER_ID_LIST =
+    PATH + string("sampled-non-spammer-id.txt");
+static const string NON_SPAMMER_ID_LIST =
+    PATH + string("non-spammer-id.txt");
 static const string SPAMMER_ID_LIST = PATH + string("spammer-id.txt");
 
 static const string SPAMMER_DATA_PATH = PATH + string("spammers.obj");
-static const string NON_SPAMMER_DATA_PATH = PATH + string("non-spammers.obj");
+static const string NON_SPAMMER_DATA_PATH =
+    PATH + string("non-spammers.obj");
 
-static const string SPAMMER_TOKEN_COUNTER = PATH + string("spammer-token-counter.obj");
-static const string NON_SPAMMER_TOKEN_COUNTER = PATH + string("non-spammer-token-counter.obj");
+static const string SPAMMER_TOKEN_COUNTER =
+    PATH + string("spammer-token-counter.obj");
+static const string NON_SPAMMER_TOKEN_COUNTER =
+    PATH + string("non-spammer-token-counter.obj");
 
-static const string SPAMMER_TOKEN_FREQ = PATH + string("spammer-token-frequency.txt");
-static const string NON_SPAMMER_TOKEN_FREQ = PATH + string("non-spammer-token-frequency.txt");
-static const string ALL_TOKEN_FREQ = PATH + string("all-token-frequency.txt");
+static const string SPAMMER_TOKEN_FREQ =
+    PATH + string("spammer-token-frequency.txt");
+static const string NON_SPAMMER_TOKEN_FREQ =
+    PATH + string("non-spammer-token-frequency.txt");
+static const string ALL_TOKEN_FREQ =
+    PATH + string("all-token-frequency.txt");
 
 static const int SAMPLE_TWEET_SIZE = 61;
 
@@ -46,7 +56,8 @@ static const double NON_SPAMMER_VALUE = 0.0;
         T *NAME(const string &dataPath, const string &path){\
             ifstream infile(dataPath);\
             if (!infile.good()) { \
-                LOG("Cannot Find ", dataPath, ". Loading File from ", path);\
+                LOG("Cannot Find ", dataPath, ". Loading File from ",
+path);\
                 infile.close();\
                 T *data = new T();\
                 saveObject(data, dataPath);\
@@ -59,14 +70,17 @@ static const double NON_SPAMMER_VALUE = 0.0;
         }
 */
 
-template <typename K> void mapAdd(unordered_map<K, double> &m, const K &key, double value) {
+template <typename K>
+void mapAdd(unordered_map<K, double> &m, const K &key, double value) {
     if (m.find(key) == m.end()) {
         m[key] = 0.0;
     }
     m[key] += value;
 }
 
-template <typename T> unordered_set<T> *setIntersection(unordered_set<T> *s1, unordered_set<T> *s2) {
+template <typename T>
+unordered_set<T> *setIntersection(unordered_set<T> *s1,
+                                  unordered_set<T> *s2) {
     unordered_set<T> *r = new unordered_set<T>();
     unordered_set<T> *sp = s1->size() < s2->size() ? s1 : s2;
     unordered_set<T> *sc = s1->size() < s2->size() ? s2 : s1;
@@ -78,7 +92,9 @@ template <typename T> unordered_set<T> *setIntersection(unordered_set<T> *s1, un
     return r;
 }
 
-template <typename T> unordered_set<T> *setUnion(unordered_set<T> *s1, unordered_set<T> *s2) {
+template <typename T>
+unordered_set<T> *setUnion(unordered_set<T> *s1,
+                           unordered_set<T> *s2) {
     unordered_set<T> *r = new unordered_set<T>();
     for (auto &item : *s1) {
         r->insert(item);
@@ -89,7 +105,8 @@ template <typename T> unordered_set<T> *setUnion(unordered_set<T> *s1, unordered
     return r;
 }
 
-template <typename K, typename V> vector<pair<K, V>> *mapToVector(unordered_map<K, V> *map) {
+template <typename K, typename V>
+vector<pair<K, V>> *mapToVector(unordered_map<K, V> *map) {
     vector<pair<K, V>> *v = new vector<pair<K, V>>();
 
     for (auto &kv : *map) {
@@ -138,7 +155,9 @@ template <typename T> class Counter {
     vector<pair<T, int>> *getTop() {
         vector<pair<T, int>> *v = mapToVector(&counterMap);
 
-        sort(v->begin(), v->end(), [](const pair<string, double> &left, const pair<string, double> &right) {
+        sort(v->begin(), v->end(),
+             [](const pair<string, double> &left,
+                const pair<string, double> &right) {
             return left.second > right.second;
         });
 
@@ -168,8 +187,10 @@ template <typename T> class Counter {
 
         vector<pair<int, int>> *v = mapToVector(&freq);
 
-        sort(v->begin(), v->end(),
-             [](const pair<int, int> &left, const pair<int, int> &right) { return left.second > right.second; });
+        sort(v->begin(), v->end(), [](const pair<int, int> &left,
+                                      const pair<int, int> &right) {
+            return left.second > right.second;
+        });
 
         writeFile(path, [&](ofstream &out) {
             for (auto &i : *v) {
@@ -195,7 +216,9 @@ template <typename T> class Counter {
         return *this;
     }
 
-    template <typename Archive> void serialize(Archive &ar) { ar(counterMap); }
+    template <typename Archive> void serialize(Archive &ar) {
+        ar(counterMap);
+    }
 
   private:
     unordered_map<T, int> counterMap;

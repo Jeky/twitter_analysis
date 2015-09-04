@@ -1,13 +1,15 @@
 #include "ml/features.h"
 
 vector<pair<string, double>> *FeatureSelector::getTopFeatureList() {
-    vector<pair<string, double>> *v = new vector<pair<string, double>>();
+    vector<pair<string, double>> *v =
+        new vector<pair<string, double>>();
 
     for (auto &kv : featureScoreMap) {
         v->push_back(make_pair(kv.first, kv.second));
     }
 
-    sort(v->begin(), v->end(), [](const pair<string, double> &left, const pair<string, double> &right) {
+    sort(v->begin(), v->end(), [](const pair<string, double> &left,
+                                  const pair<string, double> &right) {
         return left.second > right.second;
     });
 
@@ -67,10 +69,15 @@ void BiClassMutualInformation::train(Dataset *dataset) {
     for (auto &kv : featureMatrix) {
         array<double, 4> fm = kv.second;
         int N = dataset->size();
-        double score = fm[0] / N * (log(N) + log(fm[0]) - log(fm[0] + fm[1]) - log(fm[0] + fm[2])) +
-                       fm[1] / N * (log(N) + log(fm[1]) - log(fm[0] + fm[1]) - log(fm[1] + fm[3])) +
-                       fm[2] / N * (log(N) + log(fm[2]) - log(fm[2] + fm[3]) - log(fm[0] + fm[2])) +
-                       fm[3] / N * (log(N) + log(fm[3]) - log(fm[2] + fm[3]) - log(fm[1] + fm[3]));
+        double score =
+            fm[0] / N * (log(N) + log(fm[0]) - log(fm[0] + fm[1]) -
+                         log(fm[0] + fm[2])) +
+            fm[1] / N * (log(N) + log(fm[1]) - log(fm[0] + fm[1]) -
+                         log(fm[1] + fm[3])) +
+            fm[2] / N * (log(N) + log(fm[2]) - log(fm[2] + fm[3]) -
+                         log(fm[0] + fm[2])) +
+            fm[3] / N * (log(N) + log(fm[3]) - log(fm[2] + fm[3]) -
+                         log(fm[1] + fm[3]));
         featureScoreMap[kv.first] = score;
     }
 }

@@ -17,7 +17,8 @@ int *computeFolds(int totalSize, int foldN) {
     return folds;
 }
 
-Dataset *mergeTrainingDataset(Dataset *ds1, Dataset *ds2, int *folds1, int *folds2, int index) {
+Dataset *mergeTrainingDataset(Dataset *ds1, Dataset *ds2, int *folds1,
+                              int *folds2, int index) {
     Dataset *d = new Dataset();
     for (int i = 0; i < folds1[index]; i++) {
         d->addInstance((*ds1)[i]);
@@ -35,7 +36,8 @@ Dataset *mergeTrainingDataset(Dataset *ds1, Dataset *ds2, int *folds1, int *fold
     return d;
 }
 
-Dataset *mergeTestingDataset(Dataset *ds1, Dataset *ds2, int *folds1, int *folds2, int index) {
+Dataset *mergeTestingDataset(Dataset *ds1, Dataset *ds2, int *folds1,
+                             int *folds2, int index) {
     Dataset *d = new Dataset();
     for (int i = folds1[index]; i < folds1[index + 1]; i++) {
         d->addInstance((*ds1)[i]);
@@ -47,7 +49,8 @@ Dataset *mergeTestingDataset(Dataset *ds1, Dataset *ds2, int *folds1, int *folds
     return d;
 }
 
-void Evaluator::crossValidate(int foldN, Classifier *classifier, Dataset *ds1, Dataset *ds2) {
+void Evaluator::crossValidate(int foldN, Classifier *classifier,
+                              Dataset *ds1, Dataset *ds2) {
     ds1->shuffle();
     ds2->shuffle();
 
@@ -57,8 +60,10 @@ void Evaluator::crossValidate(int foldN, Classifier *classifier, Dataset *ds1, D
     double posCls = (*ds1)[0].getClassValue();
 
     for (int i = 0; i < foldN; i++) {
-        Dataset *trainingDataset = mergeTrainingDataset(ds1, ds2, folds1, folds2, i);
-        Dataset *testingDataset = mergeTestingDataset(ds1, ds2, folds1, folds2, i);
+        Dataset *trainingDataset =
+            mergeTrainingDataset(ds1, ds2, folds1, folds2, i);
+        Dataset *testingDataset =
+            mergeTestingDataset(ds1, ds2, folds1, folds2, i);
         trainingDataset->shuffle();
         testingDataset->shuffle();
 
@@ -109,7 +114,8 @@ unordered_map<string, double> Evaluator::getConfusionMatrix() {
 
 double Evaluator::getAccuracy() {
     unordered_map<string, double> cm = getConfusionMatrix();
-    return (cm["TP"] + cm["TN"]) / (cm["TP"] + cm["FP"] + cm["FN"] + cm["TN"]);
+    return (cm["TP"] + cm["TN"]) /
+           (cm["TP"] + cm["FP"] + cm["FN"] + cm["TN"]);
 }
 
 double Evaluator::getRecall() {
@@ -127,4 +133,7 @@ double Evaluator::getF1() {
     return 2 * cm["TP"] / (2 * cm["TP"] + cm["FP"] + cm["FN"]);
 }
 
-vector<unordered_map<string, double>> Evaluator::getConfusionMatrixVector() { return result; }
+vector<unordered_map<string, double>>
+Evaluator::getConfusionMatrixVector() {
+    return result;
+}

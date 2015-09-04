@@ -7,7 +7,8 @@
 
 class Evaluator {
   public:
-    void crossValidate(int foldN, Classifier *classifier, Dataset *ds1, Dataset *ds2);
+    void crossValidate(int foldN, Classifier *classifier,
+                       Dataset *ds1, Dataset *ds2);
 
     unordered_map<string, double> getConfusionMatrix();
 

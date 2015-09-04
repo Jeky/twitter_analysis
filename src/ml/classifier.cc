@@ -41,7 +41,8 @@ void NaiveBayes::train(Dataset *dataset) {
                 v = kv.second[k];
             }
 
-            kv.second[k] = log((v + 1.0) / (clsWordCount[kv.first] + featureSize));
+            kv.second[k] = log(
+                (v + 1.0) / (clsWordCount[kv.first] + featureSize));
         };
     };
 
@@ -62,7 +63,8 @@ double NaiveBayes::classify(Instance &ins) {
             string f = kv.first;
             double v = kv.second;
 
-            if (clsFeatureProb[thisCls].find(f) != clsFeatureProb[thisCls].end()) {
+            if (clsFeatureProb[thisCls].find(f) !=
+                clsFeatureProb[thisCls].end()) {
                 thisProb += clsFeatureProb[thisCls][f] * v;
             }
         };

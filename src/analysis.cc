@@ -1,9 +1,10 @@
 #include "data.h"
 #include "ml/text.h"
+#include "ml/classifier.h"
+#include "ml/evaluator.h"
+
 #include "utils.h"
 #include <iterator>
-
-#include "ml/porter2_stemmer.h"
 
 void convertToDS() {
     unordered_map<long, User> *spammers = loadSpammers();
@@ -25,7 +26,8 @@ void convertToDS() {
     delete nonSpammerDS;
 }
 
-Counter<string> *countTokens(unordered_map<long, User> *users, const string &path) {
+Counter<string> *countTokens(unordered_map<long, User> *users,
+                             const string &path) {
     ifstream infile(path);
 
     if (!infile.good()) {
@@ -61,18 +63,24 @@ void printDatasetStatistic() {
     unordered_map<long, User> *nonSpammers = loadSampledNonSpammers();
 
     LOG("Counting Tokens in Tweets from Spammers");
-    Counter<string> *spammerTokenCounter = countTokens(spammers, SPAMMER_TOKEN_COUNTER);
+    Counter<string> *spammerTokenCounter =
+        countTokens(spammers, SPAMMER_TOKEN_COUNTER);
 
     LOG("Counting Tokens in Tweets from NonSpammers");
-    Counter<string> *nonSpammerTokenCounter = countTokens(nonSpammers, NON_SPAMMER_TOKEN_COUNTER);
+    Counter<string> *nonSpammerTokenCounter =
+        countTokens(nonSpammers, NON_SPAMMER_TOKEN_COUNTER);
 
     delete spammers;
     delete nonSpammers;
 
-    unordered_set<string> *spammerTokens = spammerTokenCounter->getKeySet();
-    unordered_set<string> *nonSpammerTokens = nonSpammerTokenCounter->getKeySet();
-    unordered_set<string> *sharedTokens = setIntersection(spammerTokens, nonSpammerTokens);
-    unordered_set<string> *allTokens = setUnion(spammerTokens, nonSpammerTokens);
+    unordered_set<string> *spammerTokens =
+        spammerTokenCounter->getKeySet();
+    unordered_set<string> *nonSpammerTokens =
+        nonSpammerTokenCounter->getKeySet();
+    unordered_set<string> *sharedTokens =
+        setIntersection(spammerTokens, nonSpammerTokens);
+    unordered_set<string> *allTokens =
+        setUnion(spammerTokens, nonSpammerTokens);
 
     LOG_VAR(spammerTokens->size());
     LOG_VAR(nonSpammerTokens->size());
@@ -89,6 +97,24 @@ void printDatasetStatistic() {
     delete nonSpammerTokenCounter;
     delete sharedTokens;
     delete allTokens;
+}
+
+void testClassification() {
+    Dataset *spammerDS = Dataset::loadDataset(PATH + "spammer.dat");
+    Dataset *nonSpammerDS =
+        Dataset::loadDataset(PATH + "nonspammer.dat");
+
+    Classifier *cls = new NaiveBayes();
+    Evaluator eval;
+
+    eval.crossValidate(10, cls, spammerDS, nonSpammerDS);
+    for (auto &item : eval.getConfusionMatrixVector()) {
+        LOG(item);
+    }
+
+    delete cls;
+    delete spammerDS;
+    delete nonSpammerDS;
 }
 
 int main(int argc, char const *argv[]) {
