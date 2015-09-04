@@ -52,3 +52,36 @@ TEST(UtilsTest, Counter) {
     EXPECT_EQ((*result)[2].first, "b");
     EXPECT_EQ((*result)[2].second, 1);
 }
+
+TEST(UtilsTest, SetOperation) {
+    unordered_set<int> *s1 = new unordered_set<int>();
+    s1->insert(1);
+    s1->insert(2);
+    s1->insert(3);
+
+    unordered_set<int> *s2 = new unordered_set<int>();
+    s2->insert(2);
+    s2->insert(3);
+    s2->insert(4);
+
+    unordered_set<int> *s1Copy = setIntersection(s1, s1);
+    unordered_set<int> *intersect = setIntersection(s1, s2);
+    unordered_set<int> *s1CopyCopy = setUnion(s1, s1);
+    unordered_set<int> *unionSet = setUnion(s1, s2);
+
+    LOG_VAR(*s1Copy);
+    EXPECT_EQ(s1Copy->size(), 3);
+    LOG_VAR(*intersect);
+    EXPECT_EQ(intersect->size(), 2);
+    LOG_VAR(*s1CopyCopy);
+    EXPECT_EQ(s1CopyCopy->size(), 3);
+    LOG_VAR(*unionSet);
+    EXPECT_EQ(unionSet->size(), 4);
+
+    delete s1;
+    delete s2;
+    delete s1Copy;
+    delete intersect;
+    delete s1CopyCopy;
+    delete unionSet;
+}

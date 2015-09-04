@@ -48,17 +48,26 @@ template <typename K> void mapAdd(unordered_map<K, double> &m, const K &key, dou
 }
 
 template <typename T> unordered_set<T> *setIntersection(unordered_set<T> *s1, unordered_set<T> *s2) {
-    unordered_set<T> *intersect = new unordered_set<T>();
-    set_intersection(s1->begin(), s1->end(), s2->begin(), s2->end(), inserter(*intersect, intersect->begin()));
-
-    return intersect;
+    unordered_set<T> *r = new unordered_set<T>();
+    unordered_set<T> *sp = s1->size() < s2->size() ? s1 : s2;
+    unordered_set<T> *sc = s1->size() < s2->size() ? s2 : s1;
+    for(auto &item : *sp){
+        if(sc->find(item) != sc->end()){
+            r->insert(item);
+        }
+    }
+    return r;
 }
 
 template <typename T> unordered_set<T> *setUnion(unordered_set<T> *s1, unordered_set<T> *s2) {
-    unordered_set<T> *unionSet = new unordered_set<T>();
-    set_union(s1->begin(), s1->end(), s2->begin(), s2->end(), inserter(*unionSet, unionSet->begin()));
-
-    return unionSet;
+    unordered_set<T> *r = new unordered_set<T>();
+    for(auto &item : *s1){
+        r->insert(item);
+    }
+    for(auto &item : *s2){
+        r->insert(item);
+    }
+    return r;
 }
 
 template <typename K, typename V> vector<pair<K, V>> *mapToVector(unordered_map<K, V> *map) {
