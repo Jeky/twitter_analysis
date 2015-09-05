@@ -59,7 +59,7 @@ void Evaluator::crossValidate(int foldN, Classifier *classifier,
 
     double posCls = (*ds1)[0].getClassValue();
 
-    for (int i = 0; i < 1; i++) {
+    for (int i = 0; i < foldN; i++) {
         LOG("Evaluate ", i + 1, " Time");
         LOG("Merging Dataset...");
         Dataset *trainingDataset =
@@ -68,34 +68,6 @@ void Evaluator::crossValidate(int foldN, Classifier *classifier,
             mergeTestingDataset(ds1, ds2, folds1, folds2, i);
         trainingDataset->shuffle();
         testingDataset->shuffle();
-        int sCount = 0;
-        int nsCount = 0;
-        for(Instance &ins: *trainingDataset){
-            if(ins.getClassValue() == SPAMMER_VALUE){
-                sCount++;
-            }else if(ins.getClassValue() == NON_SPAMMER_VALUE){
-                nsCount++;
-            }else{
-                ERROR("Class Value Error: ", ins.getClassValue());
-            }
-        }
-        LOG_VAR(sCount);
-        LOG_VAR(nsCount);
-
-        sCount = 0;
-        nsCount = 0;
-        for(Instance &ins: *testingDataset){
-            if(ins.getClassValue() == SPAMMER_VALUE){
-                sCount++;
-            }else if(ins.getClassValue() == NON_SPAMMER_VALUE){
-                nsCount++;
-            }else{
-                ERROR("Class Value Error: ", ins.getClassValue());
-            }
-        }
-        LOG_VAR(sCount);
-        LOG_VAR(nsCount);
-
 
         unordered_map<string, double> confusionMatrix;
 

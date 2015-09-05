@@ -103,35 +103,13 @@ void testClassification() {
     Dataset *spammerDS = Dataset::loadDataset(PATH + "spammer.dat");
     Dataset *nonSpammerDS =
         Dataset::loadDataset(PATH + "nonspammer.dat");
+    for(auto &i : *spammerDS){
+        i.setClassValue(SPAMMER_VALUE);
+    }
+    for(auto &i : *nonSpammerDS){
+        i.setClassValue(NON_SPAMMER_VALUE);
+    }
     
-    int sCount = 0;
-    int nsCount = 0;
-        for(Instance &ins: *spammerDS){
-            ins.setClassValue(SPAMMER_VALUE);
-            if(ins.getClassValue() == SPAMMER_VALUE){
-                sCount++;
-            }else if(ins.getClassValue() == NON_SPAMMER_VALUE){
-                nsCount++;
-            }else{
-                ERROR("Class Value Error: ", ins.getClassValue());
-            }
-        }
-        LOG_VAR(sCount);
-        LOG_VAR(nsCount);
-
-        for(Instance &ins: *nonSpammerDS){
-            ins.setClassValue(NON_SPAMMER_VALUE);
-            if(ins.getClassValue() == SPAMMER_VALUE){
-                sCount++;
-            }else if(ins.getClassValue() == NON_SPAMMER_VALUE){
-                nsCount++;
-            }else{
-                ERROR("Class Value Error: ", ins.getClassValue());
-            }
-        }
-        LOG_VAR(sCount);
-        LOG_VAR(nsCount);
-
     Classifier *cls = new NaiveBayes();
     Evaluator eval;
 
@@ -139,6 +117,10 @@ void testClassification() {
     for (auto &item : eval.getConfusionMatrixVector()) {
         LOG(item);
     }
+    LOG_VAR(eval.getAccuracy());
+    LOG_VAR(eval.getRecall());
+    LOG_VAR(eval.getPrecision());
+    LOG_VAR(eval.getF1());
 
     delete cls;
     delete spammerDS;
@@ -146,6 +128,6 @@ void testClassification() {
 }
 
 int main(int argc, char const *argv[]) {
-    convertToDS();
+    testClassification();
     return 0;
 }
