@@ -63,15 +63,15 @@ void BiClassMutualInformation::train(Dataset *dataset) {
             PROFILE(has = instance.hasAttribute(kv.first));
             if (has) {
                 if (cls == instance.getClassValue()) {
-                    PROFILE(kv.second[0] += 1);
+                    PROFILE(kv.second[0] += 1, "Access map");
                 } else {
-                    PROFILE(kv.second[1] += 1);
+                    PROFILE(kv.second[1] += 1, "Access map");
                 }
             } else {
                 if (cls == instance.getClassValue()) {
-                    PROFILE(kv.second[2] += 1);
+                    PROFILE(kv.second[2] += 1, "Access map");
                 } else {
-                    PROFILE(kv.second[3] += 1);
+                    PROFILE(kv.second[3] += 1, "Access map");
                 }
             }
         }

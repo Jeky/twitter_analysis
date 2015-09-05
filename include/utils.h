@@ -76,6 +76,13 @@ path);\
         TIMER_END(#line);                                            \
     } while (0);
 
+#define PROFILE(line, key)                                                \
+    do {                                                             \
+        TIMER_START(key);                                          \
+        line;                                                        \
+        TIMER_END(key);                                            \
+    } while (0);
+
 struct hashString {
     size_t operator()(const string &s) const {
         size_t hash = 0;
