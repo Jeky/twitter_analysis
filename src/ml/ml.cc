@@ -70,8 +70,8 @@ Instance &Dataset::at(int index) { return instances[index]; }
 
 Instance &Dataset::operator[](int index) { return instances[index]; }
 
-vector<Instance>::iterator Dataset::begin() {
-    return instances.begin();
+void Dataset::addDataset(const Dataset &d) {
+    for (auto &i : d.instances) {
+        this->instances.push_back(i);
+    }
 }
-
-vector<Instance>::iterator Dataset::end() { return instances.end(); }

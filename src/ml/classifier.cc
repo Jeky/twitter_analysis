@@ -58,7 +58,8 @@ double NaiveBayes::classify(Instance &ins) {
         for (auto &insKV : ins) {
             if (clsFeatureProb[thisCls].find(insKV.first) !=
                 clsFeatureProb[thisCls].end()) {
-                thisProb += clsFeatureProb[thisCls][insKV.first] * insKV.second;
+                thisProb += clsFeatureProb[thisCls][insKV.first] *
+                            insKV.second;
             }
         };
 

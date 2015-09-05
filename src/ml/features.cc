@@ -16,12 +16,24 @@ vector<pair<string, double>> *FeatureSelector::getTopFeatureList() {
     return v;
 }
 
+double computeScore(int N, array<double, 4> &fm) {
+    return fm[0] / N * (log(N) + log(fm[0]) - log(fm[0] + fm[1]) -
+                        log(fm[0] + fm[2])) +
+           fm[1] / N * (log(N) + log(fm[1]) - log(fm[0] + fm[1]) -
+                        log(fm[1] + fm[3])) +
+           fm[2] / N * (log(N) + log(fm[2]) - log(fm[2] + fm[3]) -
+                        log(fm[0] + fm[2])) +
+           fm[3] / N * (log(N) + log(fm[3]) - log(fm[2] + fm[3]) -
+                        log(fm[1] + fm[3]));
+}
+
 void BiClassMutualInformation::train(Dataset *dataset) {
     LOG("Training Mutual Information Feature Selector");
 
     unordered_map<string, array<double, 4>> featureMatrix;
     unordered_set<double> clsSet;
 
+    LOG("Initialize Feature Matrix");
     // initialize feature matrix
     // row    = number of features
     // column = [1.0, 1.0, 1.0, 1.0]
@@ -64,20 +76,8 @@ void BiClassMutualInformation::train(Dataset *dataset) {
         featureCount++;
     }
 
-    LOG_VAR(featureMatrix);
-
+    int N = dataset->size();
     for (auto &kv : featureMatrix) {
-        array<double, 4> fm = kv.second;
-        int N = dataset->size();
-        double score =
-            fm[0] / N * (log(N) + log(fm[0]) - log(fm[0] + fm[1]) -
-                         log(fm[0] + fm[2])) +
-            fm[1] / N * (log(N) + log(fm[1]) - log(fm[0] + fm[1]) -
-                         log(fm[1] + fm[3])) +
-            fm[2] / N * (log(N) + log(fm[2]) - log(fm[2] + fm[3]) -
-                         log(fm[0] + fm[2])) +
-            fm[3] / N * (log(N) + log(fm[3]) - log(fm[2] + fm[3]) -
-                         log(fm[1] + fm[3]));
-        featureScoreMap[kv.first] = score;
+        featureScoreMap[kv.first] = computeScore(N, kv.second);
     }
 }

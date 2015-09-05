@@ -2,6 +2,7 @@
 #include "ml/text.h"
 #include "ml/classifier.h"
 #include "ml/evaluator.h"
+#include "ml/features.h"
 
 #include "utils.h"
 #include <iterator>
@@ -103,13 +104,13 @@ void testClassification() {
     Dataset *spammerDS = Dataset::loadDataset(PATH + "spammer.dat");
     Dataset *nonSpammerDS =
         Dataset::loadDataset(PATH + "nonspammer.dat");
-    for(auto &i : *spammerDS){
+    for (auto &i : *spammerDS) {
         i.setClassValue(SPAMMER_VALUE);
     }
-    for(auto &i : *nonSpammerDS){
+    for (auto &i : *nonSpammerDS) {
         i.setClassValue(NON_SPAMMER_VALUE);
     }
-    
+
     Classifier *cls = new NaiveBayes();
     Evaluator eval;
 
@@ -125,6 +126,36 @@ void testClassification() {
     delete cls;
     delete spammerDS;
     delete nonSpammerDS;
+}
+
+void testFeatureSelection() {
+    Dataset *spammerDS = Dataset::loadDataset(PATH + "spammer.dat");
+    Dataset *nonSpammerDS =
+        Dataset::loadDataset(PATH + "nonspammer.dat");
+    for (auto &i : *spammerDS) {
+        i.setClassValue(SPAMMER_VALUE);
+    }
+    for (auto &i : *nonSpammerDS) {
+        i.setClassValue(NON_SPAMMER_VALUE);
+    }
+
+    Dataset *all = spammerDS;
+    all->addDataset(*nonSpammerDS);
+    delete nonSpammerDS;
+
+    FeatureSelector *selector = new BiClassMutualInformation();
+    selector->train(all);
+
+    vector<pair<string, double>> *result =
+        selector->getTopFeatureList();
+    writeFile(PATH + "feature.txt", [&](ofstream &out) {
+        for (auto &r : *result) {
+            out << r.first << "\t" << r.second << endl;
+        }
+    });
+
+    delete selector;
+    delete all;
 }
 
 int main(int argc, char const *argv[]) {

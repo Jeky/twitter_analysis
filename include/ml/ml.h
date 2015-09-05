@@ -66,12 +66,19 @@ class Dataset {
 
     Instance &operator[](const int index);
 
-    vector<Instance>::iterator begin();
+    vector<Instance>::iterator begin() { return instances.begin(); };
 
-    vector<Instance>::iterator end();
+    vector<Instance>::iterator end() { return instances.end(); };
 
     template <typename Archive> void serialize(Archive &ar) {
         ar(instances);
+    }
+
+    void addDataset(const Dataset &d);
+
+    Dataset &operator+=(const Dataset &d) {
+        addDataset(d);
+        return *this;
     }
 
   private:
