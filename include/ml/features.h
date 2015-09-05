@@ -16,7 +16,7 @@ class FeatureSelector {
     virtual ~FeatureSelector(){};
 
   protected:
-    unordered_map<string, double> featureScoreMap;
+    unordered_map<string, double, hashString> featureScoreMap;
 };
 
 class BiClassMutualInformation : public FeatureSelector {

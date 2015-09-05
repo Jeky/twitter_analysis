@@ -70,6 +70,18 @@ path);\
         }
 */
 
+
+struct hashString {
+    size_t operator()(const string &s) const {
+        size_t hash = 0;
+        for(size_t i = 0; i < s.length(); i++){
+            hash = hash * 101  +  s[i];
+        }
+        return hash;
+    }
+};
+
+
 template <typename K>
 void mapAdd(unordered_map<K, double> &m, const K &key, double value) {
     if (m.find(key) == m.end()) {

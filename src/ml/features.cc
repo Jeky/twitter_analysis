@@ -30,7 +30,7 @@ double computeScore(int N, array<double, 4> &fm) {
 void BiClassMutualInformation::train(Dataset *dataset) {
     LOG("Training Mutual Information Feature Selector");
 
-    unordered_map<string, array<double, 4>> featureMatrix;
+    unordered_map<string, array<double, 4>, hashString> featureMatrix;
     unordered_set<double> clsSet;
 
     LOG("Initialize Feature Matrix");
