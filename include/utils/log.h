@@ -150,4 +150,12 @@ void setOutput(std::ostream &out);
 
 void setDebug(bool debug);
 
+static std::unordered_map<std::string, std::clock_t> _timer;
+
+void TIMER_START(const std::string &name);
+
+void TIMER_END(const std::string &name);
+
+void SHOW_TIMER();
+
 #endif

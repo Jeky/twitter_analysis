@@ -59,17 +59,19 @@ void BiClassMutualInformation::train(Dataset *dataset) {
             LOG("Processed ", featureCount, " Features");
         }
         for (Instance instance : *dataset) {
-            if (instance.hasAttribute(kv.first)) {
+            bool has;
+            PROFILE(has = instance.hasAttribute(kv.first));
+            if (has) {
                 if (cls == instance.getClassValue()) {
-                    kv.second[0] += 1;
+                    PROFILE(kv.second[0] += 1);
                 } else {
-                    kv.second[1] += 1;
+                    PROFILE(kv.second[1] += 1);
                 }
             } else {
                 if (cls == instance.getClassValue()) {
-                    kv.second[2] += 1;
+                    PROFILE(kv.second[2] += 1);
                 } else {
-                    kv.second[3] += 1;
+                    PROFILE(kv.second[3] += 1);
                 }
             }
         }

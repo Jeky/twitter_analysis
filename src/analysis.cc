@@ -158,7 +158,6 @@ void testFeatureSelection() {
     delete all;
 }
 
-
 int main(int argc, char const *argv[]) {
     testFeatureSelection();
     return 0;
