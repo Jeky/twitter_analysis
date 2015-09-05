@@ -159,6 +159,6 @@ void testFeatureSelection() {
 }
 
 int main(int argc, char const *argv[]) {
-    testClassification();
+    testFeatureSelection();
     return 0;
 }

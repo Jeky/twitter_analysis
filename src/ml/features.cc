@@ -55,21 +55,21 @@ void BiClassMutualInformation::train(Dataset *dataset) {
 
     int featureCount = 0;
     for (auto &kv : featureMatrix) {
-        if (featureCount % 1000 == 0) {
+        if (featureCount % 10 == 0) {
             LOG("Processed ", featureCount, " Features");
         }
         for (Instance instance : *dataset) {
             if (instance.hasAttribute(kv.first)) {
                 if (cls == instance.getClassValue()) {
-                    featureMatrix[kv.first][0] += 1;
+                    kv.second[0] += 1;
                 } else {
-                    featureMatrix[kv.first][1] += 1;
+                    kv.second[1] += 1;
                 }
             } else {
                 if (cls == instance.getClassValue()) {
-                    featureMatrix[kv.first][2] += 1;
+                    kv.second[2] += 1;
                 } else {
-                    featureMatrix[kv.first][3] += 1;
+                    kv.second[3] += 1;
                 }
             }
         }
