@@ -30,7 +30,7 @@ double computeScore(int N, array<double, 4> &fm) {
 void BiClassMutualInformation::train(Dataset *dataset) {
     LOG("Training Mutual Information Feature Selector");
 
-    unordered_map<string, array<double, 4>, hashString> featureMatrix;
+    unordered_map<string, array<double, 4>> featureMatrix;
     unordered_set<double> clsSet;
 
     LOG("Initialize Feature Matrix");
@@ -55,24 +55,21 @@ void BiClassMutualInformation::train(Dataset *dataset) {
 
     int featureCount = 0;
     for (auto &kv : featureMatrix) {
-        if (featureCount % 10 == 0) {
+        if (featureCount % 1000 == 0) {
             LOG("Processed ", featureCount, " Features");
-            SHOW_TIMER();
         }
         for (int i = 0; i < dataset->size(); i++) {
-            bool has;
-            PROFILE(has = dataset->hasAttribute(kv.first));
-            if (has) {
+            if (dataset->hasAttribute(kv.first)) {
                 if (cls == dataset->at(i).getClassValue()) {
-                    PROFILE_KEY(kv.second[0] += 1, "Access Map");
+                    kv.second[0] += 1;
                 } else {
-                    PROFILE_KEY(kv.second[1] += 1, "Access Map");
+                    kv.second[1] += 1;
                 }
             } else {
                 if (cls == dataset->at(i).getClassValue()) {
-                    PROFILE_KEY(kv.second[2] += 1, "Access Map");
+                    kv.second[2] += 1;
                 } else {
-                    PROFILE_KEY(kv.second[3] += 1, "Access Map");
+                    kv.second[3] += 1;
                 }
             }
         }

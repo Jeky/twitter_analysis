@@ -76,11 +76,11 @@ path);\
         TIMER_END(#line);                                            \
     } while (0);
 
-#define PROFILE_KEY(line, key)                                                \
+#define PROFILE_KEY(line, key)                                       \
     do {                                                             \
-        TIMER_START(key);                                          \
+        TIMER_START(key);                                            \
         line;                                                        \
-        TIMER_END(key);                                            \
+        TIMER_END(key);                                              \
     } while (0);
 
 struct hashString {

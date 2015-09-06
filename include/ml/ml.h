@@ -8,19 +8,30 @@
 
 class Instance {
   public:
-    Instance();
+    Instance() {}
 
-    void setClassValue(double value);
+    void setClassValue(double value) { classValue = value; }
 
-    double getClassValue();
+    double getClassValue() { return classValue; }
 
-    bool hasAttribute(const string &name);
+    bool hasAttribute(const string &name) {
+        return values.find(name) != values.end();
+    }
 
-    double &operator[](const string &name);
+    double &operator[](const string &name) {
+        if (!hasAttribute(name)) {
+            values[name] = 0.0;
+        }
+        return values[name];
+    }
 
-    unordered_map<string, double>::iterator begin();
+    unordered_map<string, double>::iterator begin() {
+        return values.begin();
+    }
 
-    unordered_map<string, double>::iterator end();
+    unordered_map<string, double>::iterator end() {
+        return values.end();
+    }
 
     template <typename Archive> void serialize(Archive &ar) {
         ar(classValue, values);
@@ -52,19 +63,25 @@ class Dataset {
      * @see saveObject()
      * @return the dataset pointer
      */
-    static Dataset *loadDataset(const string &filename);
+    static Dataset *loadDataset(const string &filename) {
+        return loadObject<Dataset>(filename);
+    }
 
-    Dataset();
+    Dataset() {}
 
-    void addInstance(Instance &instance);
+    void addInstance(Instance &instance) {
+        instances.push_back(instance);
+    }
 
-    int size();
+    int size() { return instances.size(); }
 
-    void shuffle();
+    void shuffle() {
+        random_shuffle(instances.begin(), instances.end());
+    }
 
-    Instance &at(const int index);
+    Instance &at(const int index) { return instances[index]; }
 
-    Instance &operator[](const int index);
+    Instance &operator[](const int index) { return instances[index]; }
 
     vector<Instance>::iterator begin() { return instances.begin(); };
 
@@ -74,7 +91,11 @@ class Dataset {
         ar(instances);
     }
 
-    void addDataset(const Dataset &d);
+    void addDataset(const Dataset &d) {
+        for (auto &i : d.instances) {
+            this->instances.push_back(i);
+        }
+    }
 
     Dataset &operator+=(const Dataset &d) {
         addDataset(d);
