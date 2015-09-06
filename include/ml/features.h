@@ -9,7 +9,7 @@ class FeatureSelector {
   public:
     virtual void reset() { featureScoreMap.clear(); };
 
-    virtual void train(const Dataset *dataset) = 0;
+    virtual void train(Dataset *dataset) = 0;
 
     virtual vector<pair<string, double>> *getTopFeatureList();
 
@@ -21,7 +21,7 @@ class FeatureSelector {
 
 class BiClassMutualInformation : public FeatureSelector {
   public:
-    void train(const Dataset *dataset);
+    void train(Dataset *dataset);
 };
 
 #endif
