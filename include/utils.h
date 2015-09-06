@@ -76,7 +76,7 @@ path);\
         TIMER_END(#line);                                            \
     } while (0);
 
-#define PROFILE(line, key)                                                \
+#define PROFILE_KEY(line, key)                                                \
     do {                                                             \
         TIMER_START(key);                                          \
         line;                                                        \

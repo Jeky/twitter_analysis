@@ -57,21 +57,22 @@ void BiClassMutualInformation::train(Dataset *dataset) {
     for (auto &kv : featureMatrix) {
         if (featureCount % 10 == 0) {
             LOG("Processed ", featureCount, " Features");
+            SHOW_TIMER();
         }
         for (Instance instance : *dataset) {
             bool has;
             PROFILE(has = instance.hasAttribute(kv.first));
             if (has) {
                 if (cls == instance.getClassValue()) {
-                    PROFILE(kv.second[0] += 1, "Access map");
+                    PROFILE_KEY(kv.second[0] += 1, "Access Map");
                 } else {
-                    PROFILE(kv.second[1] += 1, "Access map");
+                    PROFILE_KEY(kv.second[1] += 1, "Access Map");
                 }
             } else {
                 if (cls == instance.getClassValue()) {
-                    PROFILE(kv.second[2] += 1, "Access map");
+                    PROFILE_KEY(kv.second[2] += 1, "Access Map");
                 } else {
-                    PROFILE(kv.second[3] += 1, "Access map");
+                    PROFILE_KEY(kv.second[3] += 1, "Access Map");
                 }
             }
         }
