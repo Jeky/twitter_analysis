@@ -49,8 +49,8 @@ Dataset *mergeTestingDataset(Dataset *ds1, Dataset *ds2, int *folds1,
     return d;
 }
 
-void Evaluator::crossValidate(int foldN, Classifier *classifier,
-                              Dataset *ds1, Dataset *ds2) {
+void Evaluator::crossValidate(int foldN, Classifier *classifier, Dataset *ds1,
+                              Dataset *ds2) {
     ds1->shuffle();
     ds2->shuffle();
 
@@ -77,7 +77,8 @@ void Evaluator::crossValidate(int foldN, Classifier *classifier,
 
         LOG("Testing...");
         int insCount = 0;
-        for (Instance &instance : *testingDataset) {
+
+        testingDataset->eachInstance([&](const Instance &instance) {
             double cls = classifier->classify(instance);
             if (instance.getClassValue() == posCls) {
                 if (cls == posCls) {
@@ -93,7 +94,7 @@ void Evaluator::crossValidate(int foldN, Classifier *classifier,
                 }
             }
             insCount++;
-        }
+        });
 
         result.push_back(confusionMatrix);
 
@@ -120,8 +121,7 @@ unordered_map<string, double> Evaluator::getConfusionMatrix() {
 
 double Evaluator::getAccuracy() {
     unordered_map<string, double> cm = getConfusionMatrix();
-    return (cm["TP"] + cm["TN"]) /
-           (cm["TP"] + cm["FP"] + cm["FN"] + cm["TN"]);
+    return (cm["TP"] + cm["TN"]) / (cm["TP"] + cm["FP"] + cm["FN"] + cm["TN"]);
 }
 
 double Evaluator::getRecall() {
@@ -139,7 +139,6 @@ double Evaluator::getF1() {
     return 2 * cm["TP"] / (2 * cm["TP"] + cm["FP"] + cm["FN"]);
 }
 
-vector<unordered_map<string, double>>
-Evaluator::getConfusionMatrixVector() {
+vector<unordered_map<string, double>> Evaluator::getConfusionMatrixVector() {
     return result;
 }

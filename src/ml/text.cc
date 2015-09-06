@@ -12,8 +12,7 @@ vector<string> *splitWords(const string &text) {
 }
 
 void toLowerString(string &word) {
-    transform(word.begin(), word.end(), word.begin(),
-              (int (*)(int))tolower);
+    transform(word.begin(), word.end(), word.begin(), (int (*)(int))tolower);
 }
 
 void normalize(string &word) {

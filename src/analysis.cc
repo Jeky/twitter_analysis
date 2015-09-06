@@ -74,8 +74,7 @@ void printDatasetStatistic() {
     delete spammers;
     delete nonSpammers;
 
-    unordered_set<string> *spammerTokens =
-        spammerTokenCounter->getKeySet();
+    unordered_set<string> *spammerTokens = spammerTokenCounter->getKeySet();
     unordered_set<string> *nonSpammerTokens =
         nonSpammerTokenCounter->getKeySet();
     unordered_set<string> *sharedTokens =
@@ -101,15 +100,10 @@ void printDatasetStatistic() {
 }
 
 void testClassification() {
-    Dataset *spammerDS = Dataset::loadDataset(PATH + "spammer.dat");
+    Dataset *spammerDS =
+        Dataset::loadDataset(PATH + "spammer.dat", SPAMMER_VALUE);
     Dataset *nonSpammerDS =
-        Dataset::loadDataset(PATH + "nonspammer.dat");
-    for (auto &i : *spammerDS) {
-        i.setClassValue(SPAMMER_VALUE);
-    }
-    for (auto &i : *nonSpammerDS) {
-        i.setClassValue(NON_SPAMMER_VALUE);
-    }
+        Dataset::loadDataset(PATH + "nonspammer.dat", NON_SPAMMER_VALUE);
 
     Classifier *cls = new NaiveBayes();
     Evaluator eval;
@@ -129,15 +123,10 @@ void testClassification() {
 }
 
 void testFeatureSelection() {
-    Dataset *spammerDS = Dataset::loadDataset(PATH + "spammer.dat");
+    Dataset *spammerDS =
+        Dataset::loadDataset(PATH + "spammer.dat", SPAMMER_VALUE);
     Dataset *nonSpammerDS =
-        Dataset::loadDataset(PATH + "nonspammer.dat");
-    for (auto &i : *spammerDS) {
-        i.setClassValue(SPAMMER_VALUE);
-    }
-    for (auto &i : *nonSpammerDS) {
-        i.setClassValue(NON_SPAMMER_VALUE);
-    }
+        Dataset::loadDataset(PATH + "nonspammer.dat", NON_SPAMMER_VALUE);
 
     Dataset *all = spammerDS;
     all->addDataset(*nonSpammerDS);
@@ -146,8 +135,7 @@ void testFeatureSelection() {
     FeatureSelector *selector = new BiClassMutualInformation();
     selector->train(all);
 
-    vector<pair<string, double>> *result =
-        selector->getTopFeatureList();
+    vector<pair<string, double>> *result = selector->getTopFeatureList();
     writeFile(PATH + "feature.txt", [&](ofstream &out) {
         for (auto &r : *result) {
             out << r.first << "\t" << r.second << endl;

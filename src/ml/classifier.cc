@@ -5,12 +5,12 @@ void NaiveBayes::reset() {
     clsFeatureProb.clear();
 }
 
-void NaiveBayes::train(Dataset *dataset) {
+void NaiveBayes::train(const Dataset *dataset) {
     unordered_map<double, double> clsWordCount;
     unordered_set<string> featureSet;
 
     // collect features and compute class probability
-    for (Instance &instance : *dataset) {
+    dataset->eachInstance([&](const Instance &instance) {
         double cls = instance.getClassValue();
         if (clsProb.find(cls) == clsProb.end()) {
             clsFeatureProb[cls] = unordered_map<string, double>();
@@ -18,12 +18,12 @@ void NaiveBayes::train(Dataset *dataset) {
 
         mapAdd(clsProb, cls, 1.0);
 
-        for (auto &kv : instance) {
-            mapAdd(clsFeatureProb[cls], kv.first, kv.second);
-            mapAdd(clsWordCount, cls, kv.second);
-            featureSet.insert(kv.first);
-        };
-    };
+        instance.eachFeature([&](const string &key, const double &value) {
+            mapAdd(clsFeatureProb[cls], key, value);
+            mapAdd(clsWordCount, cls, value);
+            featureSet.insert(key);
+        });
+    });
 
     LOG_VAR(featureSet.size());
 
@@ -41,13 +41,13 @@ void NaiveBayes::train(Dataset *dataset) {
                 v = kv.second[k];
             }
 
-            kv.second[k] = log(
-                (v + 1.0) / (clsWordCount[kv.first] + featureSize));
+            kv.second[k] =
+                log((v + 1.0) / (clsWordCount[kv.first] + featureSize));
         };
     };
 }
 
-double NaiveBayes::classify(Instance &ins) {
+double NaiveBayes::classify(const Instance &ins) {
     double cls = 0.0;
     double prob = -1.0;
 
@@ -55,13 +55,12 @@ double NaiveBayes::classify(Instance &ins) {
         double thisCls = kv.first;
         double thisProb = clsProb[thisCls];
 
-        for (auto &insKV : ins) {
-            if (clsFeatureProb[thisCls].find(insKV.first) !=
+        ins.eachFeature([&](const string &key, const double &value) {
+            if (clsFeatureProb[thisCls].find(key) !=
                 clsFeatureProb[thisCls].end()) {
-                thisProb += clsFeatureProb[thisCls][insKV.first] *
-                            insKV.second;
+                thisProb += clsFeatureProb[thisCls][key] * value;
             }
-        };
+        });
 
         if (thisProb > prob || prob == -1.0) {
             cls = thisCls;

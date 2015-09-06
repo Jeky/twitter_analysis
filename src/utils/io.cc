@@ -35,8 +35,7 @@ void readFile(const string &filename,
     return readFile(filename, true, lineHandler);
 }
 
-void writeFile(const string &filename,
-               function<void(ofstream &)> writer) {
+void writeFile(const string &filename, function<void(ofstream &)> writer) {
     LOG("Writing To ", filename);
     ofstream out(filename);
     writer(out);

@@ -22,15 +22,13 @@ void getTime();
 void LOG(bool start);
 
 template <typename K, typename V>
-std::ostream &operator<<(std::ostream &out,
-                         const std::pair<K, V> &v) {
+std::ostream &operator<<(std::ostream &out, const std::pair<K, V> &v) {
     out << "(" << v.first << ", " << v.second << ")";
     return out;
 }
 
 template <typename T, size_t N>
-std::ostream &operator<<(std::ostream &out,
-                         const std::array<T, N> &v) {
+std::ostream &operator<<(std::ostream &out, const std::array<T, N> &v) {
     if (!v.empty()) {
         int i = 0;
         out << "[";
@@ -64,8 +62,7 @@ std::ostream &operator<<(std::ostream &out, const std::vector<T> &v) {
 }
 
 template <typename T>
-std::ostream &operator<<(std::ostream &out,
-                         const std::unordered_set<T> &v) {
+std::ostream &operator<<(std::ostream &out, const std::unordered_set<T> &v) {
     if (!v.empty()) {
         int i = 0;
         out << "{";
@@ -82,8 +79,7 @@ std::ostream &operator<<(std::ostream &out,
 }
 
 template <typename K, typename V>
-std::ostream &operator<<(std::ostream &out,
-                         const std::unordered_map<K, V> &v) {
+std::ostream &operator<<(std::ostream &out, const std::unordered_map<K, V> &v) {
     if (!v.empty()) {
         int i = 0;
         out << "{";
@@ -105,8 +101,7 @@ void LOG(bool start, T cur, Targs... args) {
     LOG(false, args...);
 }
 
-template <typename T, typename... Targs>
-void LOG(T cur, Targs... args) {
+template <typename T, typename... Targs> void LOG(T cur, Targs... args) {
     getTime();
     *__OUT << "[INFO] " << cur;
     LOG(false, args...);
@@ -120,8 +115,7 @@ void ERROR(bool start, T cur, Targs... args) {
     ERROR(false, args...);
 }
 
-template <typename T, typename... Targs>
-void ERROR(T cur, Targs... args) {
+template <typename T, typename... Targs> void ERROR(T cur, Targs... args) {
     getTime();
     *__OUT << "[ERROR]" << cur;
     ERROR(false, args...);
@@ -137,8 +131,7 @@ void DEBUG(bool start, T cur, Targs... args) {
     }
 }
 
-template <typename T, typename... Targs>
-void DEBUG(T cur, Targs... args) {
+template <typename T, typename... Targs> void DEBUG(T cur, Targs... args) {
     if (__DEBUG) {
         getTime();
         *__OUT << "[DEBUG]" << cur;

@@ -19,9 +19,7 @@ class Tweet {
 
     friend ostream &operator<<(ostream &out, Tweet &t);
 
-    template <typename Archive> void serialize(Archive &ar) {
-        ar(text);
-    }
+    template <typename Archive> void serialize(Archive &ar) { ar(text); }
 
   private:
     string text;
@@ -50,9 +48,7 @@ class User {
 
     friend ostream &operator<<(ostream &out, const User &u);
 
-    template <typename Archive> void serialize(Archive &ar) {
-        ar(id, tweets);
-    }
+    template <typename Archive> void serialize(Archive &ar) { ar(id, tweets); }
 
   private:
     long id;
@@ -66,7 +62,6 @@ unordered_map<long, User> *loadSampledNonSpammers();
 
 void sampleNonSpammers();
 
-Dataset *user2Dataset(unordered_map<long, User> *users,
-                      int gramLen = 1);
+Dataset *user2Dataset(unordered_map<long, User> *users, int gramLen = 1);
 
 #endif

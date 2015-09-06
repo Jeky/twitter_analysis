@@ -21,8 +21,7 @@ void readFile(const string &filename, bool log,
 void readFile(const string &filename,
               function<bool(int, string &)> lineHandler);
 
-void writeFile(const string &filename,
-               function<void(ofstream &)> writer);
+void writeFile(const string &filename, function<void(ofstream &)> writer);
 
 template <typename T> void saveObject(T *t, const string filename) {
     LOG("Start Saving Object to ", filename);

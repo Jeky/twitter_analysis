@@ -43,27 +43,24 @@ class basic_string_view {
     using const_reference = const Char &;
     using const_iterator = const_pointer;
     using iterator = const_iterator;
-    using const_reverse_iterator =
-        std::reverse_iterator<const_iterator>;
+    using const_reverse_iterator = std::reverse_iterator<const_iterator>;
     using reverse_iterator = const_reverse_iterator;
     using size_type = std::size_t;
     using difference_type = std::ptrdiff_t;
     static constexpr size_type npos = size_type(-1);
 
-    constexpr basic_string_view() noexcept : data_{nullptr},
-                                             size_{0} {
+    constexpr basic_string_view() noexcept : data_{nullptr}, size_{0} {
         // nothing
     }
 
-    constexpr basic_string_view(const basic_string_view &) noexcept =
-        default;
-    basic_string_view &
-    operator=(const basic_string_view &) noexcept = default;
+    constexpr basic_string_view(const basic_string_view &) noexcept = default;
+    basic_string_view &operator=(const basic_string_view &) noexcept = default;
 
     template <class Allocator>
-    basic_string_view(const std::basic_string<
-        Char, Traits, Allocator> &str) noexcept : data_{str.data()},
-                                                  size_{str.size()} {
+    basic_string_view(
+        const std::basic_string<Char, Traits, Allocator> &str) noexcept
+        : data_{str.data()},
+          size_{str.size()} {
         // nothing
     }
 
@@ -79,13 +76,9 @@ class basic_string_view {
 
     constexpr const_iterator begin() const noexcept { return data_; }
 
-    constexpr const_iterator end() const noexcept {
-        return data_ + size_;
-    }
+    constexpr const_iterator end() const noexcept { return data_ + size_; }
 
-    constexpr const_iterator cbegin() const noexcept {
-        return begin();
-    }
+    constexpr const_iterator cbegin() const noexcept { return begin(); }
 
     constexpr const_iterator cend() const noexcept { return end(); }
 
@@ -93,9 +86,7 @@ class basic_string_view {
 
     const_reverse_iterator rend() const noexcept { return {begin()}; }
 
-    const_reverse_iterator crbegin() const noexcept {
-        return rbegin();
-    }
+    const_reverse_iterator crbegin() const noexcept { return rbegin(); }
 
     const_reverse_iterator crend() const noexcept { return rend(); }
 
@@ -119,9 +110,7 @@ class basic_string_view {
 
     constexpr const_reference front() const { return data_[0]; }
 
-    constexpr const_reference back() const {
-        return data_[size_ - 1];
-    }
+    constexpr const_reference back() const { return data_[size_ - 1]; }
 
     constexpr const_pointer data() const noexcept { return data_; }
 
@@ -144,8 +133,7 @@ class basic_string_view {
     }
 
     template <class Allocator>
-    explicit
-    operator std::basic_string<Char, Traits, Allocator>() const {
+    explicit operator std::basic_string<Char, Traits, Allocator>() const {
         return {begin(), end()};
     }
 
@@ -168,13 +156,12 @@ class basic_string_view {
                                        size_type n = npos) const {
         return pos > size()
                    ? throw std::out_of_range{"index out of bounds"}
-                   : basic_string_view{data() + pos,
-                                       std::min(n, size() - pos)};
+                   : basic_string_view{data() + pos, std::min(n, size() - pos)};
     }
 
     int compare(basic_string_view s) const noexcept {
-        auto cmp = Traits::compare(data(), s.data(),
-                                   std::min(size(), s.size()));
+        auto cmp =
+            Traits::compare(data(), s.data(), std::min(size(), s.size()));
         if (cmp != 0)
             return cmp;
 
@@ -192,9 +179,8 @@ class basic_string_view {
         return substr(pos1, n1).compare(s);
     }
 
-    constexpr int compare(size_type pos1, size_type n1,
-                          basic_string_view s, size_type pos2,
-                          size_type n2) const {
+    constexpr int compare(size_type pos1, size_type n1, basic_string_view s,
+                          size_type pos2, size_type n2) const {
         return substr(pos1, n1).compare(s.substr(pos2, n2));
     }
 
@@ -202,8 +188,7 @@ class basic_string_view {
         return compare(basic_string_view{s});
     }
 
-    constexpr int compare(size_type pos1, size_type n1,
-                          const Char *s) const {
+    constexpr int compare(size_type pos1, size_type n1, const Char *s) const {
         return substr(pos1, n1).compare(basic_string_view{s});
     }
 
@@ -212,25 +197,22 @@ class basic_string_view {
         return substr(pos1, n1).compare(basic_string_view{s, n2});
     }
 
-    size_type find(basic_string_view s, size_type pos = 0) const
-        noexcept {
+    size_type find(basic_string_view s, size_type pos = 0) const noexcept {
         if (pos >= size())
             return npos;
 
-        auto it = std::search(begin() + pos, end(), s.begin(),
-                              s.end(), Traits::eq);
+        auto it =
+            std::search(begin() + pos, end(), s.begin(), s.end(), Traits::eq);
         if (it == end())
             return npos;
         return std::distance(begin(), it);
     }
 
-    constexpr size_type find(Char c, size_type pos = 0) const
-        noexcept {
+    constexpr size_type find(Char c, size_type pos = 0) const noexcept {
         return find(basic_string_view{&c, 1}, pos);
     }
 
-    constexpr size_type find(const Char *s, size_type pos,
-                             size_type n) const {
+    constexpr size_type find(const Char *s, size_type pos, size_type n) const {
         return find(basic_string_view{s, n}, pos);
     }
 
@@ -238,8 +220,7 @@ class basic_string_view {
         return find(basic_string_view{s}, pos);
     }
 
-    size_type rfind(basic_string_view s, size_type pos = npos) const
-        noexcept {
+    size_type rfind(basic_string_view s, size_type pos = npos) const noexcept {
         if (size() < s.size())
             return npos;
 
@@ -249,36 +230,33 @@ class basic_string_view {
         else
             pos = size();
 
-        auto it = std::find_end(begin(), begin() + pos, s.begin(),
-                                s.end(), Traits::eq);
+        auto it = std::find_end(begin(), begin() + pos, s.begin(), s.end(),
+                                Traits::eq);
 
         if (it == begin() + pos)
             return npos;
         return std::distance(begin(), it);
     }
 
-    constexpr size_type rfind(Char c, size_type pos = npos) const
-        noexcept {
+    constexpr size_type rfind(Char c, size_type pos = npos) const noexcept {
         return rfind(basic_string_view{&c, 1}, pos);
     }
 
-    constexpr size_type rfind(const Char *s, size_type pos,
-                              size_type n) const {
+    constexpr size_type rfind(const Char *s, size_type pos, size_type n) const {
         return rfind(basic_string_view{s, n}, pos);
     }
 
-    constexpr size_type rfind(const Char *s,
-                              size_type pos = npos) const {
+    constexpr size_type rfind(const Char *s, size_type pos = npos) const {
         return rfind(basic_string_view{s}, pos);
     }
 
-    size_type find_first_of(basic_string_view s,
-                            size_type pos = 0) const noexcept {
+    size_type find_first_of(basic_string_view s, size_type pos = 0) const
+        noexcept {
         if (pos >= size())
             return npos;
 
-        auto it = std::find_first_of(begin() + pos, end(), s.begin(),
-                                     s.end(), Traits::eq);
+        auto it = std::find_first_of(begin() + pos, end(), s.begin(), s.end(),
+                                     Traits::eq);
         if (it == end())
             return npos;
         return std::distance(begin(), it);
@@ -294,26 +272,24 @@ class basic_string_view {
         return find_first_of(basic_string_view{s, n}, pos);
     }
 
-    constexpr size_type find_first_of(const Char *s,
-                                      size_type pos = 0) const {
+    constexpr size_type find_first_of(const Char *s, size_type pos = 0) const {
         return find_first_of(basic_string_view{s}, pos);
     }
 
-    size_type find_last_of(basic_string_view s,
-                           size_type pos = npos) const noexcept {
+    size_type find_last_of(basic_string_view s, size_type pos = npos) const
+        noexcept {
         if (pos >= size())
             return npos;
 
         auto diff = size() - std::min(size(), pos);
-        auto it = std::find_first_of(rbegin() + diff, rend(),
-                                     s.begin(), s.end(), Traits::eq);
+        auto it = std::find_first_of(rbegin() + diff, rend(), s.begin(),
+                                     s.end(), Traits::eq);
         if (it == rend())
             return npos;
         return size() - 1 - std::distance(rbegin(), it);
     }
 
-    constexpr size_type find_last_of(Char c,
-                                     size_type pos = npos) const
+    constexpr size_type find_last_of(Char c, size_type pos = npos) const
         noexcept {
         return find_last_of(basic_string_view{&c, 1}, pos);
     }
@@ -328,29 +304,25 @@ class basic_string_view {
         return find_last_of(basic_string_view{s}, pos);
     }
 
-    size_type find_first_not_of(basic_string_view s,
-                                size_type pos = 0) const noexcept {
+    size_type find_first_not_of(basic_string_view s, size_type pos = 0) const
+        noexcept {
         if (pos >= size())
             return npos;
 
-        auto it =
-            std::find_if(begin(), end(), [&](const_reference c) {
-                return std::find(s.begin(), s.end(), c, Traits::eq) ==
-                       s.end();
-            });
+        auto it = std::find_if(begin(), end(), [&](const_reference c) {
+            return std::find(s.begin(), s.end(), c, Traits::eq) == s.end();
+        });
         if (it == end())
             return npos;
         return std::distance(begin(), it);
     }
 
-    constexpr size_type find_first_not_of(Char c,
-                                          size_type pos = 0) const
+    constexpr size_type find_first_not_of(Char c, size_type pos = 0) const
         noexcept {
         return find_first_not_of(basic_string_view{&c, 1}, pos);
     }
 
-    constexpr size_type find_first_not_of(const Char *s,
-                                          size_type pos,
+    constexpr size_type find_first_not_of(const Char *s, size_type pos,
                                           size_type n) const {
         return find_first_not_of(basic_string_view{s, n}, pos);
     }
@@ -360,24 +332,21 @@ class basic_string_view {
         return find_first_not_of(basic_string_view{s}, pos);
     }
 
-    size_type find_last_not_of(basic_string_view s,
-                               size_type pos = npos) const noexcept {
+    size_type find_last_not_of(basic_string_view s, size_type pos = npos) const
+        noexcept {
         if (pos >= size())
             return npos;
 
         auto diff = size() - std::min(size(), pos);
-        auto it = std::find_if(rbegin() + diff, rend(),
-                               [&](const_reference c) {
-            return std::find(s.begin(), s.end(), c, Traits::eq) ==
-                   s.end();
+        auto it = std::find_if(rbegin() + diff, rend(), [&](const_reference c) {
+            return std::find(s.begin(), s.end(), c, Traits::eq) == s.end();
         });
         if (it == rend())
             return npos;
         return size() - 1 - std::distance(rbegin(), it);
     }
 
-    constexpr size_type find_last_not_of(Char c,
-                                         size_type pos = npos) const
+    constexpr size_type find_last_not_of(Char c, size_type pos = npos) const
         noexcept {
         return find_last_not_of(basic_string_view{&c, 1}, pos);
     }
@@ -407,9 +376,8 @@ template <class T> using identity = typename std::decay<T>::type;
 }
 
 template <class Char, class Traits>
-constexpr bool
-operator==(basic_string_view<Char, Traits> lhs,
-           basic_string_view<Char, Traits> rhs) noexcept {
+constexpr bool operator==(basic_string_view<Char, Traits> lhs,
+                          basic_string_view<Char, Traits> rhs) noexcept {
     return lhs.compare(rhs) == 0;
 }
 
@@ -421,16 +389,14 @@ operator==(basic_string_view<Char, Traits> lhs,
 }
 
 template <class Char, class Traits>
-constexpr bool
-operator==(identity<basic_string_view<Char, Traits>> lhs,
-           basic_string_view<Char, Traits> rhs) noexcept {
+constexpr bool operator==(identity<basic_string_view<Char, Traits>> lhs,
+                          basic_string_view<Char, Traits> rhs) noexcept {
     return lhs.compare(rhs) == 0;
 }
 
 template <class Char, class Traits>
-constexpr bool
-operator!=(basic_string_view<Char, Traits> lhs,
-           basic_string_view<Char, Traits> rhs) noexcept {
+constexpr bool operator!=(basic_string_view<Char, Traits> lhs,
+                          basic_string_view<Char, Traits> rhs) noexcept {
     return lhs.compare(rhs) != 0;
 }
 
@@ -442,16 +408,14 @@ operator!=(basic_string_view<Char, Traits> lhs,
 }
 
 template <class Char, class Traits>
-constexpr bool
-operator!=(identity<basic_string_view<Char, Traits>> lhs,
-           basic_string_view<Char, Traits> rhs) noexcept {
+constexpr bool operator!=(identity<basic_string_view<Char, Traits>> lhs,
+                          basic_string_view<Char, Traits> rhs) noexcept {
     return lhs.compare(rhs) != 0;
 }
 
 template <class Char, class Traits>
-constexpr bool
-operator<(basic_string_view<Char, Traits> lhs,
-          basic_string_view<Char, Traits> rhs) noexcept {
+constexpr bool operator<(basic_string_view<Char, Traits> lhs,
+                         basic_string_view<Char, Traits> rhs) noexcept {
     return lhs.compare(rhs) < 0;
 }
 
@@ -463,16 +427,14 @@ operator<(basic_string_view<Char, Traits> lhs,
 }
 
 template <class Char, class Traits>
-constexpr bool
-operator<(identity<basic_string_view<Char, Traits>> lhs,
-          basic_string_view<Char, Traits> rhs) noexcept {
+constexpr bool operator<(identity<basic_string_view<Char, Traits>> lhs,
+                         basic_string_view<Char, Traits> rhs) noexcept {
     return lhs.compare(rhs) < 0;
 }
 
 template <class Char, class Traits>
-constexpr bool
-operator>(basic_string_view<Char, Traits> lhs,
-          basic_string_view<Char, Traits> rhs) noexcept {
+constexpr bool operator>(basic_string_view<Char, Traits> lhs,
+                         basic_string_view<Char, Traits> rhs) noexcept {
     return lhs.compare(rhs) > 0;
 }
 
@@ -484,16 +446,14 @@ operator>(basic_string_view<Char, Traits> lhs,
 }
 
 template <class Char, class Traits>
-constexpr bool
-operator>(identity<basic_string_view<Char, Traits>> lhs,
-          basic_string_view<Char, Traits> rhs) noexcept {
+constexpr bool operator>(identity<basic_string_view<Char, Traits>> lhs,
+                         basic_string_view<Char, Traits> rhs) noexcept {
     return lhs.compare(rhs) > 0;
 }
 
 template <class Char, class Traits>
-constexpr bool
-operator<=(basic_string_view<Char, Traits> lhs,
-           basic_string_view<Char, Traits> rhs) noexcept {
+constexpr bool operator<=(basic_string_view<Char, Traits> lhs,
+                          basic_string_view<Char, Traits> rhs) noexcept {
     return lhs.compare(rhs) <= 0;
 }
 
@@ -505,16 +465,14 @@ operator<=(basic_string_view<Char, Traits> lhs,
 }
 
 template <class Char, class Traits>
-constexpr bool
-operator<=(identity<basic_string_view<Char, Traits>> lhs,
-           basic_string_view<Char, Traits> rhs) noexcept {
+constexpr bool operator<=(identity<basic_string_view<Char, Traits>> lhs,
+                          basic_string_view<Char, Traits> rhs) noexcept {
     return lhs.compare(rhs) <= 0;
 }
 
 template <class Char, class Traits>
-constexpr bool
-operator>=(basic_string_view<Char, Traits> lhs,
-           basic_string_view<Char, Traits> rhs) noexcept {
+constexpr bool operator>=(basic_string_view<Char, Traits> lhs,
+                          basic_string_view<Char, Traits> rhs) noexcept {
     return lhs.compare(rhs) >= 0;
 }
 
@@ -526,9 +484,8 @@ operator>=(basic_string_view<Char, Traits> lhs,
 }
 
 template <class Char, class Traits>
-constexpr bool
-operator>=(identity<basic_string_view<Char, Traits>> lhs,
-           basic_string_view<Char, Traits> rhs) noexcept {
+constexpr bool operator>=(identity<basic_string_view<Char, Traits>> lhs,
+                          basic_string_view<Char, Traits> rhs) noexcept {
     return lhs.compare(rhs) >= 0;
 }
 
@@ -547,8 +504,8 @@ template <class Char, class Traits>
 struct hash<meta::util::basic_string_view<Char, Traits>> {
     meta::util::murmur_hash<> hasher;
 
-    size_t operator()(
-        const meta::util::basic_string_view<Char, Traits> &view) const
+    size_t
+    operator()(const meta::util::basic_string_view<Char, Traits> &view) const
         noexcept {
         return hasher(reinterpret_cast<const uint8_t *>(view.data()),
                       view.size());

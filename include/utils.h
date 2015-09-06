@@ -20,19 +20,16 @@
 using namespace std;
 
 static const string PATH = string("/Users/jeky/data/thesis/ctweets/");
-static const string SPAMMER_TWEET_PATH =
-    PATH + string("spammer-tweets/");
+static const string SPAMMER_TWEET_PATH = PATH + string("spammer-tweets/");
 static const string NON_SPAMMER_TWEET_PATH =
     PATH + string("non-spammer-tweets/");
 static const string SAMPLED_NON_SPAMMER_ID_LIST =
     PATH + string("sampled-non-spammer-id.txt");
-static const string NON_SPAMMER_ID_LIST =
-    PATH + string("non-spammer-id.txt");
+static const string NON_SPAMMER_ID_LIST = PATH + string("non-spammer-id.txt");
 static const string SPAMMER_ID_LIST = PATH + string("spammer-id.txt");
 
 static const string SPAMMER_DATA_PATH = PATH + string("spammers.obj");
-static const string NON_SPAMMER_DATA_PATH =
-    PATH + string("non-spammers.obj");
+static const string NON_SPAMMER_DATA_PATH = PATH + string("non-spammers.obj");
 
 static const string SPAMMER_TOKEN_COUNTER =
     PATH + string("spammer-token-counter.obj");
@@ -43,8 +40,7 @@ static const string SPAMMER_TOKEN_FREQ =
     PATH + string("spammer-token-frequency.txt");
 static const string NON_SPAMMER_TOKEN_FREQ =
     PATH + string("non-spammer-token-frequency.txt");
-static const string ALL_TOKEN_FREQ =
-    PATH + string("all-token-frequency.txt");
+static const string ALL_TOKEN_FREQ = PATH + string("all-token-frequency.txt");
 
 static const int SAMPLE_TWEET_SIZE = 61;
 
@@ -69,18 +65,18 @@ path);\
             }\
         }
 */
-#define PROFILE(line)                                                \
-    do {                                                             \
-        TIMER_START(#line);                                          \
-        line;                                                        \
-        TIMER_END(#line);                                            \
+#define PROFILE(line)                                                          \
+    do {                                                                       \
+        TIMER_START(#line);                                                    \
+        line;                                                                  \
+        TIMER_END(#line);                                                      \
     } while (0);
 
-#define PROFILE_KEY(line, key)                                       \
-    do {                                                             \
-        TIMER_START(key);                                            \
-        line;                                                        \
-        TIMER_END(key);                                              \
+#define PROFILE_KEY(line, key)                                                 \
+    do {                                                                       \
+        TIMER_START(key);                                                      \
+        line;                                                                  \
+        TIMER_END(key);                                                        \
     } while (0);
 
 struct hashString {
@@ -102,8 +98,7 @@ void mapAdd(unordered_map<K, double> &m, const K &key, double value) {
 }
 
 template <typename T>
-unordered_set<T> *setIntersection(unordered_set<T> *s1,
-                                  unordered_set<T> *s2) {
+unordered_set<T> *setIntersection(unordered_set<T> *s1, unordered_set<T> *s2) {
     unordered_set<T> *r = new unordered_set<T>();
     unordered_set<T> *sp = s1->size() < s2->size() ? s1 : s2;
     unordered_set<T> *sc = s1->size() < s2->size() ? s2 : s1;
@@ -116,8 +111,7 @@ unordered_set<T> *setIntersection(unordered_set<T> *s1,
 }
 
 template <typename T>
-unordered_set<T> *setUnion(unordered_set<T> *s1,
-                           unordered_set<T> *s2) {
+unordered_set<T> *setUnion(unordered_set<T> *s1, unordered_set<T> *s2) {
     unordered_set<T> *r = new unordered_set<T>();
     for (auto &item : *s1) {
         r->insert(item);
@@ -178,9 +172,8 @@ template <typename T> class Counter {
     vector<pair<T, int>> *getTop() {
         vector<pair<T, int>> *v = mapToVector(&counterMap);
 
-        sort(v->begin(), v->end(),
-             [](const pair<string, double> &left,
-                const pair<string, double> &right) {
+        sort(v->begin(), v->end(), [](const pair<string, double> &left,
+                                      const pair<string, double> &right) {
             return left.second > right.second;
         });
 
@@ -210,8 +203,8 @@ template <typename T> class Counter {
 
         vector<pair<int, int>> *v = mapToVector(&freq);
 
-        sort(v->begin(), v->end(), [](const pair<int, int> &left,
-                                      const pair<int, int> &right) {
+        sort(v->begin(), v->end(),
+             [](const pair<int, int> &left, const pair<int, int> &right) {
             return left.second > right.second;
         });
 
@@ -239,9 +232,7 @@ template <typename T> class Counter {
         return *this;
     }
 
-    template <typename Archive> void serialize(Archive &ar) {
-        ar(counterMap);
-    }
+    template <typename Archive> void serialize(Archive &ar) { ar(counterMap); }
 
   private:
     unordered_map<T, int> counterMap;

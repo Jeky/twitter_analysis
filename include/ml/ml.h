@@ -3,6 +3,7 @@
 
 #include <sstream>
 #include <algorithm>
+#include <functional>
 
 #include "../utils.h"
 
@@ -12,9 +13,9 @@ class Instance {
 
     void setClassValue(double value) { classValue = value; }
 
-    double getClassValue() { return classValue; }
+    const double getClassValue() const { return classValue; }
 
-    bool hasAttribute(const string &name) {
+    const bool hasAttribute(const string &name) const {
         return values.find(name) != values.end();
     }
 
@@ -25,12 +26,11 @@ class Instance {
         return values[name];
     }
 
-    unordered_map<string, double>::iterator begin() {
-        return values.begin();
-    }
-
-    unordered_map<string, double>::iterator end() {
-        return values.end();
+    void
+    eachFeature(function<void(const string &, const double &)> iterFunc) const {
+        for (auto it = values.begin(); it != values.end(); ++it) {
+            iterFunc(it->first, it->second);
+        }
     }
 
     template <typename Archive> void serialize(Archive &ar) {
@@ -59,37 +59,39 @@ class Dataset {
      * Load dataset from saved file. This dataset should be saved by
      * saveObject() function.
      *
-     * @param the filename of saved dataset
+     * @param filename: the filename of saved dataset
+     * @param label: the label of instances in this dataset
      * @see saveObject()
      * @return the dataset pointer
      */
-    static Dataset *loadDataset(const string &filename) {
-        return loadObject<Dataset>(filename);
+    static Dataset *loadDataset(const string &filename, const double label) {
+        Dataset *ds = loadObject<Dataset>(filename);
+        for (int i = 0; i < ds->size(); i++) {
+            (*ds)[i].setClassValue(label);
+        }
+
+        return ds;
     }
 
     Dataset() {}
 
-    void addInstance(Instance &instance) {
-        instances.push_back(instance);
+    void eachInstance(function<void(const Instance &)> iterFunc) const {
+        for (auto it = instances.begin(); it != instances.end(); ++it) {
+            iterFunc(*it);
+        }
     }
 
-    int size() { return instances.size(); }
+    void addInstance(Instance &instance) { instances.push_back(instance); }
 
-    void shuffle() {
-        random_shuffle(instances.begin(), instances.end());
-    }
+    const int size() const { return instances.size(); }
+
+    void shuffle() { random_shuffle(instances.begin(), instances.end()); }
 
     Instance &at(const int index) { return instances[index]; }
 
     Instance &operator[](const int index) { return instances[index]; }
 
-    vector<Instance>::iterator begin() { return instances.begin(); };
-
-    vector<Instance>::iterator end() { return instances.end(); };
-
-    template <typename Archive> void serialize(Archive &ar) {
-        ar(instances);
-    }
+    template <typename Archive> void serialize(Archive &ar) { ar(instances); }
 
     void addDataset(const Dataset &d) {
         for (auto &i : d.instances) {

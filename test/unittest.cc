@@ -6,8 +6,7 @@
 
 TEST(DataTest, User2DatasetTest) {
     // construct user list
-    unordered_map<long, User> *users =
-        new unordered_map<long, User>();
+    unordered_map<long, User> *users = new unordered_map<long, User>();
     for (int i = 0; i < 10; i++) {
         (*users)[i] = User(i, true);
         (*users)[i].getTweets().push_back(Tweet("aaaaaa"));

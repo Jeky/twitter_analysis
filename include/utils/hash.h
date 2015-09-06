@@ -76,8 +76,7 @@ template <> class murmur_hash<4> {
         const uint32_t c1 = 0xcc9e2d51;
         const uint32_t c2 = 0x1b873593;
 
-        auto blocks =
-            reinterpret_cast<const uint32_t *>(data + nblocks * 4);
+        auto blocks = reinterpret_cast<const uint32_t *>(data + nblocks * 4);
 
         for (int i = -nblocks; i; ++i) {
             auto k1 = blocks[i];

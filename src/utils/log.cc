@@ -39,7 +39,7 @@ void TIMER_END(const std::string &name) {
 
 void SHOW_TIMER() {
     for (auto &kv : _timer) {
-        LOG(kv.first, " = ",
-            kv.second / (double)(CLOCKS_PER_SEC / 1000), " ms");
+        LOG(kv.first, " = ", kv.second / (double)(CLOCKS_PER_SEC / 1000),
+            " ms");
     }
 }
