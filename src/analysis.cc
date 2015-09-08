@@ -87,7 +87,7 @@ double collectARP(unordered_map<long, User> *users) {
         }
         arp += 1.0 * r / kv.second.getTweets().size();
     }
-
+    
     arp /= users->size();
 
     return arp;
@@ -237,6 +237,6 @@ void testFeatureSelection() {
 }
 
 int main(int argc, char const *argv[]) {
-    testFeatureSelection();
+    printDatasetStatistic();
     return 0;
 }
