@@ -2,9 +2,10 @@
 
 #include "data.h"
 #include "ml/ml.h"
+#include "ml/text.h"
 #include "utils.h"
 
-TEST(DataTest, User2DatasetTest) {
+TEST(DataTest, user2Dataset) {
     // construct user list
     unordered_map<long, User> *users = new unordered_map<long, User>();
     for (int i = 0; i < 10; i++) {
@@ -35,14 +36,42 @@ TEST(DataTest, User2DatasetTest) {
     delete ds;
 }
 
+TEST(DataTest, Tweet_isRetweet) {
+    Tweet t1("RT @xxxx:this is a retweet.");
+    Tweet t2("this isn\'t a retweet.");
+    Tweet t3("RT a fake retweet");
+    Tweet t4("");
+
+    EXPECT_TRUE(t1.isRetweet());
+    EXPECT_FALSE(t2.isRetweet());
+    EXPECT_FALSE(t3.isRetweet());
+    EXPECT_FALSE(t4.isRetweet());
+}
+
+TEST(DataTest, Tweet_containsUrl) {
+    Tweet t1("contains url http://some.where/blah/blah");
+    Tweet t2("contains url http://some.where");
+    Tweet t3("contains url https://some.where/blah/blah");
+    Tweet t4("contains url https://some.where");
+    Tweet t5("doesn't contain url");
+    Tweet t6("doesn't contain url. but contains a fake url some.where.fake");
+    Tweet t7("");
+
+    EXPECT_TRUE(t1.containsUrl());
+    EXPECT_TRUE(t2.containsUrl());
+    EXPECT_TRUE(t3.containsUrl());
+    EXPECT_TRUE(t4.containsUrl());
+    EXPECT_FALSE(t5.containsUrl());
+    EXPECT_FALSE(t6.containsUrl());
+    EXPECT_FALSE(t7.containsUrl());
+}
+
 TEST(UtilsTest, Counter) {
     vector<string> words = {"a", "b", "c", "a", "a", "c"};
     Counter<string> c;
     c.count(words);
 
     vector<pair<string, int>> *result = c.getTop();
-
-    LOG_VAR(*result);
 
     EXPECT_EQ(result->size(), 3);
     EXPECT_EQ((*result)[0].first, "a");
@@ -69,13 +98,9 @@ TEST(UtilsTest, SetOperation) {
     unordered_set<int> *s1CopyCopy = setUnion(s1, s1);
     unordered_set<int> *unionSet = setUnion(s1, s2);
 
-    LOG_VAR(*s1Copy);
     EXPECT_EQ(s1Copy->size(), 3);
-    LOG_VAR(*intersect);
     EXPECT_EQ(intersect->size(), 2);
-    LOG_VAR(*s1CopyCopy);
     EXPECT_EQ(s1CopyCopy->size(), 3);
-    LOG_VAR(*unionSet);
     EXPECT_EQ(unionSet->size(), 4);
 
     delete s1;
@@ -84,4 +109,40 @@ TEST(UtilsTest, SetOperation) {
     delete intersect;
     delete s1CopyCopy;
     delete unionSet;
+}
+
+TEST(TextTest, splitWords) {
+    string s = "This is a test. http://aaa.bbb.com/cc will be tokenized as one "
+               "word. !!!! and ??? will be removed.";
+    vector<string> *words = splitWords(s);
+    vector<string> expectedWords = {
+        "This", "is", "a", "test", "http://aaa.bbb.com/cc", "will", "be",
+        "tokenized", "as", "one", "word", "and", "will", "be", "removed"};
+
+    EXPECT_EQ(words->size(), expectedWords.size());
+
+    for (int i = 0; i < words->size(); i++) {
+        EXPECT_EQ(words->at(i), expectedWords[i]);
+    }
+
+    delete words;
+}
+
+TEST(TextTest, filterStopWords) {
+    auto *tokens =
+        toGrams("This is a test and the stops words will be removed. URL "
+                "http://aaa.bbb.ccc won't be removed.....!!!");
+    auto *stops = loadStops();
+
+    auto *result = filterStopWords(tokens, stops);
+    vector<string> expectedWords = {"test", "stop", "word", "remov", "url",
+                                    "http://aaa.bbb.ccc", "won", "remov"};
+
+    for (int i = 0; i < result->size(); i++) {
+        EXPECT_EQ(result->at(i), expectedWords[i]);
+    }
+
+    delete tokens;
+    delete stops;
+    delete result;
 }

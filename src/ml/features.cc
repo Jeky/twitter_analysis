@@ -57,7 +57,7 @@ void BiClassMutualInformation::train(Dataset *dataset) {
         if (featureCount % 1000 == 0) {
             LOG("Processed ", featureCount, " Features");
         }
-        for(int i = 0; i < dataset->size(); i++){
+        for (int i = 0; i < dataset->size(); i++) {
             if ((*dataset)[i].hasAttribute(kv.first)) {
                 if (cls == (*dataset)[i].getClassValue()) {
                     kv.second[0] += 1;

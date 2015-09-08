@@ -37,6 +37,11 @@ void toLowerString(string &word);
 
 void normalize(string &word);
 
+unordered_set<string> *loadStops();
+
+vector<string> *filterStopWords(vector<string> *tokens,
+                                unordered_set<string> *stops);
+
 vector<string> *toGrams(const string &text, int gram = 1);
 
 #endif

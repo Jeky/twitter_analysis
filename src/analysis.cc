@@ -8,22 +8,22 @@
 #include <iterator>
 
 void convertToDS() {
-    unordered_map<long, User> *spammers = loadSpammers();
-    unordered_map<long, User> *nonSpammers = loadSampledNonSpammers();
+    auto *spammers = loadSpammers();
+    auto *nonSpammers = loadSampledNonSpammers();
 
     LOG("User loaded. Convert users to Dataset...");
 
-    Dataset *spammerDS = user2Dataset(spammers);
+    auto *spammerDS = user2Dataset(spammers);
     delete spammers;
 
-    Dataset *nonSpammerDS = user2Dataset(nonSpammers);
+    auto *nonSpammerDS = user2Dataset(nonSpammers);
     delete nonSpammers;
 
     LOG("Save datasets...");
-    saveObject(spammerDS, PATH + "spammer.dat");
+    saveObject(spammerDS, SPAMMER_DS);
     delete spammerDS;
 
-    saveObject(nonSpammerDS, PATH + "nonspammer.dat");
+    saveObject(nonSpammerDS, NON_SPAMMER_DS);
     delete nonSpammerDS;
 }
 
@@ -59,51 +59,142 @@ Counter<string> *countTokens(unordered_map<long, User> *users,
     }
 }
 
+double collectAUCP(unordered_map<long, User> *users) {
+    double aucp = 0.0;
+    for (auto &kv : *users) {
+        int cut = 0;
+        for (auto &t : kv.second.getTweets()) {
+            if (t.containsUrl()) {
+                cut++;
+            }
+        }
+        aucp += 1.0 * cut / kv.second.getTweets().size();
+    }
+
+    aucp /= users->size();
+
+    return aucp;
+}
+
+double collectARP(unordered_map<long, User> *users) {
+    double arp = 0.0;
+    for (auto &kv : *users) {
+        int r = 0;
+        for (auto &t : kv.second.getTweets()) {
+            if (t.isRetweet()) {
+                r++;
+            }
+        }
+        arp += 1.0 * r / kv.second.getTweets().size();
+    }
+
+    arp /= users->size();
+
+    return arp;
+}
+
+void countByLen(const Counter<string> *counter, const string &path) {
+    LOG("Counting Tokens by Length into ", path);
+    Counter<int> lenCounter;
+    counter->eachEntry([&](const string &key, const int &value) {
+        lenCounter.count(key.size(), value);
+    });
+
+    auto *top = lenCounter.getTop();
+    writeFile(path, [&](ofstream &out) {
+        for (auto &i : *top) {
+            out << i.first << "\t" << i.second << endl;
+        }
+    });
+}
+
 void printDatasetStatistic() {
-    unordered_map<long, User> *spammers = loadSpammers();
-    unordered_map<long, User> *nonSpammers = loadSampledNonSpammers();
+    auto *spammers = loadSpammers();
+    auto *nonSpammers = loadSampledNonSpammers();
+
+    // average url contain percentage definition:
+    // aucp = user.containUrlTweets.size() / user.getTweets().size()
+    LOG("Counting Average URL Contains Percentage");
+    LOG_VAR(collectAUCP(spammers));
+    LOG_VAR(collectAUCP(nonSpammers));
+
+    // average retweet percentage definition:
+    // arp = user.retweets.size() / user.getTweets().size()
+    LOG("Counting Average Retweet Percentage");
+    LOG_VAR(collectARP(spammers));
+    LOG_VAR(collectARP(nonSpammers));
 
     LOG("Counting Tokens in Tweets from Spammers");
-    Counter<string> *spammerTokenCounter =
-        countTokens(spammers, SPAMMER_TOKEN_COUNTER);
+    auto *spammerTokenCounter = countTokens(spammers, SPAMMER_TOKEN_COUNTER);
 
     LOG("Counting Tokens in Tweets from NonSpammers");
-    Counter<string> *nonSpammerTokenCounter =
+    auto *nonSpammerTokenCounter =
         countTokens(nonSpammers, NON_SPAMMER_TOKEN_COUNTER);
+
+    LOG("Counting All Tokens in Tweets");
+    auto *allTokenCounter = countTokens(spammers, SPAMMER_TOKEN_COUNTER);
+    allTokenCounter->addCounter(*nonSpammerTokenCounter);
 
     delete spammers;
     delete nonSpammers;
 
-    unordered_set<string> *spammerTokens = spammerTokenCounter->getKeySet();
-    unordered_set<string> *nonSpammerTokens =
-        nonSpammerTokenCounter->getKeySet();
-    unordered_set<string> *sharedTokens =
-        setIntersection(spammerTokens, nonSpammerTokens);
-    unordered_set<string> *allTokens =
-        setUnion(spammerTokens, nonSpammerTokens);
+    countByLen(spammerTokenCounter, PATH + "spammer-len-dist.txt");
+    countByLen(nonSpammerTokenCounter, PATH + "non-spammer-len-dist.txt");
+    countByLen(allTokenCounter, PATH + "all-len-dist.txt");
+
+    auto *spammerTokens = spammerTokenCounter->getKeySet();
+    auto *nonSpammerTokens = nonSpammerTokenCounter->getKeySet();
+    auto *sharedTokens = setIntersection(spammerTokens, nonSpammerTokens);
+    auto *allTokens = setUnion(spammerTokens, nonSpammerTokens);
+
+    LOG("Before removing stops");
+    LOG_VAR(spammerTokens->size());
+    LOG_VAR(nonSpammerTokens->size());
+    LOG_VAR(sharedTokens->size());
+    LOG_VAR(allTokens->size());
+
+    delete spammerTokens;
+    delete nonSpammerTokens;
+    delete sharedTokens;
+    delete allTokens;
+
+    spammerTokenCounter->saveFrequency(SPAMMER_TOKEN_FREQ);
+    nonSpammerTokenCounter->saveFrequency(NON_SPAMMER_TOKEN_FREQ);
+    allTokenCounter->saveFrequency(ALL_TOKEN_FREQ);
+
+    LOG("After removing stops");
+    auto *stops = loadStops();
+    for (auto &k : *stops) {
+        spammerTokenCounter->deleteKey(k);
+        nonSpammerTokenCounter->deleteKey(k);
+        allTokenCounter->deleteKey(k);
+    }
+    
+    countByLen(spammerTokenCounter, PATH + "spammer-no-stops-len-dist.txt");
+    countByLen(nonSpammerTokenCounter, PATH + "non-spammer-no-stops-len-dist.txt");
+    countByLen(allTokenCounter, PATH + "all-no-stops-len-dist.txt");
+
+    spammerTokens = spammerTokenCounter->getKeySet();
+    nonSpammerTokens = nonSpammerTokenCounter->getKeySet();
+    sharedTokens = setIntersection(spammerTokens, nonSpammerTokens);
+    allTokens = setUnion(spammerTokens, nonSpammerTokens);
 
     LOG_VAR(spammerTokens->size());
     LOG_VAR(nonSpammerTokens->size());
     LOG_VAR(sharedTokens->size());
     LOG_VAR(allTokens->size());
 
-    spammerTokenCounter->saveFrequency(SPAMMER_TOKEN_FREQ);
-    nonSpammerTokenCounter->saveFrequency(NON_SPAMMER_TOKEN_FREQ);
-
-    spammerTokenCounter->addCounter(*nonSpammerTokenCounter);
-    spammerTokenCounter->saveFrequency(ALL_TOKEN_FREQ);
+    delete stops;
 
     delete spammerTokenCounter;
     delete nonSpammerTokenCounter;
-    delete sharedTokens;
-    delete allTokens;
+    delete allTokenCounter;
 }
 
 void testClassification() {
-    Dataset *spammerDS =
-        Dataset::loadDataset(PATH + "spammer.dat", SPAMMER_VALUE);
-    Dataset *nonSpammerDS =
-        Dataset::loadDataset(PATH + "nonspammer.dat", NON_SPAMMER_VALUE);
+    auto *spammerDS = Dataset::loadDataset(SPAMMER_DS, SPAMMER_VALUE);
+    auto *nonSpammerDS =
+        Dataset::loadDataset(NON_SPAMMER_DS, NON_SPAMMER_VALUE);
 
     Classifier *cls = new NaiveBayes();
     Evaluator eval;
@@ -123,16 +214,15 @@ void testClassification() {
 }
 
 void testFeatureSelection() {
-    Dataset *spammerDS =
-        Dataset::loadDataset(PATH + "spammer.dat", SPAMMER_VALUE);
-    Dataset *nonSpammerDS =
-        Dataset::loadDataset(PATH + "nonspammer.dat", NON_SPAMMER_VALUE);
+    auto *spammerDS = Dataset::loadDataset(SPAMMER_DS, SPAMMER_VALUE);
+    auto *nonSpammerDS =
+        Dataset::loadDataset(NON_SPAMMER_DS, NON_SPAMMER_VALUE);
 
-    Dataset *all = spammerDS;
+    auto *all = spammerDS;
     all->addDataset(*nonSpammerDS);
     delete nonSpammerDS;
 
-    FeatureSelector *selector = new BiClassMutualInformation();
+    auto *selector = new BiClassMutualInformation();
     selector->train(all);
 
     vector<pair<string, double>> *result = selector->getTopFeatureList();

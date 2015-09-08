@@ -5,6 +5,19 @@ ostream &operator<<(ostream &out, Tweet &t) {
     return out;
 }
 
+static const string RT_PREFIX = "RT @";
+
+bool Tweet::isRetweet() const { // see
+    // https://dev.twitter.com/overview/api/entities-in-twitter-objects
+    return !text.compare(0, RT_PREFIX.size(), RT_PREFIX);
+}
+
+static const regex URL_MATCHER(".*((http)|(https))://(\\w+|\\.|/)+.*");
+
+bool Tweet::containsUrl() const {
+    return regex_match(text.begin(), text.end(), URL_MATCHER);
+}
+
 void User::loadTweets() {
     string filename =
         (spammer ? SPAMMER_TWEET_PATH : NON_SPAMMER_TWEET_PATH) + to_string(id);

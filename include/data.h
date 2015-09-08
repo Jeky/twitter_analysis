@@ -2,6 +2,7 @@
 #define TWITTER_ANALYSIS_DATA_H
 
 #include <algorithm>
+#include <regex>
 
 #include "utils.h"
 #include "ml/ml.h"
@@ -16,6 +17,10 @@ class Tweet {
     Tweet(char const *text) { this->text = text; }
 
     string getText() const { return text; }
+
+    bool isRetweet() const;
+
+    bool containsUrl() const;
 
     friend ostream &operator<<(ostream &out, Tweet &t);
 

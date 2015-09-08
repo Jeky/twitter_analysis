@@ -42,6 +42,11 @@ static const string NON_SPAMMER_TOKEN_FREQ =
     PATH + string("non-spammer-token-frequency.txt");
 static const string ALL_TOKEN_FREQ = PATH + string("all-token-frequency.txt");
 
+static const string STOP_WORDS_LIST = PATH + string("stops.txt");
+
+static const string SPAMMER_DS = PATH + string("spammer.dat");
+static const string NON_SPAMMER_DS = PATH + string("nonspammer.dat");
+
 static const int SAMPLE_TWEET_SIZE = 61;
 
 static const double SPAMMER_VALUE = 1.0;
@@ -156,6 +161,12 @@ template <typename T> class Counter {
         }
     }
 
+    void eachEntry(function<void(const T &, const int &)> iterFunc) const {
+        for (auto &kv : counterMap) {
+            iterFunc(kv.first, kv.second);
+        }
+    }
+
     int &operator[](const T &t) {
         if (counterMap.find(t) == counterMap.end()) {
             counterMap[t] = 0;
@@ -172,8 +183,8 @@ template <typename T> class Counter {
     vector<pair<T, int>> *getTop() {
         vector<pair<T, int>> *v = mapToVector(&counterMap);
 
-        sort(v->begin(), v->end(), [](const pair<string, double> &left,
-                                      const pair<string, double> &right) {
+        sort(v->begin(), v->end(), [](const pair<T, double> &left,
+                                      const pair<T, double> &right) {
             return left.second > right.second;
         });
 
@@ -181,6 +192,8 @@ template <typename T> class Counter {
     }
 
     int size() { return counterMap.size(); }
+
+    void deleteKey(const T &key) { counterMap.erase(key); }
 
     unordered_set<T> *getKeySet() {
         unordered_set<T> *keySet = new unordered_set<T>();

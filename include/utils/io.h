@@ -32,6 +32,12 @@ template <typename T> void saveObject(T *t, const string filename) {
 
 template <typename T> T *loadObject(const string filename) {
     LOG("Start Loading Object from ", filename);
+
+    ifstream infile(filename);
+
+    if (!infile.good())
+        ERROR("Cannot find file ", filename);
+
     ifstream is(filename, ios::binary);
     cereal::BinaryInputArchive iarchive(is);
 
