@@ -30,6 +30,6 @@ if (test)
     # This is so you can do 'make test' to see all your tests run, instead of
     # manually running the executable runUnitTests to see those specific tests.
     add_test(runUnitTest ${EXECUTABLE_OUTPUT_PATH}/runUnitTest)
-else()
+else ()
     add_executable(analysis ${SOURCE_FILES} src/analysis.cc)
 endif ()
