@@ -36,14 +36,14 @@ Counter<string> *countTokens(unordered_map<long, User> *users,
 		LOG("Cannot Find ", path, ". Counting Tokens...");
 		infile.close();
 
-		Counter < string > *tokenCounter = new Counter<string>();
+		Counter<string> *tokenCounter = new Counter<string>();
 		int i = 0;
 		for (auto &kv : *users) {
 			if (i % 1000 == 0) {
 				LOG("Process ", i, " users");
 			}
 			for (auto &t : kv.second.getTweets()) {
-				vector < string > *words = toGrams(t.getText());
+				vector<string> *words = toGrams(t.getText());
 				tokenCounter->count(words);
 				delete words;
 			}
@@ -56,7 +56,7 @@ Counter<string> *countTokens(unordered_map<long, User> *users,
 		LOG("Loading Data from ", path);
 		infile.close();
 
-		return loadObject < Counter < string >> (path);
+		return loadObject<Counter<string>>(path);
 	}
 }
 
@@ -255,7 +255,7 @@ void randomSampleRetweets(int count = 20) {
 	const string path = PATH + "spammer-retweets.obj";
 
 	ifstream infile(path);
-	vector < Tweet > *retweets;
+	vector<Tweet> *retweets;
 
 	if (!infile.good()) {
 		LOG("Cannot Find ", path, ". Collecting Retweets");
@@ -277,7 +277,7 @@ void randomSampleRetweets(int count = 20) {
 	} else {
 		LOG("Loading Reteets from ", path);
 		infile.close();
-		retweets = loadObject(path);
+		retweets = loadObject<vector<Tweet>>(path);
 	}
 
 	// shuffle retweets
