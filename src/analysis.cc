@@ -251,7 +251,44 @@ void testFeatureSelection() {
 	delete all;
 }
 
+void randomSampleRetweets(int count = 20) {
+	const string path = PATH + "spammer-retweets.obj";
+
+	ifstream infile(path);
+	vector < Tweet > *retweets;
+
+	if (!infile.good()) {
+		LOG("Cannot Find ", path, ". Collecting Retweets");
+		infile.close();
+
+		retweets = new vector<Tweet>();
+
+		auto *spammers = loadSpammers();
+		for (auto & kv : *spammers) {
+			for (auto & t : kv.second.getTweets()) {
+				if (t.isRetweet()) {
+					retweets->push_back(t);
+				}
+			}
+		}
+
+		delete spammers;
+		saveObject(retweets, path);
+	} else {
+		LOG("Loading Reteets from ", path);
+		infile.close();
+		retweets = loadObject(path);
+	}
+
+	// shuffle retweets
+	random_shuffle(retweets->begin(), retweets->end());
+
+	for (int i = 0; i < count; i++) {
+		LOG((*retweets)[i].getText());
+	}
+}
+
 int main(int argc, char const *argv[]) {
-	printDatasetStatistic();
+	randomSampleRetweets();
 	return 0;
 }
