@@ -77,7 +77,7 @@ double collectAUCP(unordered_map<long, User> *users) {
 	return aucp;
 }
 
-double collectARP(unordered_map<long, User> *users) {
+double collectARR(unordered_map<long, User> *users) {
 	double arp = 0.0;
 	for (auto &kv : *users) {
 		int r = 0;
@@ -128,15 +128,15 @@ void printDatasetStatistic() {
 
 	// average url contain percentage definition:
 	// aucp = user.containUrlTweets.size() / user.getTweets().size()
-	LOG("Counting Average URL Contains Percentage");
-	LOG_VAR(collectAUCP(spammers));
-	LOG_VAR(collectAUCP(nonSpammers));
+//	LOG("Counting Average URL Contains Percentage");
+//	LOG_VAR(collectAUCP(spammers));
+//	LOG_VAR(collectAUCP(nonSpammers));
 
-	// average retweet percentage definition:
-	// arp = user.retweets.size() / user.getTweets().size()
-	LOG("Counting Average Retweet Percentage");
-	LOG_VAR(collectARP(spammers));
-	LOG_VAR(collectARP(nonSpammers));
+	// average retweet rate definition:
+	// arR = user.retweets.size() / user.getTweets().size()
+	LOG("Counting Average Retweet Rate");
+	LOG_VAR(collectARR(spammers));
+	LOG_VAR(collectARR(nonSpammers));
 
 	LOG("Counting Tokens in Tweets from Spammers");
 	auto *spammerTokenCounter = countTokens(spammers, SPAMMER_TOKEN_COUNTER);
@@ -289,6 +289,6 @@ void randomSampleRetweets(int count = 20) {
 }
 
 int main(int argc, char const *argv[]) {
-	randomSampleRetweets();
+	printDatasetStatistic();
 	return 0;
 }
