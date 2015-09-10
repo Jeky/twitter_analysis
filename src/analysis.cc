@@ -109,7 +109,7 @@ void countByLen(const Counter<string> *counter, const string &path) {
 	});
 }
 
-int countTweets(const unordered_map<long, User> *users) {
+int countTweets(unordered_map<long, User> *users) {
 	int count = 0;
 	for (auto & kv : *users) {
 		count += kv.second.getTweets().size();
