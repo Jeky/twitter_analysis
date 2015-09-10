@@ -10,8 +10,8 @@ static const string LOWER_RT_PREFIX = "rt";
 
 bool Tweet::isRetweet() const { // see
 	// https://dev.twitter.com/overview/api/entities-in-twitter-objects
-	return !(text.compare(0, RT_PREFIX.size(), RT_PREFIX)
-			|| text.compare(0, LOWER_RT_PREFIX.size(), LOWER_RT_PREFIX));
+	return text.compare(0, RT_PREFIX.size(), RT_PREFIX) == 0
+			|| text.compare(0, LOWER_RT_PREFIX.size(), LOWER_RT_PREFIX) == 0;
 }
 
 static const regex URL_MATCHER(".*((http)|(https))://(\\w+|\\.|/)+.*");
