@@ -217,7 +217,7 @@ void testFeatureSelection() {
     auto *spammerDS = Dataset::loadDataset(SPAMMER_DS, SPAMMER_VALUE);
     auto *nonSpammerDS =
         Dataset::loadDataset(NON_SPAMMER_DS, NON_SPAMMER_VALUE);
-
+        
     auto *all = spammerDS;
     all->addDataset(*nonSpammerDS);
     delete nonSpammerDS;
