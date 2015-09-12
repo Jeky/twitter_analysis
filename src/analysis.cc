@@ -135,7 +135,7 @@ void printDatasetStatistic() {
         countTokens(nonSpammers, NON_SPAMMER_TOKEN_COUNTER);
 
     LOG("Counting All Tokens in Tweets");
-    auto *allTokenCounter = countTokens(spammers, SPAMMER_TOKEN_COUNTER);
+    auto *allTokenCounter = spammerTokenCounter->clone();
     allTokenCounter->addCounter(*nonSpammerTokenCounter);
 
     delete spammers;
@@ -277,7 +277,47 @@ void randomSampleRetweets(int count = 20) {
     }
 }
 
+vector<double> *collectRR(unordered_map<long, User> *users){
+	vector<double> *rr = new vector<double>();
+
+    for (auto &kv : *users) {
+        int r = 0;
+        for (auto &t : kv.second.getTweets()) {
+            if (t.isRetweet()) {
+                r++;
+            }
+        }
+        rr->push_back(1.0 * r / kv.second.getTweets().size());
+    }
+
+	return rr;
+}
+
+void saveRR(){
+    auto *spammers = loadSpammers();
+    auto *nonSpammers = loadSampledNonSpammers();
+
+    writeFile(PATH + "spammer-retweet-rate.txt", [&](ofstream &out){
+        vector<double> *rr = collectRR(spammers);
+    	for(auto &r : *rr){
+    		out << r << endl;
+    	}
+    	delete rr;
+    });
+
+    writeFile(PATH + "non-spammer-retweet-rate.txt", [&](ofstream &out){
+        vector<double> *rr = collectRR(nonSpammers);
+    	for(auto &r : *rr){
+    		out << r << endl;
+    	}
+    	delete rr;
+    });
+
+    delete spammers;
+    delete nonSpammers;
+}
+
 int main(int argc, char const *argv[]) {
-    printDatasetStatistic();
+	saveRR();
     return 0;
 }

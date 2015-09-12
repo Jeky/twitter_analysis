@@ -140,7 +140,13 @@ vector<pair<K, V>> *mapToVector(unordered_map<K, V> *map) {
 
 template <typename T> class Counter {
   public:
-    void count(const T &t, int number) {
+	Counter<T>(){}
+
+	Counter<T>(const Counter<T> &c){
+		this->counterMap = c.counterMap;
+	}
+
+	void count(const T &t, int number) {
         if (counterMap.find(t) == counterMap.end()) {
             counterMap[t] = 0;
         }
@@ -243,6 +249,16 @@ template <typename T> class Counter {
     Counter<T> &operator+=(const Counter<T> &c) {
         addCounter(c);
         return *this;
+    }
+
+    void operator=(const Counter<T> &c){
+    	this->counterMap = c.counterMap;
+    }
+
+    Counter<T> *clone(){
+    	Counter<T> *c = new Counter<T>();
+    	c->counterMap = this->counterMap;
+    	return c;
     }
 
     template <typename Archive> void serialize(Archive &ar) { ar(counterMap); }

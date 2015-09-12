@@ -140,9 +140,11 @@ Dataset *user2Dataset(unordered_map<long, User> *users, int gramLen) {
 
         for (auto &t : kv.second.getTweets()) {
             vector<string> *grams = toGrams(t.getText(), gramLen);
-            for (auto &g : *grams) {
+            vector<string> *tokens = filterSpecialWords(grams);
+            for (auto &g : *tokens) {
                 ins[g] += 1.0;
             };
+            delete tokens;
             delete grams;
         };
 
