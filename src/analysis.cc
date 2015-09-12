@@ -317,7 +317,50 @@ void saveRR(){
     delete nonSpammers;
 }
 
+void collectTweetDist(unordered_map<long, User> *users, const string &fname){
+	Counter<int> allTokenCounter;
+	Counter<int> removeSpecialTokenCounter;
+
+	int i = 0;
+	for(auto &kv : *users){
+        if (i % 1000 == 0) {
+            LOG("Process ", i, " users");
+        }
+		for(auto &t : kv.second.getTweets()){
+            vector<string> *tokens = toGrams(t.getText());
+            allTokenCounter.count(tokens->size());
+            vector<string> *removeSpecialTokens = filterSpecialWords(tokens);
+            removeSpecialTokenCounter.count(removeSpecialTokens->size());
+            delete tokens;
+            delete removeSpecialTokens;
+		}
+		i++;
+	}
+
+	writeFile(PATH + fname + "-tweet-len-dist-all.txt", [&](ofstream &out){
+		allTokenCounter.eachEntry([&](const int &k, const int &v){
+			out << k << "\t" << v << endl;
+		});
+	});
+
+	writeFile(PATH + fname + "-tweet-len-dist-rst.txt", [&](ofstream &out){
+		removeSpecialTokenCounter.eachEntry([&](const int &k, const int &v){
+			out << k << "\t" << v << endl;
+		});
+	});
+}
+
+void tweetDistAnalysis(){
+    auto *spammers = loadSpammers();
+    collectTweetDist(spammers, "spammer");
+    delete spammers;
+
+    auto *nonSpammers = loadSampledNonSpammers();
+    collectTweetDist(nonSpammers, "non-spammer");
+    delete nonSpammers;
+}
+
 int main(int argc, char const *argv[]) {
-	saveRR();
+	tweetDistAnalysis();
     return 0;
 }
