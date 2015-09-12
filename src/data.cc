@@ -5,13 +5,15 @@ ostream &operator<<(ostream &out, Tweet &t) {
 	return out;
 }
 
-static const string RT_PREFIX = "RT";
-static const string LOWER_RT_PREFIX = "rt";
+static const string RT_PREFIX = "rt";
+static const string VIA_RT_PREFIX = "via";
 
 bool Tweet::isRetweet() const { // see
 	// https://dev.twitter.com/overview/api/entities-in-twitter-objects
-	return text.compare(0, RT_PREFIX.size(), RT_PREFIX) == 0;
-			//|| text.compare(0, LOWER_RT_PREFIX.size(), LOWER_RT_PREFIX) == 0;
+	string s = text;
+	toLowerString(s);
+	return s.compare(0, RT_PREFIX.size(), RT_PREFIX) == 0;
+			|| s.compare(0, LOWER_RT_PREFIX.size(), VIA_RT_PREFIX) == 0;
 }
 
 static const regex URL_MATCHER(".*((http)|(https))://(\\w+|\\.|/)+.*");
