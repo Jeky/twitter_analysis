@@ -1,7 +1,7 @@
 #include "ml/text.h"
 
 vector<string> *splitWords(const string &text) {
-    regex rgx("((http)|(https))://(\\w+|\\.|/)+|\\w+");
+    regex rgx("((http)|(https))://(\\w+|\\.|/)+|\\w+|@\\w+");
     vector<string> *words = new vector<string>();
     for (sregex_iterator it(text.begin(), text.end(), rgx), it_end;
          it != it_end; ++it) {
@@ -36,6 +36,9 @@ vector<string> *filterStopWords(vector<string> *tokens,
                                 unordered_set<string> *stops) {
     vector<string> *filteredTokens = new vector<string>();
     for (auto &s : *tokens) {
+        if (s[0] == '@') {
+            continue;
+        }
         if (stops->find(s) == stops->end()) {
             filteredTokens->push_back(s);
         }

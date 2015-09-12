@@ -183,8 +183,8 @@ template <typename T> class Counter {
     vector<pair<T, int>> *getTop() {
         vector<pair<T, int>> *v = mapToVector(&counterMap);
 
-        sort(v->begin(), v->end(), [](const pair<T, double> &left,
-                                      const pair<T, double> &right) {
+        sort(v->begin(), v->end(),
+             [](const pair<T, double> &left, const pair<T, double> &right) {
             return left.second > right.second;
         });
 
