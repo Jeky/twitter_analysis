@@ -30,34 +30,23 @@ void convertToDS() {
 
 Counter<string> *countTokens(unordered_map<long, User> *users,
                              const string &path) {
-    ifstream infile(path);
-
-    if (!infile.good()) {
-        LOG("Cannot Find ", path, ". Counting Tokens...");
-        infile.close();
-
-        Counter<string> *tokenCounter = new Counter<string>();
-        int i = 0;
-        for (auto &kv : *users) {
-            if (i % 1000 == 0) {
-                LOG("Process ", i, " users");
-            }
-            for (auto &t : kv.second.getTweets()) {
-                vector<string> *words = toGrams(t.getText());
-                tokenCounter->count(words);
-                delete words;
-            }
-            i++;
+    Counter<string> *tokenCounter = new Counter<string>();
+    int i = 0;
+    for (auto &kv : *users) {
+        if (i % 1000 == 0) {
+            LOG("Process ", i, " users");
         }
-
-        saveObject(tokenCounter, path);
-        return tokenCounter;
-    } else {
-        LOG("Loading Data from ", path);
-        infile.close();
-
-        return loadObject<Counter<string>>(path);
+        for (auto &t : kv.second.getTweets()) {
+            vector<string> *words = toGrams(t.getText());
+            vector<string> *tokens = filterSpecialWords(words);
+            tokenCounter->count(tokens);
+            delete words;
+            delete tokens;
+        }
+        i++;
     }
+
+    return tokenCounter;
 }
 
 double collectAUCP(unordered_map<long, User> *users) {

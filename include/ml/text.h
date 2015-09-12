@@ -42,6 +42,8 @@ unordered_set<string> *loadStops();
 vector<string> *filterStopWords(vector<string> *tokens,
                                 unordered_set<string> *stops);
 
+vector<string> *filterSpecialWords(vector<string> *tokens);
+
 vector<string> *toGrams(const string &text, int gram = 1);
 
 #endif

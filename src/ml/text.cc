@@ -1,7 +1,7 @@
 #include "ml/text.h"
 
 vector<string> *splitWords(const string &text) {
-    regex rgx("((http)|(https))://(\\w+|\\.|/)+|\\w+|@\\w+");
+    regex rgx("((http)|(https))://(\\w+|\\.|/)+|\\w+|@\\w+|#\\w+");
     vector<string> *words = new vector<string>();
     for (sregex_iterator it(text.begin(), text.end(), rgx), it_end;
          it != it_end; ++it) {
@@ -17,7 +17,7 @@ void toLowerString(string &word) {
 
 void normalize(string &word) {
     toLowerString(word);
-    if (word.find("http://") != 0) {
+    if (word.find("http://") != 0 && word[0] != '#' && word[0] != '@') {
         Porter2Stemmer::stem(word);
     }
 }
@@ -32,13 +32,21 @@ unordered_set<string> *loadStops() {
     return stops;
 }
 
+vector<string> *filterSpecialWords(vector<string> *tokens) {
+    vector<string> *filteredTokens = new vector<string>();
+    for (auto &s : *tokens) {
+        if (s.find("http://") != 0 && s[0] != '#' && s[0] != '@') {
+            filteredTokens->push_back(s);
+        }
+    }
+
+    return filteredTokens;
+}
+
 vector<string> *filterStopWords(vector<string> *tokens,
                                 unordered_set<string> *stops) {
     vector<string> *filteredTokens = new vector<string>();
     for (auto &s : *tokens) {
-        if (s[0] == '@') {
-            continue;
-        }
         if (stops->find(s) == stops->end()) {
             filteredTokens->push_back(s);
         }
