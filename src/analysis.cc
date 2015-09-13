@@ -360,7 +360,13 @@ void tweetDistAnalysis(){
     delete nonSpammers;
 }
 
+
+
 int main(int argc, char const *argv[]) {
-	tweetDistAnalysis();
+	//tweetDistAnalysis();
+	convertToDS();
+	testClassification();
+	testFeatureSelection();
+
     return 0;
 }
