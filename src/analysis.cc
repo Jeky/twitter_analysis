@@ -277,8 +277,8 @@ void randomSampleRetweets(int count = 20) {
     }
 }
 
-vector<double> *collectRR(unordered_map<long, User> *users){
-	vector<double> *rr = new vector<double>();
+vector<double> *collectRR(unordered_map<long, User> *users) {
+    vector<double> *rr = new vector<double>();
 
     for (auto &kv : *users) {
         int r = 0;
@@ -290,67 +290,65 @@ vector<double> *collectRR(unordered_map<long, User> *users){
         rr->push_back(1.0 * r / kv.second.getTweets().size());
     }
 
-	return rr;
+    return rr;
 }
 
-void saveRR(){
+void saveRR() {
     auto *spammers = loadSpammers();
     auto *nonSpammers = loadSampledNonSpammers();
 
-    writeFile(PATH + "spammer-retweet-rate.txt", [&](ofstream &out){
+    writeFile(PATH + "spammer-retweet-rate.txt", [&](ofstream &out) {
         vector<double> *rr = collectRR(spammers);
-    	for(auto &r : *rr){
-    		out << r << endl;
-    	}
-    	delete rr;
+        for (auto &r : *rr) {
+            out << r << endl;
+        }
+        delete rr;
     });
 
-    writeFile(PATH + "non-spammer-retweet-rate.txt", [&](ofstream &out){
+    writeFile(PATH + "non-spammer-retweet-rate.txt", [&](ofstream &out) {
         vector<double> *rr = collectRR(nonSpammers);
-    	for(auto &r : *rr){
-    		out << r << endl;
-    	}
-    	delete rr;
+        for (auto &r : *rr) {
+            out << r << endl;
+        }
+        delete rr;
     });
 
     delete spammers;
     delete nonSpammers;
 }
 
-void collectTweetDist(unordered_map<long, User> *users, const string &fname){
-	Counter<int> allTokenCounter;
-	Counter<int> removeSpecialTokenCounter;
+void collectTweetDist(unordered_map<long, User> *users, const string &fname) {
+    Counter<int> allTokenCounter;
+    Counter<int> removeSpecialTokenCounter;
 
-	int i = 0;
-	for(auto &kv : *users){
+    int i = 0;
+    for (auto &kv : *users) {
         if (i % 1000 == 0) {
             LOG("Process ", i, " users");
         }
-		for(auto &t : kv.second.getTweets()){
-            vector<string> *tokens = toGrams(t.getText());
+        for (auto &t : kv.second.getTweets()) {
+            vector<string> *tokens = splitWords(t.getText());
             allTokenCounter.count(tokens->size());
             vector<string> *removeSpecialTokens = filterSpecialWords(tokens);
             removeSpecialTokenCounter.count(removeSpecialTokens->size());
             delete tokens;
             delete removeSpecialTokens;
-		}
-		i++;
-	}
+        }
+        i++;
+    }
 
-	writeFile(PATH + fname + "-tweet-len-dist-all.txt", [&](ofstream &out){
-		allTokenCounter.eachEntry([&](const int &k, const int &v){
-			out << k << "\t" << v << endl;
-		});
-	});
+    writeFile(PATH + fname + "-tweet-len-dist-all.txt", [&](ofstream &out) {
+        allTokenCounter.eachEntry(
+            [&](const int &k, const int &v) { out << k << "\t" << v << endl; });
+    });
 
-	writeFile(PATH + fname + "-tweet-len-dist-rst.txt", [&](ofstream &out){
-		removeSpecialTokenCounter.eachEntry([&](const int &k, const int &v){
-			out << k << "\t" << v << endl;
-		});
-	});
+    writeFile(PATH + fname + "-tweet-len-dist-rst.txt", [&](ofstream &out) {
+        removeSpecialTokenCounter.eachEntry(
+            [&](const int &k, const int &v) { out << k << "\t" << v << endl; });
+    });
 }
 
-void tweetDistAnalysis(){
+void tweetDistAnalysis() {
     auto *spammers = loadSpammers();
     collectTweetDist(spammers, "spammer");
     delete spammers;
@@ -360,13 +358,11 @@ void tweetDistAnalysis(){
     delete nonSpammers;
 }
 
-
-
 int main(int argc, char const *argv[]) {
-	//tweetDistAnalysis();
-	convertToDS();
-	testClassification();
-	testFeatureSelection();
+    tweetDistAnalysis();
+    convertToDS();
+    testClassification();
+    testFeatureSelection();
 
     return 0;
 }

@@ -4,4 +4,4 @@ echo "[Compiling].............................................................."
 cmake -Dtest=OFF
 make
 echo "[Running]................................................................"
-build/analysis
+script -q /dev/null time build/analysis|tee log.txt

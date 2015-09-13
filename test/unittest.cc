@@ -143,7 +143,8 @@ TEST(TextTest, filterStopWords) {
 
     auto *result = filterStopWords(tokens, stops);
     vector<string> expectedWords = {"test", "stop", "word", "remov", "url",
-                                    "http://aaa.bbb.ccc", "won", "remov", "@username"};
+                                    "http://aaa.bbb.ccc", "won", "remov",
+                                    "@username"};
 
     for (int i = 0; i < result->size(); i++) {
         EXPECT_EQ(expectedWords[i], result->at(i));
