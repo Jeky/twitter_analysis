@@ -1,5 +1,6 @@
 .DS_Store
 .idea
+log.txt
 CMakeFiles
 CMakeCache.txt
 Makefile
