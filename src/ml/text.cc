@@ -373,17 +373,16 @@ const static unordered_map<string, string> HTML_ESCAPE_TEXT_MAP = {
     {"&gt;", ">"},
 };
 
-void unescapeCode(stringstream &ss, regex_token_iterator<string::iterator> &e) {
-	LOG_VAR(*e);
+void unescapeCode(string &ss, regex_token_iterator<string::iterator> &e) {
     auto mapIt = HTML_ESCAPE_CODE_MAP.find(*e);
     if (mapIt != HTML_ESCAPE_CODE_MAP.end()) {
-        ss << mapIt->second;
+        ss += mapIt->second;
     } else {
         mapIt = HTML_ESCAPE_TEXT_MAP.find(*e);
         if (mapIt != HTML_ESCAPE_TEXT_MAP.end()) {
-            ss << mapIt->second;
+            ss += mapIt->second;
         } else {
-            ss << " ";
+            ss += " ";
         }
     }
     e++;
@@ -392,28 +391,25 @@ void unescapeCode(stringstream &ss, regex_token_iterator<string::iterator> &e) {
 void unescapeHTML(string &s) {
     string newStr;
     regex rgx("&#\\w+;|&\\w+;");
-    stringstream ss;
     regex_token_iterator<string::iterator> rend;
     regex_token_iterator<string::iterator> e(s.begin(), s.end(), rgx);
     regex_token_iterator<string::iterator> o(s.begin(), s.end(), rgx, -1);
 
-    while (e != rend && o != rend) {
-        ss << *o++;
-        unescapeCode(ss, e);
+    while (o != rend && e != rend) {
+        newStr += *o++;
+        unescapeCode(newStr, e);
     }
     while (o != rend) {
-        ss << *o++;
+        newStr += *o++;
     }
     while (e != rend) {
-        unescapeCode(ss, e);
+        unescapeCode(newStr, e);
     }
-    ss >> newStr;
     s = newStr;
 }
 
 vector<string> *splitWords(const string &text) {
-    regex rgx(
-        "((http)|(https))://(\\w+|\\.|/)+|\\w+|@\\w+|#\\w+|#&\\w+;|&\\w+;");
+    regex rgx("((http)|(https))://(\\w+|\\.|/)+|\\w+|@\\w+|#\\w+");
     vector<string> *words = new vector<string>();
     for (sregex_iterator it(text.begin(), text.end(), rgx), it_end;
          it != it_end; ++it) {
@@ -429,8 +425,7 @@ void toLowerString(string &word) {
 
 void normalize(string &word) {
     toLowerString(word);
-    if (word.find("http://") != 0 && word[0] != '#' && word[0] != '@' &&
-        word[0] != '&') {
+    if (word.find("http://") != 0 && word[0] != '#' && word[0] != '@') {
         Porter2Stemmer::stem(word);
     }
 }
@@ -448,8 +443,7 @@ unordered_set<string> *loadStops() {
 vector<string> *filterSpecialWords(vector<string> *tokens) {
     vector<string> *filteredTokens = new vector<string>();
     for (auto &s : *tokens) {
-        if (s.find("http://") != 0 && s[0] != '#' && s[0] != '@' &&
-            s[0] != '&') {
+        if (s.find("http://") != 0 && s[0] != '#' && s[0] != '@') {
             filteredTokens->push_back(s);
         }
     }
