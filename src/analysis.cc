@@ -317,6 +317,15 @@ void saveRR() {
     delete nonSpammers;
 }
 
+bool isDigitStr(const string &str) {
+    for (int i = 0; i < str.size(); i++) {
+        char c = str.c_str()[i];
+        if (c < '0' || c > '9')
+            return false;
+    }
+    return true;
+}
+
 void collectTweetDist(unordered_map<long, User> *users, const string &fname) {
     Counter<int> allTokenCounter;
     Counter<int> removeSpecialTokenCounter;
@@ -330,6 +339,14 @@ void collectTweetDist(unordered_map<long, User> *users, const string &fname) {
             vector<string> *tokens = splitWords(t.getText());
             allTokenCounter.count(tokens->size());
             vector<string> *removeSpecialTokens = filterSpecialWords(tokens);
+            if (removeSpecialTokens->size() > 100) {
+                //if (!isDigitStr(tokens->at(0))) {
+                    LOG_VAR(kv.second.getId());
+                    LOG_VAR(t.getText());
+                    LOG_VAR(*removeSpecialTokens);
+                    ERROR("Error Here");
+                //}
+            }
             removeSpecialTokenCounter.count(removeSpecialTokens->size());
             delete tokens;
             delete removeSpecialTokens;
@@ -360,9 +377,9 @@ void tweetDistAnalysis() {
 
 int main(int argc, char const *argv[]) {
     tweetDistAnalysis();
-    convertToDS();
+    /*convertToDS();
     testClassification();
     testFeatureSelection();
-
+*/
     return 0;
 }
