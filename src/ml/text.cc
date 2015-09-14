@@ -374,6 +374,7 @@ const static unordered_map<string, string> HTML_ESCAPE_TEXT_MAP = {
 };
 
 void unescapeCode(stringstream &ss, regex_token_iterator<string::iterator> &e) {
+	LOG_VAR(*e);
     auto mapIt = HTML_ESCAPE_CODE_MAP.find(*e);
     if (mapIt != HTML_ESCAPE_CODE_MAP.end()) {
         ss << mapIt->second;
@@ -390,7 +391,7 @@ void unescapeCode(stringstream &ss, regex_token_iterator<string::iterator> &e) {
 
 void unescapeHTML(string &s) {
     string newStr;
-    regex rgx("#&\\w+;|&\\w+;");
+    regex rgx("&#\\w+;|&\\w+;");
     stringstream ss;
     regex_token_iterator<string::iterator> rend;
     regex_token_iterator<string::iterator> e(s.begin(), s.end(), rgx);
