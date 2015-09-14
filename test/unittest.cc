@@ -122,11 +122,9 @@ TEST(TextTest, splitWords) {
                "also a token.";
     vector<string> *words = splitWords(s);
     vector<string> expectedWords = {
-        "This",      "is",       "a",         "test", "http://aaa.bbb.com/cc",
-        "will",      "be",       "tokenized", "as",   "one",
-        "word",      "and",      "will",      "be",   "removed",
-        "@username", "#hashtag", "are",       "also", "a",
-        "token"};
+        "This", "is", "a", "test", "http://aaa.bbb.com/cc", "will", "be",
+        "tokenized", "as", "one", "word", "and", "will", "be", "removed",
+        "@username", "#hashtag", "are", "also", "a", "token"};
 
     EXPECT_EQ(expectedWords.size(), words->size());
 
@@ -144,9 +142,9 @@ TEST(TextTest, filterStopWords) {
     auto *stops = loadStops();
 
     auto *result = filterStopWords(tokens, stops);
-    vector<string> expectedWords = {"test",  "stop",  "word",
-                                    "remov", "url",   "http://aaa.bbb.ccc",
-                                    "won",   "remov", "@username"};
+    vector<string> expectedWords = {"test", "stop", "word", "remov", "url",
+                                    "http://aaa.bbb.ccc", "won", "remov",
+                                    "@username"};
 
     for (int i = 0; i < result->size(); i++) {
         EXPECT_EQ(expectedWords[i], result->at(i));
@@ -155,4 +153,20 @@ TEST(TextTest, filterStopWords) {
     delete tokens;
     delete stops;
     delete result;
+}
+
+TEST(TextTest, unescapeHTML) {
+    string s = "&amp;lt;3&amp;lt;3&amp;lt;3&amp;lt;3&amp;lt;3&amp;lt;37&amp;lt;"
+               "3&amp;lt;3&amp;lt;3&amp;lt;3&amp;lt;3&amp;lt;3&amp;lt;3&amp;lt;"
+               "3&amp;lt;3&amp;lt;3&amp;lt;3&amp;lt;3&amp;lt;3&amp;lt;3&amp;lt;"
+               "3&amp;lt;3&amp;lt;3&amp;lt;3&amp;lt;3&amp;lt;3&amp;lt;3&amp;lt;"
+               "3&amp;lt;3&amp;lt;3&amp;lt;3&amp;lt;3&amp;lt;3&amp;lt;3&amp;lt;"
+               "3&amp;lt;3&amp;lt;3&amp;lt;3&amp;lt;3&amp;lt;3&amp;lt;3&amp;lt;"
+               "3&amp;lt;3&amp;lt;3&amp;lt;3&amp;lt;3&amp;lt;3&amp;lt;3&amp;lt;"
+               "3&amp;lt;3&amp;lt;";
+    unescapeHTML(s);
+    LOG_VAR(s);
+    unescapeHTML(s);
+    LOG_VAR(s);
+    EXPECT_TRUE(true);
 }

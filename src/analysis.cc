@@ -337,15 +337,19 @@ void collectTweetDist(unordered_map<long, User> *users, const string &fname) {
         }
         for (auto &t : kv.second.getTweets()) {
             vector<string> *tokens = splitWords(t.getText());
+            if (tokens->size() > 50) {
+            	LOG("Found Large Tweet:");
+                LOG_VAR(kv.second.getId());
+                LOG_VAR(t.getText());
+                LOG_VAR(*tokens);
+            }
             allTokenCounter.count(tokens->size());
             vector<string> *removeSpecialTokens = filterSpecialWords(tokens);
-            if (removeSpecialTokens->size() > 100) {
-                //if (!isDigitStr(tokens->at(0))) {
-                    LOG_VAR(kv.second.getId());
-                    LOG_VAR(t.getText());
-                    LOG_VAR(*removeSpecialTokens);
-                    ERROR("Error Here");
-                //}
+            if (removeSpecialTokens->size() > 50) {
+            	LOG("Found Large Tweet After Removing Special Tokens:");
+                LOG_VAR(kv.second.getId());
+                LOG_VAR(t.getText());
+                LOG_VAR(*removeSpecialTokens);
             }
             removeSpecialTokenCounter.count(removeSpecialTokens->size());
             delete tokens;

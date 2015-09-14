@@ -27,6 +27,7 @@ void User::loadTweets() {
         (spammer ? SPAMMER_TWEET_PATH : NON_SPAMMER_TWEET_PATH) + to_string(id);
 
     readFile(filename, false, [&](int index, string &line) {
+    	while(unescapeHTML(line)){}
         tweets.push_back(Tweet(line));
         return true;
     });
@@ -85,15 +86,14 @@ unordered_map<long, User> *loadSpammers() {
 unordered_map<long, User> *loadSampledNonSpammers() {
     return loadData(NON_SPAMMER_DATA_PATH, SAMPLED_NON_SPAMMER_ID_LIST, false,
                     [](unordered_map<long, User> *users) {
-                        for (auto &kv : *users) {
-                            random_shuffle(kv.second.getTweets().begin(),
-                                           kv.second.getTweets().end());
-                            kv.second.getTweets().erase(
-                                kv.second.getTweets().begin() +
-                                    SAMPLE_TWEET_SIZE,
-                                kv.second.getTweets().end());
-                        }
-                    });
+        for (auto &kv : *users) {
+            random_shuffle(kv.second.getTweets().begin(),
+                           kv.second.getTweets().end());
+            kv.second.getTweets().erase(kv.second.getTweets().begin() +
+                                            SAMPLE_TWEET_SIZE,
+                                        kv.second.getTweets().end());
+        }
+    });
 }
 
 void sampleNonSpammers() {
