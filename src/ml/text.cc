@@ -388,7 +388,7 @@ void unescapeCode(stringstream &ss, regex_token_iterator<string::iterator> &e) {
     e++;
 }
 
-bool unescapeHTML(string &s) {
+void unescapeHTML(string &s) {
     string newStr;
     regex rgx("#&\\w+;|&\\w+;");
     stringstream ss;
@@ -396,27 +396,18 @@ bool unescapeHTML(string &s) {
     regex_token_iterator<string::iterator> e(s.begin(), s.end(), rgx);
     regex_token_iterator<string::iterator> o(s.begin(), s.end(), rgx, -1);
 
-    if(e == rend){
-    	return false;
-    }
-
-    string first = *e;
-    if (s.compare(0, first.size(), first) == 0) {
-        unescapeCode(ss, e);
-    }
     while (e != rend && o != rend) {
         ss << *o++;
         unescapeCode(ss, e);
     }
     while (o != rend) {
-        ss << *o;
+        ss << *o++;
     }
     while (e != rend) {
         unescapeCode(ss, e);
     }
     ss >> newStr;
     s = newStr;
-    return true;
 }
 
 vector<string> *splitWords(const string &text) {

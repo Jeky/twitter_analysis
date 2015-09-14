@@ -164,9 +164,9 @@ TEST(TextTest, unescapeHTML) {
                "3&amp;lt;3&amp;lt;3&amp;lt;3&amp;lt;3&amp;lt;3&amp;lt;3&amp;lt;"
                "3&amp;lt;3&amp;lt;3&amp;lt;3&amp;lt;3&amp;lt;3&amp;lt;3&amp;lt;"
                "3&amp;lt;3&amp;lt;";
-    unescapeHTML(s);
-    LOG_VAR(s);
-    unescapeHTML(s);
-    LOG_VAR(s);
+    for(int i = 0; i < 2; i++){
+    	unescapeHTML(s);
+        LOG_VAR(s);
+    }
     EXPECT_TRUE(true);
 }

@@ -27,7 +27,9 @@ void User::loadTweets() {
         (spammer ? SPAMMER_TWEET_PATH : NON_SPAMMER_TWEET_PATH) + to_string(id);
 
     readFile(filename, false, [&](int index, string &line) {
-    	while(unescapeHTML(line)){}
+    	for(int i = 0; i < 3; i++){
+    		unescapeHTML(line);
+    	}
         tweets.push_back(Tweet(line));
         return true;
     });

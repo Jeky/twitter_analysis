@@ -31,7 +31,7 @@ static inline std::string &rtrim(std::string &s) {
 // trim from both ends
 static inline std::string &trim(std::string &s) { return ltrim(rtrim(s)); }
 
-bool unescapeHTML(string &s);
+void unescapeHTML(string &s);
 
 vector<string> *splitWords(const string &text);
 
