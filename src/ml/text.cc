@@ -430,6 +430,10 @@ void normalize(string &word) {
     }
 }
 
+bool isDigitStr(const string &str) {
+    return std::all_of(str.begin(), str.end(), ::isdigit);
+}
+
 unordered_set<string> *loadStops() {
     unordered_set<string> *stops = new unordered_set<string>();
     readFile(STOP_WORDS_LIST, [&](int i, string &line) {

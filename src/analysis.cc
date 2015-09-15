@@ -49,40 +49,6 @@ Counter<string> *countTokens(unordered_map<long, User> *users,
     return tokenCounter;
 }
 
-double collectAUCP(unordered_map<long, User> *users) {
-    double aucp = 0.0;
-    for (auto &kv : *users) {
-        int cut = 0;
-        for (auto &t : kv.second.getTweets()) {
-            if (t.containsUrl()) {
-                cut++;
-            }
-        }
-        aucp += 1.0 * cut / kv.second.getTweets().size();
-    }
-
-    aucp /= users->size();
-
-    return aucp;
-}
-
-double collectARR(unordered_map<long, User> *users) {
-    double arp = 0.0;
-    for (auto &kv : *users) {
-        int r = 0;
-        for (auto &t : kv.second.getTweets()) {
-            if (t.isRetweet()) {
-                r++;
-            }
-        }
-        arp += 1.0 * r / kv.second.getTweets().size();
-    }
-
-    arp /= users->size();
-
-    return arp;
-}
-
 void countByLen(const Counter<string> *counter, const string &path) {
     LOG("Counting Tokens by Length into ", path);
     Counter<int> lenCounter;
@@ -114,18 +80,6 @@ void printDatasetStatistic() {
     LOG_VAR(nonSpammers->size());
     LOG_VAR(countTweets(spammers));
     LOG_VAR(countTweets(nonSpammers));
-
-    // average url contain percentage definition:
-    // aucp = user.containUrlTweets.size() / user.getTweets().size()
-    //	LOG("Counting Average URL Contains Percentage");
-    //	LOG_VAR(collectAUCP(spammers));
-    //	LOG_VAR(collectAUCP(nonSpammers));
-
-    // average retweet rate definition:
-    // arR = user.retweets.size() / user.getTweets().size()
-    LOG("Counting Average Retweet Rate");
-    LOG_VAR(collectARR(spammers));
-    LOG_VAR(collectARR(nonSpammers));
 
     LOG("Counting Tokens in Tweets from Spammers");
     auto *spammerTokenCounter = countTokens(spammers, SPAMMER_TOKEN_COUNTER);
@@ -230,11 +184,7 @@ void testFeatureSelection() {
     selector->train(all);
 
     vector<pair<string, double>> *result = selector->getTopFeatureList();
-    writeFile(PATH + "feature.txt", [&](ofstream &out) {
-        for (auto &r : *result) {
-            out << r.first << "\t" << r.second << endl;
-        }
-    });
+    selector->save(PATH + "feature.txt");
 
     delete selector;
     delete all;
@@ -317,15 +267,46 @@ void saveRR() {
     delete nonSpammers;
 }
 
-bool isDigitStr(const string &str) {
-    for (int i = 0; i < str.size(); i++) {
-        char c = str.c_str()[i];
-        if (c < '0' || c > '9')
-            return false;
+vector<double> *collectUCR(unordered_map<long, User> *users) {
+    vector<double> *rr = new vector<double>();
+
+    for (auto &kv : *users) {
+        int r = 0;
+        for (auto &t : kv.second.getTweets()) {
+            if (t.containsUrl()) {
+            	LOG_VAR(t.getText());
+                r++;
+            }
+        }
+        rr->push_back(1.0 * r / kv.second.getTweets().size());
     }
-    return true;
+
+    return rr;
 }
 
+void saveCUR() {
+    auto *spammers = loadSpammers();
+    auto *nonSpammers = loadSampledNonSpammers();
+
+    writeFile(PATH + "spammer-url-rate.txt", [&](ofstream &out) {
+        vector<double> *rr = collectUCR(spammers);
+        for (auto &r : *rr) {
+            out << r << endl;
+        }
+        delete rr;
+    });
+
+    writeFile(PATH + "non-spammer-url-rate.txt", [&](ofstream &out) {
+        vector<double> *rr = collectUCR(nonSpammers);
+        for (auto &r : *rr) {
+            out << r << endl;
+        }
+        delete rr;
+    });
+
+    delete spammers;
+    delete nonSpammers;
+}
 void collectTweetDist(unordered_map<long, User> *users, const string &fname) {
     Counter<int> allTokenCounter;
     Counter<int> removeSpecialTokenCounter;
@@ -380,7 +361,7 @@ void tweetDistAnalysis() {
 }
 
 int main(int argc, char const *argv[]) {
-    tweetDistAnalysis();
+    collectUCR();
     /*convertToDS();
     testClassification();
     testFeatureSelection();

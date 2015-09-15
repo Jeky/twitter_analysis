@@ -31,6 +31,8 @@ static inline std::string &rtrim(std::string &s) {
 // trim from both ends
 static inline std::string &trim(std::string &s) { return ltrim(rtrim(s)); }
 
+bool isDigitStr(const string &str);
+
 void unescapeHTML(string &s);
 
 vector<string> *splitWords(const string &text);
@@ -43,7 +45,13 @@ unordered_set<string> *loadStops();
 
 vector<string> *filterStopWords(vector<string> *tokens,
                                 unordered_set<string> *stops);
-
+/**
+ * Remove Special Tokens from token vector. Special Token contains:
+ * #hashtag
+ * @username
+ * digital numbers
+ * URLs
+ */
 vector<string> *filterSpecialWords(vector<string> *tokens);
 
 vector<string> *toGrams(const string &text, int gram = 1);

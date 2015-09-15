@@ -159,9 +159,19 @@ TEST(TextTest, unescapeHTML) {
     string s = "Lots of WLA traffic due to Obama visit &amp; Prop 8 marches.  "
                "Trying to get to Landmark to see Star Wars.  Need alternate "
                "route from SM!";
+    string expect =
+        "Lots of WLA traffic due to Obama visit & Prop 8 marches.  "
+        "Trying to get to Landmark to see Star Wars.  Need alternate "
+        "route from SM!";
     for (int i = 0; i < 3; i++) {
         unescapeHTML(s);
-        LOG_VAR(s);
     }
-    EXPECT_TRUE(true);
+    EXPECT_EQ(expect, s);
+}
+
+TEST(TextTest, isDigitStr) {
+    EXPECT_TRUE(isDigitStr("1234567890"));
+    EXPECT_FALSE(isDigitStr("12.3"));
+    EXPECT_FALSE(isDigitStr("a123"));
+    EXPECT_FALSE(isDigitStr("aaa"));
 }

@@ -1,18 +1,71 @@
 #include "ml/features.h"
 
 vector<pair<string, double>> *FeatureSelector::getTopFeatureList() {
-    vector<pair<string, double>> *v = new vector<pair<string, double>>();
+    if (topFeatureList == nullptr) {
+        topFeatureList = new vector<pair<string, double>>();
 
-    for (auto &kv : featureScoreMap) {
-        v->push_back(make_pair(kv.first, kv.second));
+        for (auto &kv : featureScoreMap) {
+            topFeatureList->push_back(make_pair(kv.first, kv.second));
+        }
+
+        sort(topFeatureList->begin(), topFeatureList->end(),
+             [](const pair<string, double> &left,
+                const pair<string, double> &right) {
+            return left.second > right.second;
+        });
     }
 
-    sort(v->begin(), v->end(), [](const pair<string, double> &left,
-                                  const pair<string, double> &right) {
-        return left.second > right.second;
-    });
+    return topFeatureList;
+}
 
-    return v;
+void FeatureSelector::save(const string &path) {
+    auto *result = getTopFeatureList();
+    writeFile(path, [&](ofstream &out) {
+        for (auto &r : *result) {
+            out << r.first << "\t" << r.second << endl;
+        }
+    });
+}
+
+Dataset *FeatureSelector::filterDataset(Dataset *ds, int top) {
+    getTopFeatureList();
+
+    Dataset *fds = new Dataset();
+    ds->eachInstance([&](const Instance &ins) {
+        Instance fins;
+        fins.setClassValue(fins.getClassValue());
+        for (int i = 0; i < top; i++) {
+            fins[(*topFeatureList)[i].first] =
+                ins.at((*topFeatureList)[i].first);
+        }
+
+        fds->addInstance(fins);
+    });
+    return fds;
+}
+
+void FeatureSelector::testDataset(Classifier *cls, Dataset *ds1, Dataset *ds2,
+                                  const string &path, int foldN, int step,
+                                  int maxSize) {
+    getTopFeatureList();
+    writeFile(path, [&](ofstream &out) {
+        int m = maxSize == 0 ? topFeatureList->size() : maxSize;
+        for (int i = 1; i < m; i += step) {
+            LOG("Evaluating with Feature Size = ", i);
+
+            Evaluator eval;
+            Dataset *fds1 = filterDataset(ds1, i);
+            Dataset *fds2 = filterDataset(ds2, i);
+
+            eval.crossValidate(foldN, cls, fds1, fds2);
+
+            out << i << "\t" << eval.getAccuracy() << "\t" << eval.getF1()
+                << endl;
+
+            delete fds1;
+            delete fds2;
+        }
+    });
 }
 
 double computeScore(int N, array<double, 4> &fm) {
