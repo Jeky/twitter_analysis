@@ -271,10 +271,13 @@ vector<double> *collectUCR(unordered_map<long, User> *users) {
     vector<double> *rr = new vector<double>();
 
     for (auto &kv : *users) {
+        if (rr->size() % 1000 == 0) {
+            LOG("Process ", i, " users");
+        }
         int r = 0;
         for (auto &t : kv.second.getTweets()) {
             if (t.containsUrl()) {
-            	LOG_VAR(t.getText());
+                LOG_VAR(t.getText());
                 r++;
             }
         }
@@ -361,7 +364,7 @@ void tweetDistAnalysis() {
 }
 
 int main(int argc, char const *argv[]) {
-    collectUCR();
+    saveCUR();
     /*convertToDS();
     testClassification();
     testFeatureSelection();
