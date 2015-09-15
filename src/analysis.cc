@@ -272,7 +272,7 @@ vector<double> *collectUCR(unordered_map<long, User> *users) {
 
     for (auto &kv : *users) {
         if (rr->size() % 1000 == 0) {
-            LOG("Process ", i, " users");
+            LOG("Process ", rr->size(), " users");
         }
         int r = 0;
         for (auto &t : kv.second.getTweets()) {
