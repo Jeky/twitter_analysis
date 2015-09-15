@@ -277,7 +277,6 @@ vector<double> *collectUCR(unordered_map<long, User> *users) {
         int r = 0;
         for (auto &t : kv.second.getTweets()) {
             if (t.containsUrl()) {
-                LOG_VAR(t.getText());
                 r++;
             }
         }
@@ -364,7 +363,18 @@ void tweetDistAnalysis() {
 }
 
 int main(int argc, char const *argv[]) {
-    saveCUR();
+	auto *users = loadData(NON_SPAMMER_DATA_PATH, SAMPLED_NON_SPAMMER_ID_LIST, false);
+
+    writeFile(PATH + "test-non-spammer-url-rate.txt", [&](ofstream &out) {
+        vector<double> *rr = collectUCR(users);
+        for (auto &r : *rr) {
+            out << r << endl;
+        }
+        delete rr;
+    });
+
+    delete users;
+//    saveCUR();
     /*convertToDS();
     testClassification();
     testFeatureSelection();

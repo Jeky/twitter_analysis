@@ -61,6 +61,9 @@ class User {
     vector<Tweet> tweets;
 };
 
+unordered_map<long, User> *loadData(const string &dataPath, const string &path,
+                                    const bool spammer);
+
 unordered_map<long, User> *loadSpammers();
 
 unordered_map<long, User> *loadSampledNonSpammers();
