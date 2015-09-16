@@ -30,4 +30,27 @@ class NaiveBayes : public Classifier {
     unordered_map<double, unordered_map<string, double>> clsFeatureProb;
 };
 
+class FeaturedNaiveBayes : public Classifier {
+  public:
+    FeaturedNaiveBayes(vector<pair<string, double>> *topFeatureList) {
+        this->topFeatureList = topFeatureList;
+    }
+
+    void setTopSize(int size) { this->size = size; }
+
+    void reset();
+
+    void train(const Dataset *dataset);
+
+    double classify(const Instance &instance);
+
+    ~FeaturedNaiveBayes() { delete topFeatureList; }
+
+  private:
+    unordered_map<double, double> clsProb;
+    unordered_map<double, unordered_map<string, double>> clsFeatureProb;
+    vector<pair<string, double>> *topFeatureList;
+    int size;
+};
+
 #endif

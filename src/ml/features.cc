@@ -27,62 +27,6 @@ void FeatureSelector::save(const string &path) {
     });
 }
 
-void FeatureSelector::loadTopFeatureList(const string &path) {
-    LOG("Loading Top Feature List");
-    topFeatureList = new vector<pair<string, double>>();
-    readFile(path, [&](int i, string &line) {
-        stringstream ss(line);
-        string k;
-        double v;
-        ss >> k >> v;
-        topFeatureList->push_back(make_pair(k, v));
-        return true;
-    });
-}
-
-Dataset *FeatureSelector::filterDataset(Dataset *ds, int top) {
-    getTopFeatureList();
-
-    Dataset *fds = new Dataset();
-    ds->eachInstance([&](const Instance &ins) {
-        Instance fins;
-        fins.setClassValue(fins.getClassValue());
-        for (int i = 0; i < top; i++) {
-            if (ins.hasAttribute((*topFeatureList)[i].first)) {
-                fins[(*topFeatureList)[i].first] =
-                    ins.at((*topFeatureList)[i].first);
-            }
-        }
-
-        fds->addInstance(fins);
-    });
-    return fds;
-}
-
-void FeatureSelector::testDataset(Classifier *cls, Dataset *ds1, Dataset *ds2,
-                                  const string &path, int foldN, int step,
-                                  int maxSize) {
-    getTopFeatureList();
-    writeFile(path, [&](ofstream &out) {
-        int m = maxSize == 0 ? topFeatureList->size() : maxSize;
-        for (int i = 1; i < m; i += step) {
-            LOG("Evaluating with Feature Size = ", i);
-
-            Evaluator eval;
-            Dataset *fds1 = filterDataset(ds1, i);
-            Dataset *fds2 = filterDataset(ds2, i);
-
-            eval.crossValidate(foldN, cls, fds1, fds2);
-
-            out << i << "\t" << eval.getAccuracy() << "\t" << eval.getF1()
-                << endl;
-
-            delete fds1;
-            delete fds2;
-        }
-    });
-}
-
 double computeScore(int N, array<double, 4> &fm) {
     return fm[0] / N *
                (log(N) + log(fm[0]) - log(fm[0] + fm[1]) - log(fm[0] + fm[2])) +

@@ -10,6 +10,10 @@ class Evaluator {
     void crossValidate(int foldN, Classifier *classifier, Dataset *ds1,
                        Dataset *ds2);
 
+    void featureSelectionValidate(Dataset *ds1, Dataset *ds2,
+                                  const string &path, const string &output,
+                                  int step = 1, int maxSize = 0);
+
     unordered_map<string, double> getConfusionMatrix();
 
     double getAccuracy();

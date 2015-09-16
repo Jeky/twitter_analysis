@@ -362,7 +362,7 @@ void tweetDistAnalysis() {
     delete nonSpammers;
 }
 
-void loadAllNonSpammerUsers(){
+void loadAllNonSpammerUsers() {
     LOG("Start Loading Normal Users...");
     unordered_set<long> spammerIds;
     readFile(SPAMMER_ID_LIST, [&](int i, string &line) {
@@ -378,7 +378,7 @@ void loadAllNonSpammerUsers(){
             User u(id, false);
             u.loadTweets();
             if (u.getTweets().size() >= SAMPLE_TWEET_SIZE) {
-            	(*users)[id] = u;
+                (*users)[id] = u;
             }
         }
         if (users->size() % 100 == 0 && users->size() != 0) {
@@ -392,22 +392,19 @@ void loadAllNonSpammerUsers(){
     delete users;
 }
 
+void testFeatureRelation() {
+    auto *spammerDS = Dataset::loadDataset(SPAMMER_DS, SPAMMER_VALUE);
+    auto *nonSpammerDS =
+        Dataset::loadDataset(NON_SPAMMER_DS, NON_SPAMMER_VALUE);
+
+    Evaluator eval;
+    eval.featureSelectionValidate(spammerDS, nonSpammerDS, PATH + "feature.txt",
+                                  PATH + "feature-select-result.txt");
+    delete spammerDS;
+    delete nonSpammerDS;
+}
+
 int main(int argc, char const *argv[]) {
-	loadAllNonSpammerUsers();
-//    auto *spammerDS = Dataset::loadDataset(SPAMMER_DS, SPAMMER_VALUE);
-//    auto *nonSpammerDS =
-//        Dataset::loadDataset(NON_SPAMMER_DS, NON_SPAMMER_VALUE);
-//
-//    auto *selector = new BiClassMutualInformation();
-//    auto *cls = new NaiveBayes();
-//
-//    selector->loadTopFeatureList(PATH + "feature.txt");
-//    selector->testDataset(cls, spammerDS, nonSpammerDS,
-//                          PATH + "feature-select-result.txt", 10, 100, 1000000);
-//
-//    delete selector;
-//    delete cls;
-//    delete spammerDS;
-//    delete nonSpammerDS;
+    testFeatureRelation();
     return 0;
 }

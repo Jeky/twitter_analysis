@@ -106,6 +106,71 @@ void Evaluator::crossValidate(int foldN, Classifier *classifier, Dataset *ds1,
     delete[] folds2;
 }
 
+void Evaluator::featureSelectionValidate(Dataset *ds1, Dataset *ds2,
+                                         const string &path,
+                                         const string &output, int step,
+                                         int maxSize) {
+    LOG("Loading Top Feature List");
+    auto *topFeatureList = new vector<pair<string, double>>();
+    readFile(path, [&](int i, string &line) {
+        stringstream ss(line);
+        string k;
+        double v;
+        ss >> k >> v;
+        topFeatureList->push_back(make_pair(k, v));
+        return true;
+    });
+
+    FeaturedNaiveBayes *classifier = new FeaturedNaiveBayes(topFeatureList);
+
+    int foldN = 10;
+    double posCls = (*ds1)[0].getClassValue();
+    int *folds1 = computeFolds(ds1->size(), foldN);
+    int *folds2 = computeFolds(ds2->size(), foldN);
+
+    Dataset *trainingDataset =
+        mergeTrainingDataset(ds1, ds2, folds1, folds2, 1);
+    Dataset *testingDataset = mergeTestingDataset(ds1, ds2, folds1, folds2, 1);
+    trainingDataset->shuffle();
+    testingDataset->shuffle();
+
+    writeFile(output, [&](ofstream &out) {
+        int m = maxSize == 0 ? topFeatureList->size() : maxSize;
+        for (int i = 1; i < m; i += step) {
+            LOG("Evaluating with Feature Size = ", i);
+
+            classifier->train(trainingDataset);
+
+            unordered_map<string, double> cm;
+            testingDataset->eachInstance([&](const Instance &instance) {
+                double cls = classifier->classify(instance);
+                if (instance.getClassValue() == posCls) {
+                    if (cls == posCls) {
+                        mapAdd<string>(cm, "TP", 1);
+                    } else {
+                        mapAdd<string>(cm, "FP", 1);
+                    }
+                } else {
+                    if (cls == posCls) {
+                        mapAdd<string>(cm, "FN", 1);
+                    } else {
+                        mapAdd<string>(cm, "TN", 1);
+                    }
+                }
+            });
+
+            out << i << "\t" << cm["TP"] << "\t" << cm["FP"] << "\t" << cm["FN"]
+                << "\t" << cm["TN"] << endl;
+        }
+    });
+
+    delete folds1;
+    delete folds2;
+    delete trainingDataset;
+    delete testingDataset;
+    delete classifier;
+}
+
 unordered_map<string, double> Evaluator::getConfusionMatrix() {
     unordered_map<string, double> cm;
 
