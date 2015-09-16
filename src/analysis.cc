@@ -363,21 +363,9 @@ void tweetDistAnalysis() {
 }
 
 int main(int argc, char const *argv[]) {
-    auto *spammers = loadSpammers();
-    auto *spammerDS = user2Dataset(spammers);
-    delete spammers;
-
-    auto *nonSpammers = loadSampledNonSpammers();
-    auto *nonSpammerDS = user2Dataset(nonSpammers);
-    delete nonSpammers;
-
-    LOG("Save datasets...");
-    saveObject(spammerDS, SPAMMER_DS);
-
-    delete spammerDS;
-
-    saveObject(nonSpammerDS, NON_SPAMMER_DS);
-    delete nonSpammerDS;
+    auto *spammerDS = Dataset::loadDataset(SPAMMER_DS, SPAMMER_VALUE);
+    auto *nonSpammerDS =
+        Dataset::loadDataset(NON_SPAMMER_DS, NON_SPAMMER_VALUE);
 
     auto *selector = new BiClassMutualInformation();
     auto *cls = new NaiveBayes();

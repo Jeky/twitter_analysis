@@ -48,6 +48,8 @@ Dataset *FeatureSelector::filterDataset(Dataset *ds, int top) {
         Instance fins;
         fins.setClassValue(fins.getClassValue());
         for (int i = 0; i < top; i++) {
+        	LOG_VAR((*topFeatureList)[i].first);
+        	LOG_VAR(ins.at((*topFeatureList)[i].first));
             fins[(*topFeatureList)[i].first] =
                 ins.at((*topFeatureList)[i].first);
         }
