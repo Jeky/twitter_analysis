@@ -138,7 +138,7 @@ void Evaluator::featureSelectionValidate(Dataset *ds1, Dataset *ds2,
         int m = maxSize == 0 ? topFeatureList->size() : maxSize;
         for (int i = 1; i < m; i += step) {
             LOG("Evaluating with Feature Size = ", i);
-
+            classifier->setTopSize(i);
             classifier->train(trainingDataset);
 
             unordered_map<string, double> cm;

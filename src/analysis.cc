@@ -399,7 +399,7 @@ void testFeatureRelation() {
 
     Evaluator eval;
     eval.featureSelectionValidate(spammerDS, nonSpammerDS, PATH + "feature.txt",
-                                  PATH + "feature-select-result.txt");
+                                  PATH + "feature-select-result.txt", 100);
     delete spammerDS;
     delete nonSpammerDS;
 }
