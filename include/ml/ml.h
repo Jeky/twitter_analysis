@@ -26,7 +26,13 @@ class Instance {
         return values[name];
     }
 
-    double at(const string &name) const { return values.find(name)->second; }
+    double at(const string &name) const {
+        if (hasAttribute(name)) {
+            return values.find(name)->second;
+        } else {
+            return 0.0;
+        }
+    }
 
     void
     eachFeature(function<void(const string &, const double &)> iterFunc) const {
