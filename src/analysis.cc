@@ -362,21 +362,52 @@ void tweetDistAnalysis() {
     delete nonSpammers;
 }
 
+void loadAllNonSpammerUsers(){
+    LOG("Start Loading Normal Users...");
+    unordered_set<long> spammerIds;
+    readFile(SPAMMER_ID_LIST, [&](int i, string &line) {
+        spammerIds.insert(stol(line));
+        return true;
+    });
+    LOG("Spammer User Count = ", spammerIds.size());
+
+    unordered_map<long, User> *users = new unordered_map<long, User>();
+    readFile(NON_SPAMMER_ID_LIST, [&](int i, string &line) {
+        long id = stol(line);
+        if (spammerIds.find(id) == spammerIds.end()) {
+            User u(id, false);
+            u.loadTweets();
+            if (u.getTweets().size() >= SAMPLE_TWEET_SIZE) {
+            	users[id] = u;
+            }
+        }
+        if (nonSpammerIds.size() % 100 == 0 && nonSpammerIds.size() != 0) {
+            LOG("Processed ", nonSpammerIds.size(), " users");
+        }
+        return true;
+    });
+    LOG_VAR(users.size());
+
+    saveObject<unordered_map<long, User>>(users, PATH + "all-non-spammers.obj");
+    delete users;
+}
+
 int main(int argc, char const *argv[]) {
-    auto *spammerDS = Dataset::loadDataset(SPAMMER_DS, SPAMMER_VALUE);
-    auto *nonSpammerDS =
-        Dataset::loadDataset(NON_SPAMMER_DS, NON_SPAMMER_VALUE);
-
-    auto *selector = new BiClassMutualInformation();
-    auto *cls = new NaiveBayes();
-
-    selector->loadTopFeatureList(PATH + "feature.txt");
-    selector->testDataset(cls, spammerDS, nonSpammerDS,
-                          PATH + "feature-select-result.txt", 10, 100, 1000000);
-
-    delete selector;
-    delete cls;
-    delete spammerDS;
-    delete nonSpammerDS;
+	loadAllNonSpammerUsers();
+//    auto *spammerDS = Dataset::loadDataset(SPAMMER_DS, SPAMMER_VALUE);
+//    auto *nonSpammerDS =
+//        Dataset::loadDataset(NON_SPAMMER_DS, NON_SPAMMER_VALUE);
+//
+//    auto *selector = new BiClassMutualInformation();
+//    auto *cls = new NaiveBayes();
+//
+//    selector->loadTopFeatureList(PATH + "feature.txt");
+//    selector->testDataset(cls, spammerDS, nonSpammerDS,
+//                          PATH + "feature-select-result.txt", 10, 100, 1000000);
+//
+//    delete selector;
+//    delete cls;
+//    delete spammerDS;
+//    delete nonSpammerDS;
     return 0;
 }
