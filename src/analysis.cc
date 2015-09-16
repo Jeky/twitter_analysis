@@ -371,6 +371,14 @@ int main(int argc, char const *argv[]) {
     auto *nonSpammerDS = user2Dataset(nonSpammers);
     delete nonSpammers;
 
+    LOG("Save datasets...");
+    saveObject(spammerDS, SPAMMER_DS);
+
+    delete spammerDS;
+
+    saveObject(nonSpammerDS, NON_SPAMMER_DS);
+    delete nonSpammerDS;
+
     auto *selector = new BiClassMutualInformation();
     auto *cls = new NaiveBayes();
 
