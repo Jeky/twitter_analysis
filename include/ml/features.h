@@ -20,7 +20,7 @@ class FeatureSelector {
             delete topFeatureList;
     };
 
-    void load();
+    void loadTopFeatureList(const string &path);
 
     virtual void save(const string &path);
     /**

@@ -27,6 +27,19 @@ void FeatureSelector::save(const string &path) {
     });
 }
 
+void FeatureSelector::loadTopFeatureList(const string &path) {
+    LOG("Loading Top Feature List");
+    topFeatureList = new vector<pair<string, double>>();
+    readFile(path, [&](int i, string &line) {
+        stringstream ss(line);
+        string k;
+        double v;
+        ss >> k >> v;
+        topFeatureList->push_back(make_pair(k, v));
+        return true;
+    });
+}
+
 Dataset *FeatureSelector::filterDataset(Dataset *ds, int top) {
     getTopFeatureList();
 

@@ -363,21 +363,25 @@ void tweetDistAnalysis() {
 }
 
 int main(int argc, char const *argv[]) {
-	auto *users = loadData(NON_SPAMMER_DATA_PATH, SAMPLED_NON_SPAMMER_ID_LIST, false);
+    auto *spammers = loadSpammers();
+    auto *spammerDS = user2Dataset(spammers);
+    delete spammers;
 
-    writeFile(PATH + "test-non-spammer-url-rate.txt", [&](ofstream &out) {
-        vector<double> *rr = collectUCR(users);
-        for (auto &r : *rr) {
-            out << r << endl;
-        }
-        delete rr;
-    });
+    auto *nonSpammers = loadSampledNonSpammers();
+    auto *nonSpammerDS = user2Dataset(nonSpammers);
+    delete nonSpammers;
 
-    delete users;
-//    saveCUR();
-    /*convertToDS();
-    testClassification();
-    testFeatureSelection();
-*/
+    auto *selector = new BiClassMutualInformation();
+    auto *cls = new NaiveBayes();
+
+    selector->loadTopFeatureList(PATH + "feature.txt");
+    selector->testDataset(cls, spammerDS, nonSpammerDS,
+                          PATH + "feature-select-result.txt", 10, 100,
+                          1000000);
+
+    delete selector;
+    delete cls;
+    delete spammerDS;
+    delete nonSpammerDS;
     return 0;
 }
