@@ -378,15 +378,15 @@ void loadAllNonSpammerUsers(){
             User u(id, false);
             u.loadTweets();
             if (u.getTweets().size() >= SAMPLE_TWEET_SIZE) {
-            	users[id] = u;
+            	(*users)[id] = u;
             }
         }
-        if (nonSpammerIds.size() % 100 == 0 && nonSpammerIds.size() != 0) {
-            LOG("Processed ", nonSpammerIds.size(), " users");
+        if (users->size() % 100 == 0 && users->size() != 0) {
+            LOG("Processed ", users->size(), " users");
         }
         return true;
     });
-    LOG_VAR(users.size());
+    LOG_VAR(users->size());
 
     saveObject<unordered_map<long, User>>(users, PATH + "all-non-spammers.obj");
     delete users;
