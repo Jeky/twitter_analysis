@@ -134,13 +134,13 @@ void sampleNonSpammers() {
 }
 
 Dataset *user2Dataset(unordered_map<long, User> *users, int gramLen) {
-	LOG("Converting user map to dataset");
+    LOG("Converting user map to dataset");
     Dataset *dataset = new Dataset();
 
     for (auto &kv : *users) {
-    	if(dataset->size() % 1000 == 0){
-    		LOG("Processed ", dataset->size(), " users");
-    	}
+        if (dataset->size() % 1000 == 0) {
+            LOG("Processed ", dataset->size(), " users");
+        }
         Instance ins;
         ins.setClassValue(kv.second.isSpammer() ? SPAMMER_VALUE
                                                 : NON_SPAMMER_VALUE);

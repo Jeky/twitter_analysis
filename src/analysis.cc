@@ -372,8 +372,7 @@ int main(int argc, char const *argv[]) {
 
     selector->loadTopFeatureList(PATH + "feature.txt");
     selector->testDataset(cls, spammerDS, nonSpammerDS,
-                          PATH + "feature-select-result.txt", 10, 100,
-                          1000000);
+                          PATH + "feature-select-result.txt", 10, 100, 1000000);
 
     delete selector;
     delete cls;
