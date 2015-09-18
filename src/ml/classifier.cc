@@ -83,21 +83,32 @@ void FeaturedNaiveBayes::train(const Dataset *dataset) {
     unordered_map<double, double> clsWordCount;
     unordered_set<string> featureSet;
 
+    TIMER_START("train1");
+    clsFeatureProb[SPAMMER_VALUE] = unordered_map<string, double, hashString>();
+    clsFeatureProb[NON_SPAMMER_VALUE] = unordered_map<string, double, hashString>();
     // collect features and compute class probability
-    dataset->eachInstance([&](const Instance &instance) {
-        double cls = instance.getClassValue();
-        if (clsProb.find(cls) == clsProb.end()) {
-            clsFeatureProb[cls] = unordered_map<string, double>();
-        }
-
+    //dataset->eachInstance([&](const Instance &instance) {
+    for(auto it = dataset->instances.begin(), end = dataset->instances.end(); it != end; it++){
+        double cls = it->getClassValue();
         mapAdd(clsProb, cls, 1.0);
+        /*
         for (int i = 0; i < size; i++) {
-            mapAdd(clsFeatureProb[cls], topFeatureList->at(i).first,
-                   instance.at(topFeatureList->at(i).first));
-            mapAdd(clsWordCount, cls, instance.at(topFeatureList->at(i).first));
-            featureSet.insert(topFeatureList->at(i).first);
+            PROFILE(clsFeatureProb[cls][topFeatureList->at(i).first] += 
+                instance.at(topFeatureList->at(i).first));
+            PROFILE(clsWordCount[cls] += instance.at(topFeatureList->at(i).first));
+            PROFILE(featureSet.insert(topFeatureList->at(i).first));
+        }*/
+        int i = 0;
+        for (auto kv = topFeatureList->begin(); i < size; kv++, i++) {
+            string k = kv->first;
+
+            clsFeatureProb[cls][k] += it->at(k);
+            clsWordCount[cls] += it->at(k);
+            featureSet.insert(k);
         }
-    });
+    };
+
+    TIMER_END("train1");
 
     LOG_VAR(featureSet.size());
 
@@ -119,6 +130,8 @@ void FeaturedNaiveBayes::train(const Dataset *dataset) {
                 log((v + 1.0) / (clsWordCount[kv.first] + featureSize));
         };
     };
+    SHOW_TIMER();
+    CLEAR_TIMER();
 }
 
 double FeaturedNaiveBayes::classify(const Instance &ins) {

@@ -112,7 +112,7 @@ void Evaluator::featureSelectionValidate(Dataset *ds1, Dataset *ds2,
                                          int maxSize) {
     LOG("Loading Top Feature List");
     auto *topFeatureList = new vector<pair<string, double>>();
-    readFile(path, [&](int i, string &line) {
+    readFile(path, false, [&](int i, string &line) {
         stringstream ss(line);
         string k;
         double v;
@@ -139,6 +139,7 @@ void Evaluator::featureSelectionValidate(Dataset *ds1, Dataset *ds2,
         for (int i = 1; i < m; i += step) {
             LOG("Evaluating with Feature Size = ", i);
             classifier->setTopSize(i);
+            classifier->reset();
             classifier->train(trainingDataset);
 
             unordered_map<string, double> cm;

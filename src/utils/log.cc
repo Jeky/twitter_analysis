@@ -43,3 +43,7 @@ void SHOW_TIMER() {
             " ms");
     }
 }
+
+void CLEAR_TIMER() {
+    _timer.clear();
+}

@@ -45,7 +45,6 @@ class Instance {
         ar(classValue, values);
     }
 
-  private:
     unordered_map<string, double> values;
     double classValue;
 };
@@ -112,7 +111,6 @@ class Dataset {
         return *this;
     }
 
-  private:
     vector<Instance> instances;
 };
 

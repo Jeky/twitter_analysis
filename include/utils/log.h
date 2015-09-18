@@ -151,4 +151,6 @@ void TIMER_END(const std::string &name);
 
 void SHOW_TIMER();
 
+void CLEAR_TIMER();
+
 #endif
