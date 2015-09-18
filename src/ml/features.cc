@@ -48,17 +48,19 @@ void BiClassMutualInformation::train(Dataset *dataset) {
     // initialize feature matrix
     // row    = number of features
     // column = [1.0, 1.0, 1.0, 1.0]
-    dataset->eachInstance([&](const Instance &i) {
-        clsSet.insert(i.getClassValue());
+    for (auto i = dataset->instances.begin(), dend = dataset->instances.end();
+         i != dend; i++) {
+        clsSet.insert(i->getClassValue());
 
-        i.eachFeature([&](const string &key, const double &value) {
+        for (auto kv = i->values.begin(), iend = i->values.end(); kv != iend;
+             kv++) {
             array<double, 4> score;
             for (int j = 0; j < 4; j++) {
                 score[j] = 1.0;
             }
-            featureMatrix[key] = score;
-        });
-    });
+            featureMatrix[kv->first] = score;
+        };
+    };
 
     double cls = *clsSet.begin();
 

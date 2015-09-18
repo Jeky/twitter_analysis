@@ -27,7 +27,8 @@ class NaiveBayes : public Classifier {
 
   private:
     unordered_map<double, double> clsProb;
-    unordered_map<double, unordered_map<string, double>> clsFeatureProb;
+    unordered_map<double, unordered_map<string, double, hashString>>
+        clsFeatureProb;
 };
 
 class FeaturedNaiveBayes : public Classifier {
@@ -48,7 +49,8 @@ class FeaturedNaiveBayes : public Classifier {
 
   private:
     unordered_map<double, double> clsProb;
-    unordered_map<double, unordered_map<string, double, hashString>> clsFeatureProb;
+    unordered_map<double, unordered_map<string, double, hashString>>
+        clsFeatureProb;
     vector<pair<string, double>> *topFeatureList;
     int size;
 };

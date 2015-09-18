@@ -34,13 +34,6 @@ class Instance {
         }
     }
 
-    void
-    eachFeature(function<void(const string &, const double &)> iterFunc) const {
-        for (auto it = values.begin(); it != values.end(); ++it) {
-            iterFunc(it->first, it->second);
-        }
-    }
-
     template <typename Archive> void serialize(Archive &ar) {
         ar(classValue, values);
     }
@@ -81,12 +74,6 @@ class Dataset {
     }
 
     Dataset() {}
-
-    void eachInstance(function<void(const Instance &)> iterFunc) const {
-        for (auto it = instances.begin(); it != instances.end(); ++it) {
-            iterFunc(*it);
-        }
-    }
 
     void addInstance(Instance &instance) { instances.push_back(instance); }
 

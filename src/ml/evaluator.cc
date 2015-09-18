@@ -69,34 +69,32 @@ void Evaluator::crossValidate(int foldN, Classifier *classifier, Dataset *ds1,
         trainingDataset->shuffle();
         testingDataset->shuffle();
 
-        unordered_map<string, double> confusionMatrix;
-
         LOG("Training Classifier...");
         classifier->reset();
         classifier->train(trainingDataset);
 
         LOG("Testing...");
-        int insCount = 0;
-
-        testingDataset->eachInstance([&](const Instance &instance) {
-            double cls = classifier->classify(instance);
-            if (instance.getClassValue() == posCls) {
+        unordered_map<string, double> cm;
+        for (auto instance = testingDataset->instances.begin(),
+                  end = testingDataset->instances.end();
+             instance != end; instance++) {
+            double cls = classifier->classify(*instance);
+            if (instance->getClassValue() == posCls) {
                 if (cls == posCls) {
-                    mapAdd<string>(confusionMatrix, "TP", 1);
+                    cm["TP"] += 1;
                 } else {
-                    mapAdd<string>(confusionMatrix, "FP", 1);
+                    cm["FP"] += 1;
                 }
             } else {
                 if (cls == posCls) {
-                    mapAdd<string>(confusionMatrix, "FN", 1);
+                    cm["FN"] += 1;
                 } else {
-                    mapAdd<string>(confusionMatrix, "TN", 1);
+                    cm["TN"] += 1;
                 }
             }
-            insCount++;
-        });
+        };
 
-        result.push_back(confusionMatrix);
+        result.push_back(cm);
 
         delete trainingDataset;
         delete testingDataset;
@@ -143,22 +141,24 @@ void Evaluator::featureSelectionValidate(Dataset *ds1, Dataset *ds2,
             classifier->train(trainingDataset);
 
             unordered_map<string, double> cm;
-            testingDataset->eachInstance([&](const Instance &instance) {
-                double cls = classifier->classify(instance);
-                if (instance.getClassValue() == posCls) {
+            for (auto instance = testingDataset->instances.begin(),
+                      end = testingDataset->instances.end();
+                 instance != end; instance++) {
+                double cls = classifier->classify(*instance);
+                if (instance->getClassValue() == posCls) {
                     if (cls == posCls) {
-                        mapAdd<string>(cm, "TP", 1);
+                        cm["TP"] += 1;
                     } else {
-                        mapAdd<string>(cm, "FP", 1);
+                        cm["FP"] += 1;
                     }
                 } else {
                     if (cls == posCls) {
-                        mapAdd<string>(cm, "FN", 1);
+                        cm["FN"] += 1;
                     } else {
-                        mapAdd<string>(cm, "TN", 1);
+                        cm["TN"] += 1;
                     }
                 }
-            });
+            };
 
             out << i << "\t" << cm["TP"] << "\t" << cm["FP"] << "\t" << cm["FN"]
                 << "\t" << cm["TN"] << endl;
@@ -176,10 +176,10 @@ unordered_map<string, double> Evaluator::getConfusionMatrix() {
     unordered_map<string, double> cm;
 
     for (unordered_map<string, double> &i : result) {
-        mapAdd<string>(cm, "TP", i["TP"]);
-        mapAdd<string>(cm, "FP", i["FP"]);
-        mapAdd<string>(cm, "FN", i["FN"]);
-        mapAdd<string>(cm, "TN", i["TN"]);
+        cm["TP"] += i["TP"];
+        cm["FP"] += i["FP"];
+        cm["FN"] += i["FN"];
+        cm["TN"] += i["TN"];
     }
 
     return cm;

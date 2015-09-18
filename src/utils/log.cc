@@ -44,6 +44,4 @@ void SHOW_TIMER() {
     }
 }
 
-void CLEAR_TIMER() {
-    _timer.clear();
-}
+void CLEAR_TIMER() { _timer.clear(); }
