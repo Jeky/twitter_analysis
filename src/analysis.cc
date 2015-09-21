@@ -404,7 +404,43 @@ void testFeatureRelation() {
     delete nonSpammerDS;
 }
 
+void selectFeatureToMatrix(){
+    auto *spammerDS = Dataset::loadDataset(SPAMMER_DS, SPAMMER_VALUE);
+    auto *nonSpammerDS =
+        Dataset::loadDataset(NON_SPAMMER_DS, NON_SPAMMER_VALUE);
+
+    LOG("Loading Top Feature List");
+    auto *topFeatureList = new vector<pair<string, double>>();
+    readFile(PATH + "feature.txt", false, [&](int i, string &line) {
+        stringstream ss(line);
+        string k;
+        double v;
+        ss >> k >> v;
+        topFeatureList->push_back(make_pair(k, v));
+        return topFeatureList->size() < 100;
+    });
+
+    writeFile(PATH + "user-matrix.txt", [&](ofstream &out){
+        for(auto iit = spammerDS->instances.begin(), iend = spammerDS->instances.end(); iit != iend; iit ++){
+    		for(auto fit = topFeatureList->begin(), fend = topFeatureList->end(); fit != fend; fit++){
+    			out << iit->values[fit->first] << "\t";
+    		}
+    		out << endl;
+        }
+        for(auto iit = nonSpammerDS->instances.begin(), iend = nonSpammerDS->instances.end(); iit != iend; iit ++){
+    		for(auto fit = topFeatureList->begin(), fend = topFeatureList->end(); fit != fend; fit++){
+    			out << iit->values[fit->first] << "\t";
+    		}
+    		out << endl;
+        }
+    });
+
+    delete topFeatureList;
+    delete spammerDS;
+    delete nonSpammerDS;
+}
+
 int main(int argc, char const *argv[]) {
-    testFeatureRelation();
+	selectFeatureToMatrix();
     return 0;
 }
