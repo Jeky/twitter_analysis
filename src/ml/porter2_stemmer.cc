@@ -273,27 +273,13 @@ void Porter2Stemmer::internal::step1C(std::string &word) {
 */
 void Porter2Stemmer::internal::step2(std::string &word, size_t startR1) {
     static const std::pair<meta::util::string_view, meta::util::string_view>
-        subs[] = {{"ational", "ate"},
-                  {"tional", "tion"},
-                  {"enci", "ence"},
-                  {"anci", "ance"},
-                  {"abli", "able"},
-                  {"entli", "ent"},
-                  {"izer", "ize"},
-                  {"ization", "ize"},
-                  {"ation", "ate"},
-                  {"ator", "ate"},
-                  {"alism", "al"},
-                  {"aliti", "al"},
-                  {"alli", "al"},
-                  {"fulness", "ful"},
-                  {"ousli", "ous"},
-                  {"ousness", "ous"},
-                  {"iveness", "ive"},
-                  {"iviti", "ive"},
-                  {"biliti", "ble"},
-                  {"bli", "ble"},
-                  {"fulli", "ful"},
+        subs[] = {{"ational", "ate"}, {"tional", "tion"}, {"enci", "ence"},
+                  {"anci", "ance"},   {"abli", "able"},   {"entli", "ent"},
+                  {"izer", "ize"},    {"ization", "ize"}, {"ation", "ate"},
+                  {"ator", "ate"},    {"alism", "al"},    {"aliti", "al"},
+                  {"alli", "al"},     {"fulness", "ful"}, {"ousli", "ous"},
+                  {"ousness", "ous"}, {"iveness", "ive"}, {"iviti", "ive"},
+                  {"biliti", "ble"},  {"bli", "ble"},     {"fulli", "ful"},
                   {"lessli", "less"}};
 
     for (auto &sub : subs)
@@ -330,14 +316,9 @@ void Porter2Stemmer::internal::step2(std::string &word, size_t startR1) {
 void Porter2Stemmer::internal::step3(std::string &word, size_t startR1,
                                      size_t startR2) {
     static const std::pair<meta::util::string_view, meta::util::string_view>
-        subs[] = {{"ational", "ate"},
-                  {"tional", "tion"},
-                  {"alize", "al"},
-                  {"icate", "ic"},
-                  {"iciti", "ic"},
-                  {"ical", "ic"},
-                  {"ful", ""},
-                  {"ness", ""}};
+        subs[] = {{"ational", "ate"}, {"tional", "tion"}, {"alize", "al"},
+                  {"icate", "ic"},    {"iciti", "ic"},    {"ical", "ic"},
+                  {"ful", ""},        {"ness", ""}};
 
     for (auto &sub : subs)
         if (replaceIfExists(word, sub.first, sub.second, startR1))
@@ -359,22 +340,10 @@ void Porter2Stemmer::internal::step3(std::string &word, size_t startR1,
 */
 void Porter2Stemmer::internal::step4(std::string &word, size_t startR2) {
     static const std::pair<meta::util::string_view, meta::util::string_view>
-        subs[] = {{"al", ""},
-                  {"ance", ""},
-                  {"ence", ""},
-                  {"er", ""},
-                  {"ic", ""},
-                  {"able", ""},
-                  {"ible", ""},
-                  {"ant", ""},
-                  {"ement", ""},
-                  {"ment", ""},
-                  {"ism", ""},
-                  {"ate", ""},
-                  {"iti", ""},
-                  {"ous", ""},
-                  {"ive", ""},
-                  {"ize", ""}};
+        subs[] = {{"al", ""},    {"ance", ""}, {"ence", ""}, {"er", ""},
+                  {"ic", ""},    {"able", ""}, {"ible", ""}, {"ant", ""},
+                  {"ement", ""}, {"ment", ""}, {"ism", ""},  {"ate", ""},
+                  {"iti", ""},   {"ous", ""},  {"ive", ""},  {"ize", ""}};
 
     for (auto &sub : subs)
         if (replaceIfExists(word, sub.first, sub.second, startR2))
@@ -434,17 +403,10 @@ bool Porter2Stemmer::internal::isShort(const std::string &word) {
 bool Porter2Stemmer::internal::special(std::string &word) {
     static const std::unordered_map<meta::util::string_view,
                                     meta::util::string_view> exceptions = {
-        {"skis", "ski"},
-        {"skies", "sky"},
-        {"dying", "die"},
-        {"lying", "lie"},
-        {"tying", "tie"},
-        {"idly", "idl"},
-        {"gently", "gentl"},
-        {"ugly", "ugli"},
-        {"early", "earli"},
-        {"only", "onli"},
-        {"singly", "singl"}};
+        {"skis", "ski"},     {"skies", "sky"},   {"dying", "die"},
+        {"lying", "lie"},    {"tying", "tie"},   {"idly", "idl"},
+        {"gently", "gentl"}, {"ugly", "ugli"},   {"early", "earli"},
+        {"only", "onli"},    {"singly", "singl"}};
 
     // special cases
     auto ex = exceptions.find(word);

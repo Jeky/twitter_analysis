@@ -27,11 +27,8 @@ class Instance {
     }
 
     double at(const string &name) const {
-        if (hasAttribute(name)) {
-            return values.find(name)->second;
-        } else {
-            return 0.0;
-        }
+        auto iter = values.find(name);
+        return iter == values.end() ? 0.0 : iter->second;
     }
 
     template <typename Archive> void serialize(Archive &ar) {

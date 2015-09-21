@@ -92,9 +92,14 @@ void FeaturedNaiveBayes::train(const Dataset *dataset) {
         unordered_map<string, double, hashString>();
 
     // collect features and compute class probability
+    LOG("Training");
+    int count = 0;
     for (auto instance = dataset->instances.begin(),
               end = dataset->instances.end();
          instance != end; instance++) {
+        if (count % 1000 == 0) {
+            LOG("Processed ", count, " instances");
+        }
         double cls = instance->getClassValue();
         clsProb[cls] += 1.0;
 
@@ -106,6 +111,7 @@ void FeaturedNaiveBayes::train(const Dataset *dataset) {
             clsWordCount[cls] += instance->at(k);
             featureSet.insert(k);
         }
+        count++;
     }
 
     LOG_VAR(featureSet.size());

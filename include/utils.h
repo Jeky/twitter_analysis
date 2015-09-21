@@ -7,12 +7,7 @@
 #include <utility>
 #include <algorithm>
 #include <array>
-
-#include <cereal/types/string.hpp>
-#include <cereal/types/vector.hpp>
-#include <cereal/types/unordered_map.hpp>
-#include <cereal/types/memory.hpp>
-#include <cereal/archives/binary.hpp>
+#include <string>
 
 #include "utils/log.h"
 #include "utils/io.h"
@@ -163,8 +158,8 @@ template <typename T> class Counter {
 
         sort(v->begin(), v->end(),
              [](const pair<T, double> &left, const pair<T, double> &right) {
-            return left.second > right.second;
-        });
+                 return left.second > right.second;
+             });
 
         return v;
     }
@@ -196,8 +191,8 @@ template <typename T> class Counter {
 
         sort(v->begin(), v->end(),
              [](const pair<int, int> &left, const pair<int, int> &right) {
-            return left.second > right.second;
-        });
+                 return left.second > right.second;
+             });
 
         writeFile(path, [&](ofstream &out) {
             for (auto &i : *v) {

@@ -122,9 +122,11 @@ TEST(TextTest, splitWords) {
                "also a token.";
     vector<string> *words = splitWords(s);
     vector<string> expectedWords = {
-        "This", "is", "a", "test", "http://aaa.bbb.com/cc", "will", "be",
-        "tokenized", "as", "one", "word", "and", "will", "be", "removed",
-        "@username", "#hashtag", "are", "also", "a", "token"};
+        "This",      "is",       "a",         "test", "http://aaa.bbb.com/cc",
+        "will",      "be",       "tokenized", "as",   "one",
+        "word",      "and",      "will",      "be",   "removed",
+        "@username", "#hashtag", "are",       "also", "a",
+        "token"};
 
     EXPECT_EQ(expectedWords.size(), words->size());
 
@@ -142,9 +144,9 @@ TEST(TextTest, filterStopWords) {
     auto *stops = loadStops();
 
     auto *result = filterStopWords(tokens, stops);
-    vector<string> expectedWords = {"test", "stop", "word", "remov", "url",
-                                    "http://aaa.bbb.ccc", "won", "remov",
-                                    "@username"};
+    vector<string> expectedWords = {"test",  "stop",  "word",
+                                    "remov", "url",   "http://aaa.bbb.ccc",
+                                    "won",   "remov", "@username"};
 
     for (int i = 0; i < result->size(); i++) {
         EXPECT_EQ(expectedWords[i], result->at(i));

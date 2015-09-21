@@ -88,14 +88,15 @@ unordered_map<long, User> *loadSpammers() {
 unordered_map<long, User> *loadSampledNonSpammers() {
     return loadData(NON_SPAMMER_DATA_PATH, SAMPLED_NON_SPAMMER_ID_LIST, false,
                     [](unordered_map<long, User> *users) {
-        for (auto &kv : *users) {
-            random_shuffle(kv.second.getTweets().begin(),
-                           kv.second.getTweets().end());
-            kv.second.getTweets().erase(kv.second.getTweets().begin() +
-                                            SAMPLE_TWEET_SIZE,
-                                        kv.second.getTweets().end());
-        }
-    });
+                        for (auto &kv : *users) {
+                            random_shuffle(kv.second.getTweets().begin(),
+                                           kv.second.getTweets().end());
+                            kv.second.getTweets().erase(
+                                kv.second.getTweets().begin() +
+                                    SAMPLE_TWEET_SIZE,
+                                kv.second.getTweets().end());
+                        }
+                    });
 }
 
 void sampleNonSpammers() {
