@@ -514,19 +514,45 @@ void testFeatureSelection() {
     delete all;
 }
 
-void collectBiGramURLProb(const string pre){
+double BiGramURLProb(unordered_map<long, User> *users, const string pre){
+	int prob = 0;
+	int count = 0;
+	int totalCount = 0;
+	for(auto &u : *users){
+		if(count % 1000 == 0){
+			LOG("Processed ", i , " Users");
+		}
+		for(auto &t : u.second.getTweets()){
+			auto *grams = toGrams(t.getText());
+			for(int i = 0; i < grams->size() - 1; i++){
+				if(grams[i] == pre && grams[i + 1].find("http://") != 0){
+					prob ++;
+				}
+			}
+			delete grams;
+			totalCount++;
+		}
+
+		count++;
+	}
+
+	return 1.0 * prob / totalCount;
+}
+
+void collectBiGramURLProb(){
     auto *spammers = loadSpammers();
     auto *nonSpammers = loadSampledNonSpammers();
-
-    for(auto uit = spammers->instances.begin(), uend = spammers->instances.end(); uit != uend; uit++){
-        for(auto fit = uit->values.begin(), fend = uit->values.end(); fit != fend; fit++){
-        }
-    }
     
+    LOG_VAR(BiGramURLProb(spammers, "via"));
+    LOG_VAR(BiGramURLProb(nonSpammers, "via"));
+    LOG_VAR(BiGramURLProb(spammers, "check"));
+    LOG_VAR(BiGramURLProb(nonSpammers, "check"));
+
     delete spammers;
     delete nonSpammers;
 }
 
 int main(int argc, char const *argv[]) {
+	collectBiGramURLProb();
     return 0;
 }
