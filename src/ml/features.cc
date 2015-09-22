@@ -11,8 +11,8 @@ vector<pair<string, double>> *FeatureSelector::getTopFeatureList() {
         sort(topFeatureList->begin(), topFeatureList->end(),
              [](const pair<string, double> &left,
                 const pair<string, double> &right) {
-                 return left.second > right.second;
-             });
+            return left.second > right.second;
+        });
     }
 
     return topFeatureList;

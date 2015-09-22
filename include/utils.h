@@ -158,8 +158,8 @@ template <typename T> class Counter {
 
         sort(v->begin(), v->end(),
              [](const pair<T, double> &left, const pair<T, double> &right) {
-                 return left.second > right.second;
-             });
+            return left.second > right.second;
+        });
 
         return v;
     }
@@ -191,8 +191,8 @@ template <typename T> class Counter {
 
         sort(v->begin(), v->end(),
              [](const pair<int, int> &left, const pair<int, int> &right) {
-                 return left.second > right.second;
-             });
+            return left.second > right.second;
+        });
 
         writeFile(path, [&](ofstream &out) {
             for (auto &i : *v) {

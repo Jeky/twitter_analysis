@@ -171,7 +171,6 @@ void testClassification() {
     delete nonSpammerDS;
 }
 
-
 void randomSampleRetweets(int count = 20) {
     const string path = PATH + "spammer-retweets.obj";
 
@@ -386,7 +385,7 @@ void testFeatureRelation() {
     delete nonSpammerDS;
 }
 
-void selectFeatureToMatrix(){
+void selectFeatureToMatrix() {
     auto *spammerDS = Dataset::loadDataset(SPAMMER_DS, SPAMMER_VALUE);
     auto *nonSpammerDS =
         Dataset::loadDataset(NON_SPAMMER_DS, NON_SPAMMER_VALUE);
@@ -402,18 +401,26 @@ void selectFeatureToMatrix(){
         return topFeatureList->size() < 100;
     });
 
-    writeFile(PATH + "user-matrix.txt", [&](ofstream &out){
-        for(auto iit = spammerDS->instances.begin(), iend = spammerDS->instances.end(); iit != iend; iit ++){
-    		for(auto fit = topFeatureList->begin(), fend = topFeatureList->end(); fit != fend; fit++){
-    			out << iit->values[fit->first] << "\t";
-    		}
-    		out << endl;
+    writeFile(PATH + "user-matrix.txt", [&](ofstream &out) {
+        for (auto iit = spammerDS->instances.begin(),
+                  iend = spammerDS->instances.end();
+             iit != iend; iit++) {
+            for (auto fit = topFeatureList->begin(),
+                      fend = topFeatureList->end();
+                 fit != fend; fit++) {
+                out << iit->values[fit->first] << "\t";
+            }
+            out << endl;
         }
-        for(auto iit = nonSpammerDS->instances.begin(), iend = nonSpammerDS->instances.end(); iit != iend; iit ++){
-    		for(auto fit = topFeatureList->begin(), fend = topFeatureList->end(); fit != fend; fit++){
-    			out << iit->values[fit->first] << "\t";
-    		}
-    		out << endl;
+        for (auto iit = nonSpammerDS->instances.begin(),
+                  iend = nonSpammerDS->instances.end();
+             iit != iend; iit++) {
+            for (auto fit = topFeatureList->begin(),
+                      fend = topFeatureList->end();
+                 fit != fend; fit++) {
+                out << iit->values[fit->first] << "\t";
+            }
+            out << endl;
         }
     });
 
@@ -422,23 +429,28 @@ void selectFeatureToMatrix(){
     delete nonSpammerDS;
 }
 
-void removeSpecialWordsInDS(Dataset *ds){
-    for(auto uit = ds->instances.begin(), uend = ds->instances.end(); uit != uend; uit++){
-    	for(auto fit = uit->values.begin(), fend = uit->values.end(); fit != fend; fit++){
-    		string s = fit->first;
-    		if (s.find("http://") == 0 || s[0] == '#' || s[0] == '@' || isDigitStr(s)) {
-    			uit->values.erase(s);
-    		}
-    	}
+void removeSpecialWordsInDS(Dataset *ds) {
+    for (auto uit = ds->instances.begin(), uend = ds->instances.end();
+         uit != uend; uit++) {
+        for (auto fit = uit->values.begin(), fend = uit->values.end();
+             fit != fend; fit++) {
+            string s = fit->first;
+            if (s.find("http://") == 0 || s[0] == '#' || s[0] == '@' ||
+                isDigitStr(s)) {
+                uit->values.erase(s);
+            }
+        }
     }
 }
-void removeStopsInDS(Dataset *ds, unordered_set<string> *stops){
-    for(auto uit = ds->instances.begin(), uend = ds->instances.end(); uit != uend; uit++){
-    	for(auto fit = uit->values.begin(), fend = uit->values.end(); fit != fend; fit++){
-    		if (stops->find(fit->first) != stops->end()) {
-    			uit->values.erase(fit->first);
-    		}
-    	}
+void removeStopsInDS(Dataset *ds, unordered_set<string> *stops) {
+    for (auto uit = ds->instances.begin(), uend = ds->instances.end();
+         uit != uend; uit++) {
+        for (auto fit = uit->values.begin(), fend = uit->values.end();
+             fit != fend; fit++) {
+            if (stops->find(fit->first) != stops->end()) {
+                uit->values.erase(fit->first);
+            }
+        }
     }
 }
 
@@ -496,7 +508,7 @@ void testFeatureSelection() {
     delete nonSpammerDS;
     LOG("Finish merging dataset.");
     LOG_VAR(all->size());
-    
+
     LOG("Remove Special Words");
     removeSpecialWordsInDS(all);
     auto *stops = loadStops();
@@ -514,45 +526,69 @@ void testFeatureSelection() {
     delete all;
 }
 
-double BiGramURLProb(unordered_map<long, User> *users, const string pre){
-	int prob = 0;
-	int count = 0;
-	int totalCount = 0;
-	for(auto &u : *users){
-		if(count % 1000 == 0){
-			LOG("Processed ", i , " Users");
-		}
-		for(auto &t : u.second.getTweets()){
-			auto *grams = toGrams(t.getText());
-			for(int i = 0; i < grams->size() - 1; i++){
-				if(grams[i] == pre && grams[i + 1].find("http://") != 0){
-					prob ++;
-				}
-			}
-			delete grams;
-			totalCount++;
-		}
+double BiGramURLProb(vector<vector<string>> *userGrams, const string pre) {
+    int prob = 0;
+    int count = 0;
 
-		count++;
-	}
+    for (auto &gram : *userGrams) {
+        if (count % 1000 == 0) {
+            LOG("Processed ", count, " users");
+        }
+        for (int i = 0; i < gram.size() - 1; i++) {
+            if (gram.size() != 0) {
+                if (gram[i] == pre && gram[i + 1].find("http://") != 0) {
+                    prob++;
+                }
+            }
+        }
 
-	return 1.0 * prob / totalCount;
+        count++;
+    }
+
+    return 1.0 * prob / userGrams->size();
 }
 
-void collectBiGramURLProb(){
+vector<vector<string>> *usersToGrams(unordered_map<long, User> *users) {
+    int count = 0;
+    vector<vector<string>> *userGrams = new vector<vector<string>>();
+    for (auto &u : *users) {
+        if (count % 1000 == 0) {
+            LOG("Processed ", count, " Users");
+        }
+        for (auto &t : u.second.getTweets()) {
+            auto *grams = toGrams(t.getText());
+            userGrams->push_back(*grams);
+            delete grams;
+        }
+
+        count++;
+    }
+
+    return userGrams;
+}
+
+void collectBiGramURLProb() {
     auto *spammers = loadSpammers();
     auto *nonSpammers = loadSampledNonSpammers();
-    
-    LOG_VAR(BiGramURLProb(spammers, "via"));
-    LOG_VAR(BiGramURLProb(nonSpammers, "via"));
-    LOG_VAR(BiGramURLProb(spammers, "check"));
-    LOG_VAR(BiGramURLProb(nonSpammers, "check"));
+
+    auto *spammerGrams = usersToGrams(spammers);
+    saveObject(spammerGrams, PATH + "spammer-grams-1.obj");
+    auto *nonSpammerGrams = usersToGrams(nonSpammers);
+    saveObject(nonSpammerGrams, PATH + "non-spammer-grams-1.obj");
 
     delete spammers;
     delete nonSpammers;
+
+    LOG_VAR(BiGramURLProb(spammerGrams, "via"));
+    LOG_VAR(BiGramURLProb(nonSpammerGrams, "via"));
+    LOG_VAR(BiGramURLProb(spammerGrams, "check"));
+    LOG_VAR(BiGramURLProb(nonSpammerGrams, "check"));
+
+    delete spammerGrams;
+    delete nonSpammerGrams;
 }
 
 int main(int argc, char const *argv[]) {
-	collectBiGramURLProb();
+    collectBiGramURLProb();
     return 0;
 }
