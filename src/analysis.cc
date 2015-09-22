@@ -507,14 +507,12 @@ void testFeatureSelection() {
     all->addDataset(*nonSpammerDS);
     delete nonSpammerDS;
     LOG("Finish merging dataset.");
-    LOG_VAR(all->size());
 
     LOG("Remove Special Words");
     removeSpecialWordsInDS(all);
     auto *stops = loadStops();
     removeStopsInDS(all, stops);
     delete stops;
-    LOG_VAR(all->size());
 
     auto *selector = new BiClassMutualInformation();
     selector->train(all);
@@ -531,8 +529,8 @@ double BiGramURLProb(vector<vector<string>> *userGrams, const string pre) {
     int count = 0;
 
     for (auto &gram : *userGrams) {
-        if (count % 1000 == 0) {
-            LOG("Processed ", count, " users");
+        if (count % 10 == 0) {
+            LOG("Processed ", count, " grams");
         }
         for (int i = 0; i < gram.size() - 1; i++) {
             if (gram.size() != 0) {
@@ -571,10 +569,8 @@ void collectBiGramURLProb() {
     auto *spammers = loadSpammers();
     auto *nonSpammers = loadSampledNonSpammers();
 
-    auto *spammerGrams = usersToGrams(spammers);
-    saveObject(spammerGrams, PATH + "spammer-grams-1.obj");
-    auto *nonSpammerGrams = usersToGrams(nonSpammers);
-    saveObject(nonSpammerGrams, PATH + "non-spammer-grams-1.obj");
+    auto *spammerGrams = loadObject<vector<vector<string>>>(PATH + "spammer-grams-1.obj");
+    auto *nonSpammerGrams = loadObject<vector<vector<string>>>(PATH + "non-spammer-grams-1.obj");
 
     delete spammers;
     delete nonSpammers;
@@ -588,7 +584,55 @@ void collectBiGramURLProb() {
     delete nonSpammerGrams;
 }
 
+void randomSampleCheck(int count = 20) {
+    vector<Tweet> *retweets;
+
+        retweets = new vector<Tweet>();
+
+        auto *spammers = loadSpammers();
+        for (auto &kv : *spammers) {
+            for (auto &t : kv.second.getTweets()) {
+                if (t.getText().find("check") != string::npos) {
+                    retweets->push_back(t.getText());
+                }
+            }
+        }
+
+    // shuffle retweets
+    random_shuffle(retweets->begin(), retweets->end());
+
+    for (int i = 0; i < count; i++) {
+        LOG((*retweets)[i].getText());
+    }
+    delete retweets;
+}
+
 int main(int argc, char const *argv[]) {
-    collectBiGramURLProb();
+    /*
+    auto *spammerDS = Dataset::loadDataset(SPAMMER_DS, SPAMMER_VALUE);
+    auto *nonSpammerDS =
+        Dataset::loadDataset(NON_SPAMMER_DS, NON_SPAMMER_VALUE);
+
+    vector<string> words = {
+        "rt", "via", "thank", "check", "post", "new", "free", "market", "great", "media"
+    };
+
+    for(auto &w: words){
+        int sCount = 0;
+        int nsCount = 0;
+        for(auto uit = spammerDS->instances.begin(); uit != spammerDS->instances.end(); uit++){
+            sCount += uit->at(w); 
+        }
+        for(auto uit = nonSpammerDS->instances.begin(); uit != nonSpammerDS->instances.end(); uit++){
+            nsCount += uit->at(w); 
+        }
+        LOG_VAR(w);
+        LOG_VAR(sCount);
+        LOG_VAR(nsCount);
+    }
+*/
+    testFeatureSelection();
+   // delete spammerDS;
+    //delete nonSpammerDS;
     return 0;
 }
