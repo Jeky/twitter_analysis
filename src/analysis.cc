@@ -440,7 +440,71 @@ void selectFeatureToMatrix(){
     delete nonSpammerDS;
 }
 
+void removeSpeicalWordsInDS(Dataset *ds){
+    for(auto uit = ds->instances.begin(), uend = ds->instances.end(); uit != uend; uit++){
+    	for(auto fit = uit->values.begin(), fend = uit->values.end(); fit != fend; fit++){
+    		string s = fit->first;
+    		if (s.find("http://") == 0 || s[0] == '#' || s[0] == '@' || isDigitStr(s)) {
+    			uit->values.erase(s);
+    		}
+    	}
+    }
+}
+void removeStopsInDS(Dataset *ds, unordered_set<string> *stops){
+    for(auto uit = ds->instances.begin(), uend = ds->instances.end(); uit != uend; uit++){
+    	for(auto fit = uit->values.begin(), fend = uit->values.end(); fit != fend; fit++){
+    		if (stops->find(fit->first) != stops->end()) {
+    			uit->values.erase(fit->first);
+    		}
+    	}
+    }
+}
+
+void testClassificationWithoutSpecialWords() {
+    auto *spammerDS = Dataset::loadDataset(SPAMMER_DS, SPAMMER_VALUE);
+    auto *nonSpammerDS =
+        Dataset::loadDataset(NON_SPAMMER_DS, NON_SPAMMER_VALUE);
+
+    LOG("Remove Special Words");
+    removeSpeicalWordsInDS(spammerDS);
+    removeSpeicalWordsInDS(nonSpammerDS);
+
+    Classifier *cls = new NaiveBayes();
+    Evaluator eval;
+
+    eval.crossValidate(10, cls, spammerDS, nonSpammerDS);
+    for (auto &item : eval.getConfusionMatrixVector()) {
+        LOG(item);
+    }
+    LOG_VAR(eval.getAccuracy());
+    LOG_VAR(eval.getRecall());
+    LOG_VAR(eval.getPrecision());
+    LOG_VAR(eval.getF1());
+
+    LOG("Remove Stops");
+    auto *stops = loadStops();
+    removeStopsInDS(spammerDS, stops);
+    removeStopsInDS(nonSpammerDS, stops);
+
+    cls->reset();
+    eval.reset();
+
+    eval.crossValidate(10, cls, spammerDS, nonSpammerDS);
+    for (auto &item : eval.getConfusionMatrixVector()) {
+        LOG(item);
+    }
+    LOG_VAR(eval.getAccuracy());
+    LOG_VAR(eval.getRecall());
+    LOG_VAR(eval.getPrecision());
+    LOG_VAR(eval.getF1());
+
+    delete stops;
+    delete cls;
+    delete spammerDS;
+    delete nonSpammerDS;
+}
+
 int main(int argc, char const *argv[]) {
-	selectFeatureToMatrix();
+	testClassificationWithoutSpecialWords();
     return 0;
 }

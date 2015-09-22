@@ -14,6 +14,8 @@ class Evaluator {
                                   const string &path, const string &output,
                                   int step = 1, int maxSize = 0);
 
+    void reset();
+
     unordered_map<string, double> getConfusionMatrix();
 
     double getAccuracy();

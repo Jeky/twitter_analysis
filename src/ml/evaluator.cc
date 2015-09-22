@@ -185,6 +185,10 @@ unordered_map<string, double> Evaluator::getConfusionMatrix() {
     return cm;
 }
 
+void Evaluator::reset(){
+	result.clear();
+}
+
 double Evaluator::getAccuracy() {
     unordered_map<string, double> cm = getConfusionMatrix();
     return (cm["TP"] + cm["TN"]) / (cm["TP"] + cm["FP"] + cm["FN"] + cm["TN"]);
