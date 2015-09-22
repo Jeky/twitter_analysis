@@ -85,8 +85,8 @@ class Dataset {
     template <typename Archive> void serialize(Archive &ar) { ar(instances); }
 
     void addDataset(const Dataset &d) {
-        for (auto &i : d.instances) {
-            this->instances.push_back(i);
+        for (auto it = d.instances.begin(), end = d.instances.end(); it != end; it++) {
+            instances.push_back(*it);
         }
     }
 

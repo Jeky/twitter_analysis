@@ -171,24 +171,6 @@ void testClassification() {
     delete nonSpammerDS;
 }
 
-void testFeatureSelection() {
-    auto *spammerDS = Dataset::loadDataset(SPAMMER_DS, SPAMMER_VALUE);
-    auto *nonSpammerDS =
-        Dataset::loadDataset(NON_SPAMMER_DS, NON_SPAMMER_VALUE);
-
-    auto *all = spammerDS;
-    all->addDataset(*nonSpammerDS);
-    delete nonSpammerDS;
-
-    auto *selector = new BiClassMutualInformation();
-    selector->train(all);
-
-    vector<pair<string, double>> *result = selector->getTopFeatureList();
-    selector->save(PATH + "feature.txt");
-
-    delete selector;
-    delete all;
-}
 
 void randomSampleRetweets(int count = 20) {
     const string path = PATH + "spammer-retweets.obj";
@@ -440,7 +422,7 @@ void selectFeatureToMatrix(){
     delete nonSpammerDS;
 }
 
-void removeSpeicalWordsInDS(Dataset *ds){
+void removeSpecialWordsInDS(Dataset *ds){
     for(auto uit = ds->instances.begin(), uend = ds->instances.end(); uit != uend; uit++){
     	for(auto fit = uit->values.begin(), fend = uit->values.end(); fit != fend; fit++){
     		string s = fit->first;
@@ -466,8 +448,8 @@ void testClassificationWithoutSpecialWords() {
         Dataset::loadDataset(NON_SPAMMER_DS, NON_SPAMMER_VALUE);
 
     LOG("Remove Special Words");
-    removeSpeicalWordsInDS(spammerDS);
-    removeSpeicalWordsInDS(nonSpammerDS);
+    removeSpecialWordsInDS(spammerDS);
+    removeSpecialWordsInDS(nonSpammerDS);
 
     Classifier *cls = new NaiveBayes();
     Evaluator eval;
@@ -504,7 +486,47 @@ void testClassificationWithoutSpecialWords() {
     delete nonSpammerDS;
 }
 
+void testFeatureSelection() {
+    auto *spammerDS = Dataset::loadDataset(SPAMMER_DS, SPAMMER_VALUE);
+    auto *nonSpammerDS =
+        Dataset::loadDataset(NON_SPAMMER_DS, NON_SPAMMER_VALUE);
+
+    auto *all = spammerDS;
+    all->addDataset(*nonSpammerDS);
+    delete nonSpammerDS;
+    LOG("Finish merging dataset.");
+    LOG_VAR(all->size());
+    
+    LOG("Remove Special Words");
+    removeSpecialWordsInDS(all);
+    auto *stops = loadStops();
+    removeStopsInDS(all, stops);
+    delete stops;
+    LOG_VAR(all->size());
+
+    auto *selector = new BiClassMutualInformation();
+    selector->train(all);
+
+    vector<pair<string, double>> *result = selector->getTopFeatureList();
+    selector->save(PATH + "feature.txt");
+
+    delete selector;
+    delete all;
+}
+
+void collectBiGramURLProb(const string pre){
+    auto *spammers = loadSpammers();
+    auto *nonSpammers = loadSampledNonSpammers();
+
+    for(auto uit = spammers->instances.begin(), uend = spammers->instances.end(); uit != uend; uit++){
+        for(auto fit = uit->values.begin(), fend = uit->values.end(); fit != fend; fit++){
+        }
+    }
+    
+    delete spammers;
+    delete nonSpammers;
+}
+
 int main(int argc, char const *argv[]) {
-	testClassificationWithoutSpecialWords();
     return 0;
 }
