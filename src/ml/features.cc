@@ -42,7 +42,6 @@ void BiClassMutualInformation::train(Dataset *dataset) {
     LOG("Training Mutual Information Feature Selector");
 
     unordered_map<string, array<double, 4>> featureMatrix;
-    unordered_set<double> clsSet;
 
     LOG("Initialize Feature Matrix");
     // initialize feature matrix
@@ -50,7 +49,6 @@ void BiClassMutualInformation::train(Dataset *dataset) {
     // column = [1.0, 1.0, 1.0, 1.0]
     for (auto i = dataset->instances.begin(), dend = dataset->instances.end();
          i != dend; i++) {
-        clsSet.insert(i->getClassValue());
 
         for (auto kv = i->values.begin(), iend = i->values.end(); kv != iend;
              kv++) {
@@ -62,7 +60,7 @@ void BiClassMutualInformation::train(Dataset *dataset) {
         };
     };
 
-    double cls = *clsSet.begin();
+    double cls = SPAMMER_VALUE;
 
     LOG_VAR(featureMatrix.size());
 
@@ -90,7 +88,12 @@ void BiClassMutualInformation::train(Dataset *dataset) {
     }
 
     int N = dataset->size();
-    for (auto &kv : featureMatrix) {
-        featureScoreMap[kv.first] = computeScore(N, kv.second);
-    }
+
+    writeFile(PATH + "mi.txt", [&](ofstream &out){
+        for (auto &kv : featureMatrix) {
+            featureScoreMap[kv.first] = computeScore(N, kv.second);
+        	out << kv.first << "\t" << kv.second[0] << "\t" << kv.second[1] << "\t" << kv.second[2] << "\t" << kv.second[3] << "\t" << featureScoreMap[kv.first] << endl;
+        }
+    });
+
 }
