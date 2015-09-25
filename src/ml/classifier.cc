@@ -58,9 +58,9 @@ void NaiveBayes::train(const Dataset *dataset) {
             	if(i!= kv.second.size() - 1){
             		out << "\t";
             	}
-            	out << endl;
             	i++;
             }
+        	out << endl;
         };
     });
 }

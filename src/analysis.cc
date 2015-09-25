@@ -610,13 +610,13 @@ void randomSampleCheck(int count = 20) {
 }
 
 int main(int argc, char const *argv[]) {
-    
+
+	/*
     auto *spammerDS = Dataset::loadDataset(SPAMMER_DS, SPAMMER_VALUE);
     auto *nonSpammerDS =
         Dataset::loadDataset(NON_SPAMMER_DS, NON_SPAMMER_VALUE);
     spammerDS->save(PATH + "spammer-user-features.txt");
     nonSpammerDS->save(PATH + "non-spammer-user-features.txt");
-/*
     vector<string> words = {
         "rt", "via", "thank", "check", "post", "new", "free", "market", "great",
     "media"
@@ -637,9 +637,10 @@ int main(int argc, char const *argv[]) {
         LOG_VAR(sCount);
         LOG_VAR(nsCount);
     }
-*/
-    // testFeatureSelection();
     delete spammerDS;
     delete nonSpammerDS;
+*/
+
+    testClassification();
     return 0;
 }
