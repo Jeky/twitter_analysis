@@ -641,33 +641,6 @@ int main(int argc, char const *argv[]) {
     delete nonSpammerDS;
 */
 
-//    testClassification();
-
-	Dataset *ds1 = Dataset::loadDatasetMatrix("/Users/jeky/Desktop/1.mat");
-	Dataset *ds2 = Dataset::loadDatasetMatrix("/Users/jeky/Desktop/2.mat");
-	LOG("DS1");
-	for(auto &ins : ds1->instances){
-		LOG(ins.classValue);
-		LOG(ins.values);
-	}
-	LOG("DS2");
-	for(auto &ins : ds2->instances){
-		LOG(ins.classValue);
-		LOG(ins.values);
-	}
-
-	Evaluator eval;
-	Classifier *cls = new BernoulliNaiveBayes();
-	eval.crossValidate(2, cls, ds1, ds2);
-
-    LOG_VAR(eval.getAccuracy());
-    LOG_VAR(eval.getRecall());
-    LOG_VAR(eval.getPrecision());
-    LOG_VAR(eval.getF1());
-
-    delete cls;
-	delete ds1;
-	delete ds2;
-
+    testClassification();
     return 0;
 }
