@@ -48,6 +48,21 @@ void NaiveBayes::train(const Dataset *dataset) {
                 log((v + 1.0) / (clsWordCount[kv.first] + featureSize));
         };
     };
+
+    writeFile(PATH + dataset.name, [&](ofstream &out){
+        for (auto &kv : clsFeatureProb) {
+        	out << "Class Label = " << kv.first << endl;
+        	int i = 0;
+            for(auto &fs: kv.second){
+            	out << fs.first << "\t" << fs.second;
+            	if(i!= kv.second.size() - 1){
+            		out << "\t";
+            	}
+            	out << endl;
+            	i++;
+            }
+        };
+    });
 }
 
 double NaiveBayes::classify(const Instance &ins) {

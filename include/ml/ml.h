@@ -99,6 +99,7 @@ class Dataset {
     }
 
     vector<Instance> instances;
+    string name;
 };
 
 #endif

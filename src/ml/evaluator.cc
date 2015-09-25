@@ -68,10 +68,12 @@ void Evaluator::crossValidate(int foldN, Classifier *classifier, Dataset *ds1,
             mergeTestingDataset(ds1, ds2, folds1, folds2, i);
         trainingDataset->shuffle();
         testingDataset->shuffle();
+        trainingDataset->name = "full-feature-cv-train-" + to_string(i + 1) + ".txt";
 
         LOG("Training Classifier...");
         classifier->reset();
         classifier->train(trainingDataset);
+        testingDataset->save(PATH + "full-feature-cv-test-" + to_string(i + 1) + ".txt");
 
         LOG("Testing...");
         unordered_map<string, double> cm;
