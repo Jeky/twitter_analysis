@@ -13,7 +13,7 @@ Dataset *Dataset::loadDatasetMatrix(const string &filename) {
         instance.setClassValue(cls);
 
         while (ss >> buf) {
-            instance[to_string(colCount)] = buf;
+            instance["f" + to_string(colCount)] = buf;
             colCount++;
         }
 
@@ -30,6 +30,7 @@ void Dataset::save(const string &path){
 	writeFile(path, [&](ofstream &out){
 		for(auto &ins : instances){
             int i = 0;
+            out << ins.getClassValue() << "\t";
 			for(auto &kv : ins.values){
 				out << kv.first << "\t" << kv.second;
                 if(i != ins.values.size() - 1){

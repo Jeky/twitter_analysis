@@ -51,8 +51,8 @@ Dataset *mergeTestingDataset(Dataset *ds1, Dataset *ds2, int *folds1,
 
 void Evaluator::crossValidate(int foldN, Classifier *classifier, Dataset *ds1,
                               Dataset *ds2) {
-    ds1->shuffle();
-    ds2->shuffle();
+//    ds1->shuffle();
+//    ds2->shuffle();
 
     int *folds1 = computeFolds(ds1->size(), foldN);
     int *folds2 = computeFolds(ds2->size(), foldN);
@@ -66,8 +66,8 @@ void Evaluator::crossValidate(int foldN, Classifier *classifier, Dataset *ds1,
             mergeTrainingDataset(ds1, ds2, folds1, folds2, i);
         Dataset *testingDataset =
             mergeTestingDataset(ds1, ds2, folds1, folds2, i);
-        trainingDataset->shuffle();
-        testingDataset->shuffle();
+//        trainingDataset->shuffle();
+//        testingDataset->shuffle();
         trainingDataset->save(PATH + "full-feature-cv-train-" + to_string(i + 1) + ".txt");
         trainingDataset->name = "full-feature-cv-train-result-" + to_string(i + 1) + ".txt";
 
@@ -96,6 +96,8 @@ void Evaluator::crossValidate(int foldN, Classifier *classifier, Dataset *ds1,
                 }
             }
         };
+
+        LOG_VAR(cm);
 
         result.push_back(cm);
 

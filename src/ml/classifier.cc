@@ -97,6 +97,7 @@ void BernoulliNaiveBayes::reset() {
 
 void BernoulliNaiveBayes::train(const Dataset *dataset) {
     unordered_set<string> featureSet;
+    unordered_map<double, double> instanceCounter;
 
     // TODO: modify to accept multiply classes
     clsFeatureProb[SPAMMER_VALUE] = unordered_map<string, double, hashString>();
@@ -109,14 +110,16 @@ void BernoulliNaiveBayes::train(const Dataset *dataset) {
          instance != end; instance++) {
         double cls = instance->getClassValue();
         clsProb[cls] += 1.0;
+        instanceCounter[cls] += 1.0;
         for (auto kv = instance->values.begin(), iend = instance->values.end();
              kv != iend; kv++) {
-            clsFeatureProb[cls][kv->first] ++;
-            featureSet.insert(kv->first);
+        	if(kv->second != 0){
+				clsFeatureProb[cls][kv->first] ++;
+				featureSet.insert(kv->first);
+        	}
         }
     }
 
-    LOG_VAR(featureSet.size());
 
     // compute class probability
     for (auto &kv : clsProb) {
@@ -133,7 +136,7 @@ void BernoulliNaiveBayes::train(const Dataset *dataset) {
             }
 
             kv.second[k] =
-                log((v + 1.0) / (clsProb[kv.first] + 2.0));
+                log((v + 1.0) / (instanceCounter[kv.first] + 2.0));
         };
     };
 
@@ -156,19 +159,18 @@ void BernoulliNaiveBayes::train(const Dataset *dataset) {
 double BernoulliNaiveBayes::classify(const Instance &ins) {
     double cls = 0.0;
     double prob = -1.0;
-
     for (auto &ckv : clsFeatureProb) {
         double thisCls = ckv.first;
         double thisProb = clsProb[thisCls];
 
         for(auto &kv : ckv.second){
-        	if(ins.values.find(kv.first) != ins.values.end()){
-        		prob += kv.second * ins.values[kv.first];
+        	auto fIter = ins.values.find(kv.first);
+        	if(fIter != ins.values.end()){
+        		thisProb += kv.second * fIter->second;
         	}else{
-        		prob -= kv.second * ins.values[kv.first];
+        		thisProb -= kv.second;
         	}
         }
-        LOG("CLS = ", thisCls, ", Prob = ", thisProb);
 
         if (thisProb > prob || prob == -1.0) {
             cls = thisCls;
@@ -238,8 +240,6 @@ void FeaturedNaiveBayes::train(const Dataset *dataset) {
                 log((v + 1.0) / (clsWordCount[kv.first] + featureSize));
         };
     };
-    SHOW_TIMER();
-    CLEAR_TIMER();
 }
 
 double FeaturedNaiveBayes::classify(const Instance &ins) {
