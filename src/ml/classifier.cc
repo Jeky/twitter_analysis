@@ -69,8 +69,8 @@ double NaiveBayes::classify(const Instance &ins) {
     double cls = 0.0;
     double prob = -1.0;
 
-    for (auto &kv : clsFeatureProb) {
-        double thisCls = kv.first;
+    for (auto &ckv : clsFeatureProb) {
+        double thisCls = ckv.first;
         double thisProb = clsProb[thisCls];
 
         for (auto kv = ins.values.begin(), end = ins.values.end(); kv != end;
@@ -96,7 +96,6 @@ void BernoulliNaiveBayes::reset() {
 }
 
 void BernoulliNaiveBayes::train(const Dataset *dataset) {
-    unordered_map<double, double> clsWordCount;
     unordered_set<string> featureSet;
 
     // TODO: modify to accept multiply classes
@@ -112,8 +111,7 @@ void BernoulliNaiveBayes::train(const Dataset *dataset) {
         clsProb[cls] += 1.0;
         for (auto kv = instance->values.begin(), iend = instance->values.end();
              kv != iend; kv++) {
-            clsFeatureProb[cls][kv->first] += kv->second;
-            clsWordCount[cls] += kv->second;
+            clsFeatureProb[cls][kv->first] ++;
             featureSet.insert(kv->first);
         }
     }
@@ -135,12 +133,51 @@ void BernoulliNaiveBayes::train(const Dataset *dataset) {
             }
 
             kv.second[k] =
-                log((v + 1.0) / (clsWordCount[kv.first] + featureSize));
+                log((v + 1.0) / (clsProb[kv.first] + 2.0));
         };
     };
+
+    writeFile(PATH + dataset->name, [&](ofstream &out){
+        for (auto &kv : clsFeatureProb) {
+        	out << "Class Label = " << kv.first << endl;
+        	int i = 0;
+            for(auto &fs: kv.second){
+            	out << fs.first << "\t" << fs.second;
+            	if(i!= kv.second.size() - 1){
+            		out << "\t";
+            	}
+            	i++;
+            }
+        	out << endl;
+        };
+    });
 }
 
-double BernoulliNaiveBayes::classify(const Instance &ins) { return 0.0; }
+double BernoulliNaiveBayes::classify(const Instance &ins) {
+    double cls = 0.0;
+    double prob = -1.0;
+
+    for (auto &ckv : clsFeatureProb) {
+        double thisCls = ckv.first;
+        double thisProb = clsProb[thisCls];
+
+        for(auto &kv : ckv.second){
+        	if(ins.values.find(kv.first) != ins.values.end()){
+        		prob += kv.second * ins.values[kv.first];
+        	}else{
+        		prob -= kv.second * ins.values[kv.first];
+        	}
+        }
+        LOG("CLS = ", thisCls, ", Prob = ", thisProb);
+
+        if (thisProb > prob || prob == -1.0) {
+            cls = thisCls;
+            prob = thisProb;
+        }
+    };
+
+    return cls;
+}
 
 /**
  * Featured Naive Bayes
