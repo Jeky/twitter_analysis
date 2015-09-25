@@ -91,6 +91,8 @@ class Dataset {
         }
     }
 
+    void save(const string &path);
+
     Dataset &operator+=(const Dataset &d) {
         addDataset(d);
         return *this;

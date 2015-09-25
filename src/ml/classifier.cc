@@ -75,6 +75,58 @@ double NaiveBayes::classify(const Instance &ins) {
     return cls;
 }
 
+void BernoulliNaiveBayes::reset() {
+    clsProb.clear();
+    clsFeatureProb.clear();
+}
+
+void BernoulliNaiveBayes::train(const Dataset *ds) {
+    unordered_map<double, double> clsWordCount;
+    unordered_set<string> featureSet;
+
+    // TODO: modify to accept multiply classes
+    clsFeatureProb[SPAMMER_VALUE] = unordered_map<string, double, hashString>();
+    clsFeatureProb[NON_SPAMMER_VALUE] =
+        unordered_map<string, double, hashString>();
+
+    // collect features and compute class probability
+    for (auto instance = dataset->instances.begin(),
+              end = dataset->instances.end();
+         instance != end; instance++) {
+        double cls = instance->getClassValue();
+        clsProb[cls] += 1.0;
+        for (auto kv = instance->values.begin(), iend = instance->values.end();
+             kv != iend; kv++) {
+            clsFeatureProb[cls][kv->first] += kv->second;
+            clsWordCount[cls] += kv->second;
+            featureSet.insert(kv->first);
+        }
+    }
+
+    LOG_VAR(featureSet.size());
+
+    // compute class probability
+    for (auto &kv : clsProb) {
+        clsProb[kv.first] = log(kv.second / dataset->size());
+    };
+
+    // compute class feature probability
+    int featureSize = featureSet.size();
+    for (auto &kv : clsFeatureProb) {
+        for (auto &k : featureSet) {
+            double v = 0.0;
+            if (kv.second.find(k) != kv.second.end()) {
+                v = kv.second[k];
+            }
+
+            kv.second[k] =
+                log((v + 1.0) / (clsWordCount[kv.first] + featureSize));
+        };
+    };
+}
+
+double BernoulliNaiveBayes::classify(const Instance &ins) { return 0.0; }
+
 /**
  * Featured Naive Bayes
  */

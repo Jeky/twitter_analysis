@@ -24,3 +24,16 @@ Dataset *Dataset::loadDatasetMatrix(const string &filename) {
 
     return ds;
 }
+
+
+void Dataset::save(const string &path){
+	writeFile(path, [&](ofstream &out){
+		for(auto &ins : instances){
+			out << ins.getClassValue() << "\t";
+			for(auto &kv : ins.values){
+				out << kv.first << "\t" << kv.second << "\t";
+			}
+			out << endl;
+		}
+	});
+}

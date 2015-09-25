@@ -569,8 +569,10 @@ void collectBiGramURLProb() {
     auto *spammers = loadSpammers();
     auto *nonSpammers = loadSampledNonSpammers();
 
-    auto *spammerGrams = loadObject<vector<vector<string>>>(PATH + "spammer-grams-1.obj");
-    auto *nonSpammerGrams = loadObject<vector<vector<string>>>(PATH + "non-spammer-grams-1.obj");
+    auto *spammerGrams =
+        loadObject<vector<vector<string>>>(PATH + "spammer-grams-1.obj");
+    auto *nonSpammerGrams =
+        loadObject<vector<vector<string>>>(PATH + "non-spammer-grams-1.obj");
 
     delete spammers;
     delete nonSpammers;
@@ -587,16 +589,16 @@ void collectBiGramURLProb() {
 void randomSampleCheck(int count = 20) {
     vector<Tweet> *retweets;
 
-        retweets = new vector<Tweet>();
+    retweets = new vector<Tweet>();
 
-        auto *spammers = loadSpammers();
-        for (auto &kv : *spammers) {
-            for (auto &t : kv.second.getTweets()) {
-                if (t.getText().find("check") != string::npos) {
-                    retweets->push_back(t.getText());
-                }
+    auto *spammers = loadSpammers();
+    for (auto &kv : *spammers) {
+        for (auto &t : kv.second.getTweets()) {
+            if (t.getText().find("check") != string::npos) {
+                retweets->push_back(t.getText());
             }
         }
+    }
 
     // shuffle retweets
     random_shuffle(retweets->begin(), retweets->end());
@@ -614,17 +616,20 @@ int main(int argc, char const *argv[]) {
         Dataset::loadDataset(NON_SPAMMER_DS, NON_SPAMMER_VALUE);
 
     vector<string> words = {
-        "rt", "via", "thank", "check", "post", "new", "free", "market", "great", "media"
+        "rt", "via", "thank", "check", "post", "new", "free", "market", "great",
+    "media"
     };
 
     for(auto &w: words){
         int sCount = 0;
         int nsCount = 0;
-        for(auto uit = spammerDS->instances.begin(); uit != spammerDS->instances.end(); uit++){
-            sCount += uit->at(w); 
+        for(auto uit = spammerDS->instances.begin(); uit !=
+    spammerDS->instances.end(); uit++){
+            sCount += uit->at(w);
         }
-        for(auto uit = nonSpammerDS->instances.begin(); uit != nonSpammerDS->instances.end(); uit++){
-            nsCount += uit->at(w); 
+        for(auto uit = nonSpammerDS->instances.begin(); uit !=
+    nonSpammerDS->instances.end(); uit++){
+            nsCount += uit->at(w);
         }
         LOG_VAR(w);
         LOG_VAR(sCount);
@@ -632,7 +637,7 @@ int main(int argc, char const *argv[]) {
     }
 */
     testFeatureSelection();
-   // delete spammerDS;
-    //delete nonSpammerDS;
+    // delete spammerDS;
+    // delete nonSpammerDS;
     return 0;
 }

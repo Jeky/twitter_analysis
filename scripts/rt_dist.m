@@ -23,7 +23,7 @@ for i = 1:2
         bin(length(bin) + 1) = length(find(intData == count));
     end
     
-    semilogy(0:1/BIN_N:1, bin, '.', 'DisplayName', NAMES(i));
+    semilogy(0:1/BIN_N:1, bin, '-', 'DisplayName', NAMES(i));
     hold all;
 end
 

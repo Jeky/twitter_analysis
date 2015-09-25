@@ -31,6 +31,20 @@ class NaiveBayes : public Classifier {
         clsFeatureProb;
 };
 
+class BernoulliNaiveBayes : public Classifier {
+  public:
+    void reset();
+
+    void train(const Dataset *dataset);
+
+    double classify(const Instance &instance);
+
+  private:
+    unordered_map<double, double> clsProb;
+    unordered_map<double, unordered_map<string, double, hashString>>
+        clsFeatureProb;
+};
+
 class FeaturedNaiveBayes : public Classifier {
   public:
     FeaturedNaiveBayes(vector<pair<string, double>> *topFeatureList) {
