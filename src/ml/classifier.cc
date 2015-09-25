@@ -80,7 +80,7 @@ void BernoulliNaiveBayes::reset() {
     clsFeatureProb.clear();
 }
 
-void BernoulliNaiveBayes::train(const Dataset *ds) {
+void BernoulliNaiveBayes::train(const Dataset *dataset) {
     unordered_map<double, double> clsWordCount;
     unordered_set<string> featureSet;
 
