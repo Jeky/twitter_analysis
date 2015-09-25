@@ -49,7 +49,7 @@ void NaiveBayes::train(const Dataset *dataset) {
         };
     };
 
-    writeFile(PATH + dataset.name, [&](ofstream &out){
+    writeFile(PATH + dataset->name, [&](ofstream &out){
         for (auto &kv : clsFeatureProb) {
         	out << "Class Label = " << kv.first << endl;
         	int i = 0;
