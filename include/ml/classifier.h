@@ -43,6 +43,7 @@ class BernoulliNaiveBayes : public Classifier {
     unordered_map<double, double> clsProb;
     unordered_map<double, unordered_map<string, double, hashString>>
         clsFeatureProb;
+    unordered_map<double, double> totalFalseValues;
 };
 
 class FeaturedNaiveBayes : public Classifier {

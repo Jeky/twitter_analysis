@@ -127,7 +127,6 @@ void BernoulliNaiveBayes::train(const Dataset *dataset) {
     };
 
     // compute class feature probability
-    int featureSize = featureSet.size();
     for (auto &kv : clsFeatureProb) {
         for (auto &k : featureSet) {
             double v = 0.0;
@@ -137,6 +136,12 @@ void BernoulliNaiveBayes::train(const Dataset *dataset) {
 
             kv.second[k] =
                 log((v + 1.0) / (instanceCounter[kv.first] + 2.0));
+        };
+    };
+
+    for (auto &kv : clsFeatureProb) {
+        for (auto &k : featureSet) {
+        	totalFalseValues[kv.first] += kv.second[k];
         };
     };
 
@@ -161,16 +166,15 @@ double BernoulliNaiveBayes::classify(const Instance &ins) {
     double prob = -1.0;
     for (auto &ckv : clsFeatureProb) {
         double thisCls = ckv.first;
-        double thisProb = clsProb[thisCls];
+        double thisProb = clsProb[thisCls] - totalFalseValues[thisCls];
 
-        for(auto &kv : ckv.second){
-        	auto fIter = ins.values.find(kv.first);
-        	if(fIter != ins.values.end()){
-        		thisProb += kv.second * fIter->second;
-        	}else{
-        		thisProb -= kv.second;
-        	}
-        }
+        for (auto kv = ins.values.begin(), end = ins.values.end(); kv != end;
+             kv++) {
+            if (clsFeatureProb[thisCls].find(kv->first) !=
+                clsFeatureProb[thisCls].end()) {
+                thisProb += clsFeatureProb[thisCls][kv->first] * kv->second;
+            }
+        };
 
         if (thisProb > prob || prob == -1.0) {
             cls = thisCls;
