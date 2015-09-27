@@ -78,9 +78,13 @@ void Evaluator::crossValidate(int foldN, Classifier *classifier, Dataset *ds1,
 
         LOG("Testing...");
         unordered_map<string, double> cm;
+        int count = 0;
         for (auto instance = testingDataset->instances.begin(),
                   end = testingDataset->instances.end();
              instance != end; instance++) {
+        	if(count % 100 == 0){
+        		LOG("Classified ", count, " users");
+        	}
             double cls = classifier->classify(*instance);
             if (instance->getClassValue() == posCls) {
                 if (cls == posCls) {
@@ -95,6 +99,7 @@ void Evaluator::crossValidate(int foldN, Classifier *classifier, Dataset *ds1,
                     cm["TN"] += 1;
                 }
             }
+            count++;
         };
 
         LOG_VAR(cm);
