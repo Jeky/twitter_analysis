@@ -641,7 +641,7 @@ int main(int argc, char const *argv[]) {
     delete nonSpammerDS;
 */
 
-//    testClassification();
+    testClassification();
 
     return 0;
 }

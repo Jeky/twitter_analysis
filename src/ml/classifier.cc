@@ -150,20 +150,20 @@ void BernoulliNaiveBayes::train(const Dataset *dataset) {
 //        	LOG(kv.first, " = ", kv.second);
 //    	}
 //    }
-//    writeFile(PATH + dataset->name, [&](ofstream &out){
-//        for (auto &kv : clsFeatureProb) {
-//        	out << "Class Label = " << kv.first << endl;
-//        	int i = 0;
-//            for(auto &fs: kv.second){
-//            	out << fs.first << "\t" << fs.second;
-//            	if(i!= kv.second.size() - 1){
-//            		out << "\t";
-//            	}
-//            	i++;
-//            }
-//        	out << endl;
-//        };
-//    });
+    writeFile(PATH + dataset->name, [&](ofstream &out){
+        for (auto &kv : clsFeatureProb) {
+        	out << "Class Label = " << kv.first << endl;
+        	int i = 0;
+            for(auto &fs: kv.second){
+            	out << fs.first << "\t" << fs.second;
+            	if(i!= kv.second.size() - 1){
+            		out << "\t";
+            	}
+            	i++;
+            }
+        	out << endl;
+        };
+    });
 }
 
 double BernoulliNaiveBayes::classify(const Instance &ins) {
