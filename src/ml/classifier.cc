@@ -123,7 +123,7 @@ void BernoulliNaiveBayes::train(const Dataset *dataset) {
 
     // compute class probability
     for (auto &kv : clsProb) {
-        clsProb[kv.first] = log(kv.second / dataset->size());
+        clsProb[kv.first] = kv.second / dataset->size();
     };
 
     // compute class feature probability
@@ -134,8 +134,7 @@ void BernoulliNaiveBayes::train(const Dataset *dataset) {
                 v = kv.second[k];
             }
 
-            kv.second[k] =
-                log((v + 1.0) / (instanceCounter[kv.first] + 2.0));
+            kv.second[k] = (v + 1.0) / (instanceCounter[kv.first] + 2.0);
         };
     };
 
@@ -145,20 +144,26 @@ void BernoulliNaiveBayes::train(const Dataset *dataset) {
         };
     };
 
-    writeFile(PATH + dataset->name, [&](ofstream &out){
-        for (auto &kv : clsFeatureProb) {
-        	out << "Class Label = " << kv.first << endl;
-        	int i = 0;
-            for(auto &fs: kv.second){
-            	out << fs.first << "\t" << fs.second;
-            	if(i!= kv.second.size() - 1){
-            		out << "\t";
-            	}
-            	i++;
-            }
-        	out << endl;
-        };
-    });
+//    for (auto &ckv : clsFeatureProb) {
+//    	LOG("Class = ", ckv.first, ", Prob = ", clsProb[ckv.first]);
+//    	for(auto &kv : ckv.second){
+//        	LOG(kv.first, " = ", kv.second);
+//    	}
+//    }
+//    writeFile(PATH + dataset->name, [&](ofstream &out){
+//        for (auto &kv : clsFeatureProb) {
+//        	out << "Class Label = " << kv.first << endl;
+//        	int i = 0;
+//            for(auto &fs: kv.second){
+//            	out << fs.first << "\t" << fs.second;
+//            	if(i!= kv.second.size() - 1){
+//            		out << "\t";
+//            	}
+//            	i++;
+//            }
+//        	out << endl;
+//        };
+//    });
 }
 
 double BernoulliNaiveBayes::classify(const Instance &ins) {
@@ -166,16 +171,17 @@ double BernoulliNaiveBayes::classify(const Instance &ins) {
     double prob = -1.0;
     for (auto &ckv : clsFeatureProb) {
         double thisCls = ckv.first;
-        double thisProb = clsProb[thisCls] - totalFalseValues[thisCls];
+        double thisProb = clsProb[thisCls];
 
-        for (auto kv = ins.values.begin(), end = ins.values.end(); kv != end;
+        for (auto kv = ckv.second.begin(), end = ckv.second.end(); kv != end;
              kv++) {
-            if (clsFeatureProb[thisCls].find(kv->first) !=
-                clsFeatureProb[thisCls].end()) {
-                thisProb += clsFeatureProb[thisCls][kv->first] * kv->second;
+            if (ins.values.find(kv->first) != ins.values.end()) {
+                thisProb *= clsFeatureProb[thisCls][kv->first];
+            }else{
+            	thisProb *= 1 - clsFeatureProb[thisCls][kv->first];
             }
         };
-
+        LOG("Classified: CLS = ", thisCls, ", Prob = ", thisProb);
         if (thisProb > prob || prob == -1.0) {
             cls = thisCls;
             prob = thisProb;
@@ -262,7 +268,6 @@ double FeaturedNaiveBayes::classify(const Instance &ins) {
                     clsFeatureProb[thisCls][kv->first] * ins.at(kv->first);
             }
         }
-
         if (thisProb > prob || prob == -1.0) {
             cls = thisCls;
             prob = thisProb;
