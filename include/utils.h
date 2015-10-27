@@ -17,32 +17,30 @@ using namespace std;
 static const string PATH = string("/Users/jeky/data/thesis/ctweets/");
 static const string SPAMMER_TWEET_PATH = PATH + string("suspended-tweets/");
 static const string NON_SPAMMER_TWEET_PATH =
-    PATH + string("non-spammer-tweets/");
+    PATH + string("non-suspended-tweets/");
 static const string SAMPLED_NON_SPAMMER_ID_LIST =
-    PATH + string("sampled-non-spammer-id.txt");
-static const string NON_SPAMMER_ID_LIST = PATH + string("non-spammer-id.txt");
-static const string SPAMMER_ID_LIST = PATH + string("spammer-id.txt");
+    PATH + string("sampled-non-suspended-id.txt");
+static const string NON_SPAMMER_ID_LIST = PATH + string("non-suspended-ids.txt");
+static const string SPAMMER_ID_LIST = PATH + string("suspended-ids.txt");
 
-static const string SPAMMER_DATA_PATH = PATH + string("spammers.obj");
-static const string NON_SPAMMER_DATA_PATH = PATH + string("non-spammers.obj");
+static const string SPAMMER_DATA_PATH = PATH + string("suspendeds.obj");
+static const string NON_SPAMMER_DATA_PATH = PATH + string("non-suspendeds.obj");
 
 static const string SPAMMER_TOKEN_COUNTER =
-    PATH + string("spammer-token-counter.obj");
+    PATH + string("suspended-token-counter.obj");
 static const string NON_SPAMMER_TOKEN_COUNTER =
-    PATH + string("non-spammer-token-counter.obj");
+    PATH + string("non-suspended-token-counter.obj");
 
 static const string SPAMMER_TOKEN_FREQ =
-    PATH + string("spammer-token-frequency.txt");
+    PATH + string("suspended-token-frequency.txt");
 static const string NON_SPAMMER_TOKEN_FREQ =
-    PATH + string("non-spammer-token-frequency.txt");
+    PATH + string("non-suspended-token-frequency.txt");
 static const string ALL_TOKEN_FREQ = PATH + string("all-token-frequency.txt");
 
 static const string STOP_WORDS_LIST = PATH + string("stops.txt");
 
-static const string SPAMMER_DS = PATH + string("spammer.dat");
-static const string NON_SPAMMER_DS = PATH + string("nonspammer.dat");
-
-static const int SAMPLE_TWEET_SIZE = 61;
+static const string SPAMMER_DS = PATH + string("suspended.dat");
+static const string NON_SPAMMER_DS = PATH + string("non-suspended.dat");
 
 static const double SPAMMER_VALUE = 1.0;
 static const double NON_SPAMMER_VALUE = 0.0;
