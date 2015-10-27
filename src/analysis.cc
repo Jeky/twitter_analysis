@@ -9,7 +9,7 @@
 
 void convertToDS() {
     auto *spammers = loadSpammers();
-    auto *nonSpammers = loadSampledNonSpammers();
+    auto *nonSpammers = loadNonSpammers();
 
     LOG("User loaded. Convert users to Dataset...");
 

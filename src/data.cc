@@ -85,6 +85,10 @@ unordered_map<long, User> *loadSpammers() {
     return loadData(SPAMMER_DATA_PATH, SPAMMER_ID_LIST, true);
 }
 
+unordered_map<long, User> *loadNonSpammers() {
+    return loadData(NON_SPAMMER_DATA_PATH, SAMPLED_NON_SPAMMER_ID_LIST, true);
+}
+
 unordered_map<long, User> *loadSampledNonSpammers() {
     return loadData(NON_SPAMMER_DATA_PATH, SAMPLED_NON_SPAMMER_ID_LIST, false,
                     [](unordered_map<long, User> *users) {
