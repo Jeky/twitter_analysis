@@ -89,53 +89,53 @@ unordered_map<long, User> *loadNonSpammers() {
     return loadData(NON_SPAMMER_DATA_PATH, SAMPLED_NON_SPAMMER_ID_LIST, true);
 }
 
-unordered_map<long, User> *loadSampledNonSpammers() {
-    return loadData(NON_SPAMMER_DATA_PATH, SAMPLED_NON_SPAMMER_ID_LIST, false,
-                    [](unordered_map<long, User> *users) {
-        for (auto &kv : *users) {
-            random_shuffle(kv.second.getTweets().begin(),
-                           kv.second.getTweets().end());
-            kv.second.getTweets().erase(kv.second.getTweets().begin() +
-                                            SAMPLE_TWEET_SIZE,
-                                        kv.second.getTweets().end());
-        }
-    });
-}
+// unordered_map<long, User> *loadSampledNonSpammers() {
+//     return loadData(NON_SPAMMER_DATA_PATH, SAMPLED_NON_SPAMMER_ID_LIST, false,
+//                     [](unordered_map<long, User> *users) {
+//         for (auto &kv : *users) {
+//             random_shuffle(kv.second.getTweets().begin(),
+//                            kv.second.getTweets().end());
+//             kv.second.getTweets().erase(kv.second.getTweets().begin() +
+//                                             SAMPLE_TWEET_SIZE,
+//                                         kv.second.getTweets().end());
+//         }
+//     });
+// }
 
-void sampleNonSpammers() {
-    LOG("Start Sampling Normal Users...");
-    unordered_set<long> spammerIds;
-    readFile(SPAMMER_ID_LIST, [&](int i, string &line) {
-        spammerIds.insert(stol(line));
-        return true;
-    });
-    LOG_VAR(spammerIds.size());
+// void sampleNonSpammers() {
+//     LOG("Start Sampling Normal Users...");
+//     unordered_set<long> spammerIds;
+//     readFile(SPAMMER_ID_LIST, [&](int i, string &line) {
+//         spammerIds.insert(stol(line));
+//         return true;
+//     });
+//     LOG_VAR(spammerIds.size());
 
-    vector<long> nonSpammerIds;
-    readFile(NON_SPAMMER_ID_LIST, [&](int i, string &line) {
-        long id = stol(line);
-        if (spammerIds.find(id) == spammerIds.end()) {
-            User u(id, false);
-            u.loadTweets();
-            if (u.getTweets().size() >= SAMPLE_TWEET_SIZE) {
-                nonSpammerIds.push_back(id);
-            }
-        }
-        if (nonSpammerIds.size() % 100 == 0 && nonSpammerIds.size() != 0) {
-            LOG("Sampled ", nonSpammerIds.size(), " users");
-        }
-        return true;
-    });
-    LOG_VAR(nonSpammerIds.size());
+//     vector<long> nonSpammerIds;
+//     readFile(NON_SPAMMER_ID_LIST, [&](int i, string &line) {
+//         long id = stol(line);
+//         if (spammerIds.find(id) == spammerIds.end()) {
+//             User u(id, false);
+//             u.loadTweets();
+//             if (u.getTweets().size() >= SAMPLE_TWEET_SIZE) {
+//                 nonSpammerIds.push_back(id);
+//             }
+//         }
+//         if (nonSpammerIds.size() % 100 == 0 && nonSpammerIds.size() != 0) {
+//             LOG("Sampled ", nonSpammerIds.size(), " users");
+//         }
+//         return true;
+//     });
+//     LOG_VAR(nonSpammerIds.size());
 
-    random_shuffle(nonSpammerIds.begin(), nonSpammerIds.end());
+//     random_shuffle(nonSpammerIds.begin(), nonSpammerIds.end());
 
-    writeFile(SAMPLED_NON_SPAMMER_ID_LIST, [&](ofstream &out) {
-        for (int i = 0; i < spammerIds.size(); i++) {
-            out << nonSpammerIds[i] << endl;
-        }
-    });
-}
+//     writeFile(SAMPLED_NON_SPAMMER_ID_LIST, [&](ofstream &out) {
+//         for (int i = 0; i < spammerIds.size(); i++) {
+//             out << nonSpammerIds[i] << endl;
+//         }
+//     });
+// }
 
 Dataset *user2Dataset(unordered_map<long, User> *users, int gramLen) {
     LOG("Converting user map to dataset");
