@@ -154,7 +154,7 @@ void testClassification() {
     auto *nonSpammerDS =
         Dataset::loadDataset(NON_SPAMMER_DS, NON_SPAMMER_VALUE);
 
-    Classifier *cls = new BernoulliNaiveBayes();
+    Classifier *cls = new NaiveBayes();
     Evaluator eval;
 
     eval.crossValidate(10, cls, spammerDS, nonSpammerDS);
@@ -641,6 +641,7 @@ int main(int argc, char const *argv[]) {
     delete nonSpammerDS;
 */
 
+    convertToDS();
     testClassification();
 
     return 0;

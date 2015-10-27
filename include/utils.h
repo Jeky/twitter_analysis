@@ -15,7 +15,7 @@
 using namespace std;
 
 static const string PATH = string("/Users/jeky/data/thesis/ctweets/");
-static const string SPAMMER_TWEET_PATH = PATH + string("spammer-tweets/");
+static const string SPAMMER_TWEET_PATH = PATH + string("suspended-tweets/");
 static const string NON_SPAMMER_TWEET_PATH =
     PATH + string("non-spammer-tweets/");
 static const string SAMPLED_NON_SPAMMER_ID_LIST =
