@@ -20,7 +20,8 @@ static const string NON_SPAMMER_TWEET_PATH =
     PATH + string("non-suspended-tweets/");
 static const string SAMPLED_NON_SPAMMER_ID_LIST =
     PATH + string("sampled-non-suspended-id.txt");
-static const string NON_SPAMMER_ID_LIST = PATH + string("non-suspended-ids.txt");
+static const string NON_SPAMMER_ID_LIST =
+    PATH + string("non-suspended-ids.txt");
 static const string SPAMMER_ID_LIST = PATH + string("suspended-ids.txt");
 
 static const string SPAMMER_DATA_PATH = PATH + string("suspendeds.obj");

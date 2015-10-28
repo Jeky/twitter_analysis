@@ -177,52 +177,46 @@ TEST(TextTest, isDigitStr) {
     EXPECT_FALSE(isDigitStr("aaa"));
 }
 
-TEST(ClassificationTest, BernoulliNaiveBayes){
-	Dataset *ds = new Dataset();
-	vector<string> class1Strings = {
-			"Chinese Beijing Chinese",
-			"Chinese Chinese Shanghai",
-			"Chinese Macao"
-	};
-	vector<string> class2Strings = {
-			"Tokyo Japan Chinese"
-	};
+TEST(ClassificationTest, BernoulliNaiveBayes) {
+    Dataset *ds = new Dataset();
+    vector<string> class1Strings = {
+        "Chinese Beijing Chinese", "Chinese Chinese Shanghai", "Chinese Macao"};
+    vector<string> class2Strings = {"Tokyo Japan Chinese"};
 
-	for(auto s : class1Strings){
-		Instance i;
-		i.setClassValue(SPAMMER_VALUE);
-		vector<string> *grams = toGrams(s);
-		for(auto &g : *grams){
-			i[g] ++;
-		}
-		ds->addInstance(i);
-		delete grams;
-	}
+    for (auto s : class1Strings) {
+        Instance i;
+        i.setClassValue(SPAMMER_VALUE);
+        vector<string> *grams = toGrams(s);
+        for (auto &g : *grams) {
+            i[g]++;
+        }
+        ds->addInstance(i);
+        delete grams;
+    }
 
+    for (auto s : class2Strings) {
+        Instance i;
+        i.setClassValue(NON_SPAMMER_VALUE);
+        vector<string> *grams = toGrams(s);
+        for (auto &g : *grams) {
+            i[g]++;
+        }
+        ds->addInstance(i);
+        delete grams;
+    }
 
-	for(auto s : class2Strings){
-		Instance i;
-		i.setClassValue(NON_SPAMMER_VALUE);
-		vector<string> *grams = toGrams(s);
-		for(auto &g : *grams){
-			i[g] ++;
-		}
-		ds->addInstance(i);
-		delete grams;
-	}
+    Classifier *cls = new BernoulliNaiveBayes();
+    cls->train(ds);
 
-	Classifier *cls = new BernoulliNaiveBayes();
-	cls->train(ds);
+    Instance testInstance;
+    vector<string> *grams = toGrams("Chinese Chinese Chinese Tokyo Japan");
+    for (auto &g : *grams) {
+        testInstance[g]++;
+    }
+    delete grams;
 
-	Instance testInstance;
-	vector<string> *grams = toGrams("Chinese Chinese Chinese Tokyo Japan");
-	for(auto &g : *grams){
-		testInstance[g] ++;
-	}
-	delete grams;
+    double c = cls->classify(testInstance);
 
-	double c = cls->classify(testInstance);
-
-	delete cls;
-	delete ds;
+    delete cls;
+    delete ds;
 }

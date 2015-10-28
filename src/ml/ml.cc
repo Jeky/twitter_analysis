@@ -25,20 +25,19 @@ Dataset *Dataset::loadDatasetMatrix(const string &filename) {
     return ds;
 }
 
-
-void Dataset::save(const string &path){
-	writeFile(path, [&](ofstream &out){
-		for(auto &ins : instances){
+void Dataset::save(const string &path) {
+    writeFile(path, [&](ofstream &out) {
+        for (auto &ins : instances) {
             int i = 0;
             out << ins.getClassValue() << "\t";
-			for(auto &kv : ins.values){
-				out << kv.first << "\t" << kv.second;
-                if(i != ins.values.size() - 1){
+            for (auto &kv : ins.values) {
+                out << kv.first << "\t" << kv.second;
+                if (i != ins.values.size() - 1) {
                     out << "\t";
                 }
                 i++;
-			}
-			out << endl;
-		}
-	});
+            }
+            out << endl;
+        }
+    });
 }

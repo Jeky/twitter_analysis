@@ -66,9 +66,7 @@ unordered_map<long, User> *loadData(const string &dataPath, const string &path,
 
 unordered_map<long, User> *loadSpammers();
 
-unordered_map<long, User> *loadSampledNonSpammers();
-
-void sampleNonSpammers();
+unordered_map<long, User> *loadNonSpammers();
 
 Dataset *user2Dataset(unordered_map<long, User> *users, int gramLen = 1);
 

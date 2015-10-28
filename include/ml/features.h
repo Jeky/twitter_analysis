@@ -40,11 +40,17 @@ class FeatureSelector {
     Dataset *filterDataset(Dataset *ds, int top);
 
   protected:
+    bool output = true;
     unordered_map<string, double, hashString> featureScoreMap;
     vector<pair<string, double>> *topFeatureList = nullptr;
 };
 
 class BiClassMutualInformation : public FeatureSelector {
+  public:
+    void train(Dataset *dataset);
+};
+
+class BIClassWAPMI : public FeatureSelector {
   public:
     void train(Dataset *dataset);
 };

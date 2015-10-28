@@ -50,10 +50,25 @@ void testClassification() {
     delete nonSpammerDS;
 }
 
+void testFeatureSelection(){
+    auto *spammerDS = Dataset::loadDataset(SPAMMER_DS, SPAMMER_VALUE);
+    auto *nonSpammerDS =
+        Dataset::loadDataset(NON_SPAMMER_DS, NON_SPAMMER_VALUE);
+
+    auto *all = spammerDS;
+    all->addDataset(*nonSpammerDS);
+    delete nonSpammerDS;
+
+    FeatureSelector *selector = new BIClassWAPMI();
+    selector->train(all);
+    selector->save(PATH + "selected-feature.txt");
+
+    delete selector;
+    delete all;
+}
 
 int main(int argc, char const *argv[]) {
-    convertToDS();
-    testClassification();
+    testFeatureSelection();
 
     return 0;
 }

@@ -51,8 +51,8 @@ Dataset *mergeTestingDataset(Dataset *ds1, Dataset *ds2, int *folds1,
 
 void Evaluator::crossValidate(int foldN, Classifier *classifier, Dataset *ds1,
                               Dataset *ds2) {
-//    ds1->shuffle();
-//    ds2->shuffle();
+    //    ds1->shuffle();
+    //    ds2->shuffle();
 
     int *folds1 = computeFolds(ds1->size(), foldN);
     int *folds2 = computeFolds(ds2->size(), foldN);
@@ -66,15 +66,18 @@ void Evaluator::crossValidate(int foldN, Classifier *classifier, Dataset *ds1,
             mergeTrainingDataset(ds1, ds2, folds1, folds2, i);
         Dataset *testingDataset =
             mergeTestingDataset(ds1, ds2, folds1, folds2, i);
-//        trainingDataset->shuffle();
-//        testingDataset->shuffle();
-        trainingDataset->save(PATH + "full-feature-cv-train-" + to_string(i + 1) + ".txt");
-        trainingDataset->name = "full-feature-cv-train-result-" + to_string(i + 1) + ".txt";
+        //        trainingDataset->shuffle();
+        //        testingDataset->shuffle();
+        trainingDataset->save(PATH + "full-feature-cv-train-" +
+                              to_string(i + 1) + ".txt");
+        trainingDataset->name =
+            "full-feature-cv-train-result-" + to_string(i + 1) + ".txt";
 
         LOG("Training Classifier...");
         classifier->reset();
         classifier->train(trainingDataset);
-        testingDataset->save(PATH + "full-feature-cv-test-" + to_string(i + 1) + ".txt");
+        testingDataset->save(PATH + "full-feature-cv-test-" + to_string(i + 1) +
+                             ".txt");
 
         LOG("Testing...");
         unordered_map<string, double> cm;
@@ -82,9 +85,9 @@ void Evaluator::crossValidate(int foldN, Classifier *classifier, Dataset *ds1,
         for (auto instance = testingDataset->instances.begin(),
                   end = testingDataset->instances.end();
              instance != end; instance++) {
-        	if(count % 100 == 0){
-        		LOG("Classified ", count, " users");
-        	}
+            if (count % 100 == 0) {
+                LOG("Classified ", count, " users");
+            }
             double cls = classifier->classify(*instance);
             if (instance->getClassValue() == posCls) {
                 if (cls == posCls) {
