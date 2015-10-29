@@ -59,9 +59,9 @@ void testFeatureSelection() {
     all->addDataset(*nonSpammerDS);
     delete nonSpammerDS;
 
-    FeatureSelector *selector = new BIClassWAPMI();
+    FeatureSelector *selector = new BiClassMutualInformation();
     selector->train(all);
-    selector->save(PATH + "selected-feature.txt");
+    selector->save(PATH + "selected-feature-mi.txt");
 
     delete selector;
     delete all;
