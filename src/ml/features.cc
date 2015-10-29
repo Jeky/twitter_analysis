@@ -190,3 +190,28 @@ void BIClassWAPMI::train(Dataset *dataset) {
 
     delete insLenArr;
 }
+
+unordered_set<string> *loadFeatures(const string &filename) {
+    unordered_set<string> *features = new unordered_set<string>();
+
+    readFile(filename, [&](int i, string &l) {
+        stringstream ss(l);
+        string token;
+        double score;
+        ss >> token >> score;
+        features->insert(token);
+        return true;
+    });
+
+    return features;
+}
+
+void filterDataset(Dataset *ds, unordered_set<string> *features) {
+    for (auto &instance : ds->instances) {
+        for (auto &kv : instance.values) {
+            if (features->find(kv.first) != features->end()) {
+                instance.values.erase(kv.first);
+            }
+        }
+    }
+}

@@ -67,6 +67,35 @@ void testFeatureSelection() {
     delete all;
 }
 
+void testWAPMI() {
+    auto *spammerDS = Dataset::loadDataset(SPAMMER_DS, SPAMMER_VALUE);
+    auto *nonSpammerDS =
+        Dataset::loadDataset(NON_SPAMMER_DS, NON_SPAMMER_VALUE);
+
+    auto *features = loadFeatures("selected-feature-wapmi-pos.txt");
+
+    filterDataset(spammerDS, features);
+    filterDataset(nonSpammerDS, features);
+
+    delete features;
+
+    Classifier *cls = new NaiveBayes();
+    Evaluator eval;
+
+    eval.crossValidate(10, cls, spammerDS, nonSpammerDS);
+    for (auto &item : eval.getConfusionMatrixVector()) {
+        LOG(item);
+    }
+    LOG_VAR(eval.getAccuracy());
+    LOG_VAR(eval.getRecall());
+    LOG_VAR(eval.getPrecision());
+    LOG_VAR(eval.getF1());
+
+    delete cls;
+    delete spammerDS;
+    delete nonSpammerDS;
+}
+
 int main(int argc, char const *argv[]) {
     testFeatureSelection();
 

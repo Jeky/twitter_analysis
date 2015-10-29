@@ -55,4 +55,8 @@ class BIClassWAPMI : public FeatureSelector {
     void train(Dataset *dataset);
 };
 
+unordered_set<string> *loadFeatures(const string &filename);
+
+void filterDataset(Dataset *ds, unordered_set<string> *features);
+
 #endif
