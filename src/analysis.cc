@@ -50,7 +50,7 @@ void testClassification() {
     delete nonSpammerDS;
 }
 
-void testFeatureSelection(){
+void testFeatureSelection() {
     auto *spammerDS = Dataset::loadDataset(SPAMMER_DS, SPAMMER_VALUE);
     auto *nonSpammerDS =
         Dataset::loadDataset(NON_SPAMMER_DS, NON_SPAMMER_VALUE);

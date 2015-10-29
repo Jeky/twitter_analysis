@@ -172,21 +172,24 @@ void BIClassWAPMI::train(Dataset *dataset) {
         double score = 0.0;
         for (auto &instance : dataset->instances) {
             double j = instance.getClassValue();
-            if(instance.hasAttribute(kv.first) && instance[kv.first] != 0){
-				score +=
-					// alpha_i (1) = p(c_j) * |d_i| /\sum_{d_i \in c_j}{|d_i|}
-					1.0 * instanceCounter[j] / N * insLenArr[i] / totalInstanceLen[j] *
-					// alpha_i (2)
-					// alpha_i (3)
+            if (instance.hasAttribute(kv.first) && instance[kv.first] != 0) {
+                score +=
+                    // alpha_i (1) = p(c_j) * |d_i| /\sum_{d_i \in c_j}{|d_i|}
+                    1.0 * instanceCounter[j] / N * insLenArr[i] /
+                    totalInstanceLen[j] *
+                    // alpha_i (2)
+                    // alpha_i (3)
 
-					// p(w_t|d_i)
-					instance[kv.first] / insLenArr[i] *
-					// (log2(p(w_t,c_j)) - log2(p(w_t)) - log(p(c_j)))
-					(log2(N) + log2(kv.second[(int)j]) -
-					 log2(kv.second[0] + kv.second[1]) - log2(totalInstanceLen[j]));
+                    // p(w_t|d_i)
+                    instance[kv.first] / insLenArr[i] *
+                    // (log2(p(w_t,c_j)) - log2(p(w_t)) - log(p(c_j)))
+                    (log2(N) + log2(kv.second[(int)j]) -
+                     log2(kv.second[0] + kv.second[1]) -
+                     log2(totalInstanceLen[j]));
             }
         }
-		featureScoreMap[kv.first] = score;
+        featureScoreMap[kv.first] = score;
+        break;
         featureCount++;
     }
 
@@ -194,14 +197,17 @@ void BIClassWAPMI::train(Dataset *dataset) {
         writeFile(PATH + "mi.txt", [&](ofstream &out) {
             for (auto &kv : featureMatrix) {
                 int i = 0;
-                for(auto &instance : dataset->instances){
-                    if(instance.hasAttribute(kv.first) && instance[kv.first] != 0){
-                    out << kv.first << "\t";
-                    double j = instance.getClassValue();
-                    out << instanceCounter[j] << "\t" << N << "\t"
-                        << insLenArr[i] << "\t" << totalInstanceLen[j] << "\t"
-                        << instance[kv.first] << "\t" << kv.second[0] << "\t"
-                        << kv.second[1] << "\t" << featureScoreMap[kv.first] << endl;
+                for (auto &instance : dataset->instances) {
+                    if (instance.hasAttribute(kv.first) &&
+                        instance[kv.first] != 0) {
+                        out << kv.first << "\t";
+                        double j = instance.getClassValue();
+                        out << "1.0 * " << instanceCounter[j] << "/" << N << "*"
+                            << insLenArr[i] << "/" totalInstanceLen[j] << "*"
+                            << instance[kv.first] << "/" insLenArr[i]
+                            << "*(log2(" << N << ")+log2(" << kv.second[(int)j]
+                            << ")-log2(" << kv.second[0] << "+" << kv.second[1]
+                            << ")-log2(" totalInstanceLen[j] << "))" << endl;
                     }
                     i++;
                 }
