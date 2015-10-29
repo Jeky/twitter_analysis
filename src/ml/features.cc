@@ -165,6 +165,7 @@ void BIClassWAPMI::train(Dataset *dataset) {
     LOG_VAR(totalInstanceLen);
 
     featureCount = 0;
+    string f;
     for (auto &kv : featureMatrix) {
         if (featureCount % 1000 == 0) {
             LOG("Processed ", featureCount, " Features");
@@ -185,34 +186,32 @@ void BIClassWAPMI::train(Dataset *dataset) {
                     // (log2(p(w_t,c_j)) - log2(p(w_t)) - log(p(c_j)))
                     (log2(N) + log2(kv.second[(int)j]) -
                      log2(kv.second[0] + kv.second[1]) -
-                     log2(totalInstanceLen[j]));
+                     log2(instanceCounter[j]));
             }
         }
         featureScoreMap[kv.first] = score;
-        break;
+        f = kv.first;
         featureCount++;
     }
 
     if (output) {
         writeFile(PATH + "mi.txt", [&](ofstream &out) {
-            for (auto &kv : featureMatrix) {
                 int i = 0;
                 for (auto &instance : dataset->instances) {
-                    if (instance.hasAttribute(kv.first) &&
-                        instance[kv.first] != 0) {
-                        out << kv.first << "\t";
+                    if (instance.hasAttribute(f) &&
+                        instance[f] != 0) {
+                        out << f << "\t";
                         double j = instance.getClassValue();
-                        out << "1.0 * " << instanceCounter[j] << "/" << N << "*"
-                            << insLenArr[i] << "/" totalInstanceLen[j] << "*"
-                            << instance[kv.first] << "/" insLenArr[i]
-                            << "*(log2(" << N << ")+log2(" << kv.second[(int)j]
-                            << ")-log2(" << kv.second[0] << "+" << kv.second[1]
-                            << ")-log2(" totalInstanceLen[j] << "))" << endl;
+                        out << "1.0 * " << instanceCounter[j] << "/" << N << "*" 
+                            << insLenArr[i] << "/" << totalInstanceLen[j] << "*"
+                            << instance[f] << "/" << insLenArr[i]
+                            << "*(log2(" << N << ")+log2(" << featureMatrix[f][(int)j]
+                            << ")-log2(" << featureMatrix[f][0] << "+" << featureMatrix[f][1]
+                            << ")-log2(" << instanceCounter[j] << "))" << endl;
                     }
                     i++;
                 }
                 return;
-            }
         });
     }
 
