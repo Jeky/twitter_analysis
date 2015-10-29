@@ -72,14 +72,10 @@ void testWAPMI() {
     auto *nonSpammerDS =
         Dataset::loadDataset(NON_SPAMMER_DS, NON_SPAMMER_VALUE);
 
-    auto *features = loadFeatures("selected-feature-wapmi-pos.txt");
+    FeatureSelector *selector = new BIClassWAPMI();
+    selector->loadTopFeatureList(PATH + "selected-feature-wapmi-pos.txt");
 
-    filterDataset(spammerDS, features);
-    filterDataset(nonSpammerDS, features);
-
-    delete features;
-
-    Classifier *cls = new NaiveBayes();
+    Classifier *cls = new FeaturedNaiveBayes(selector->getTopFeatureList());
     Evaluator eval;
 
     eval.crossValidate(10, cls, spammerDS, nonSpammerDS);
@@ -92,12 +88,13 @@ void testWAPMI() {
     LOG_VAR(eval.getF1());
 
     delete cls;
+    delete selector;
     delete spammerDS;
     delete nonSpammerDS;
 }
 
 int main(int argc, char const *argv[]) {
-    testFeatureSelection();
+	testWAPMI();
 
     return 0;
 }

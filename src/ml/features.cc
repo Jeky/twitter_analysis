@@ -27,6 +27,24 @@ void FeatureSelector::save(const string &path) {
     });
 }
 
+
+void FeatureSelector::loadTopFeatureList(const string &path){
+    if (topFeatureList != nullptr) {
+    	delete topFeatureList;
+    }
+    topFeatureList = new vector<pair<string, double>>();
+
+	readFile(path, [&](int i, string &l){
+		stringstream ss(l);
+		string f;
+		double s;
+		ss >> f >> s;
+        topFeatureList->push_back(make_pair(f, s));
+
+		return true;
+	});
+}
+
 double computeScore(int N, array<double, 4> &fm) {
     return fm[0] / N * (log2(N) + log2(fm[0]) - log2(fm[0] + fm[1]) -
                         log2(fm[0] + fm[2])) +

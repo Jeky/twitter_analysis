@@ -50,6 +50,7 @@ class FeaturedNaiveBayes : public Classifier {
   public:
     FeaturedNaiveBayes(vector<pair<string, double>> *topFeatureList) {
         this->topFeatureList = topFeatureList;
+        this->size = topFeatureList->size();
     }
 
     void setTopSize(int size) { this->size = size; }
