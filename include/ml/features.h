@@ -11,7 +11,7 @@ class FeatureSelector {
   public:
     virtual void reset() { featureScoreMap.clear(); }
 
-    virtual void train(Dataset *dataset) = 0;
+    virtual void train(Dataset *dataset) {};
 
     virtual vector<pair<string, double>> *getTopFeatureList();
 

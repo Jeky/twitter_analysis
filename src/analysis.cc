@@ -67,34 +67,29 @@ void testFeatureSelection() {
     delete all;
 }
 
-void testWAPMI() {
+void testFeatureRelation() {
     auto *spammerDS = Dataset::loadDataset(SPAMMER_DS, SPAMMER_VALUE);
     auto *nonSpammerDS =
         Dataset::loadDataset(NON_SPAMMER_DS, NON_SPAMMER_VALUE);
 
-    FeatureSelector *selector = new BIClassWAPMI();
-    selector->loadTopFeatureList(PATH + "selected-feature-wapmi-pos.txt");
-
-    Classifier *cls = new FeaturedNaiveBayes(selector->getTopFeatureList());
     Evaluator eval;
 
-    eval.crossValidate(10, cls, spammerDS, nonSpammerDS);
-    for (auto &item : eval.getConfusionMatrixVector()) {
-        LOG(item);
-    }
-    LOG_VAR(eval.getAccuracy());
-    LOG_VAR(eval.getRecall());
-    LOG_VAR(eval.getPrecision());
-    LOG_VAR(eval.getF1());
+    eval.featureSelectionValidate(spammerDS, nonSpammerDS,
+    		PATH + "selected-feature-wapmi.txt",
+			PATH + "wapmi-test.txt",
+			100, 10000);
 
-    delete cls;
-    delete selector;
+    eval.featureSelectionValidate(spammerDS, nonSpammerDS,
+    		PATH + "selected-feature-mi.txt",
+			PATH + "mi-test.txt",
+			100, 10000);
+
     delete spammerDS;
     delete nonSpammerDS;
 }
 
 int main(int argc, char const *argv[]) {
-	testWAPMI();
+	testFeatureRelation();
 
     return 0;
 }
