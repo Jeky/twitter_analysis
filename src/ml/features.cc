@@ -27,22 +27,21 @@ void FeatureSelector::save(const string &path) {
     });
 }
 
-
-void FeatureSelector::loadTopFeatureList(const string &path){
+void FeatureSelector::loadTopFeatureList(const string &path) {
     if (topFeatureList != nullptr) {
-    	delete topFeatureList;
+        delete topFeatureList;
     }
     topFeatureList = new vector<pair<string, double>>();
 
-	readFile(path, [&](int i, string &l){
-		stringstream ss(l);
-		string f;
-		double s;
-		ss >> f >> s;
+    readFile(path, [&](int i, string &l) {
+        stringstream ss(l);
+        string f;
+        double s;
+        ss >> f >> s;
         topFeatureList->push_back(make_pair(f, s));
 
-		return true;
-	});
+        return true;
+    });
 }
 
 double computeScore(int N, array<double, 4> &fm) {
@@ -189,9 +188,16 @@ void BIClassWAPMI::train(Dataset *dataset) {
             double j = instance.getClassValue();
             if (instance.hasAttribute(kv.first) && instance[kv.first] != 0) {
                 score +=
+                    1.0 *
                     // alpha_i (1) = p(c_j) * |d_i| /\sum_{d_i \in c_j}{|d_i|}
-                    1.0 * instanceCounter[j] / N * insLenArr[i] /
-                    totalInstanceLen[j] *
+                    // instanceCounter[j] / N * insLenArr[i] /
+                    // totalInstanceLen[j] *
+
+                    // alpha_i (2) = 1 / \sum_{j=1}^{C}{|c_j|}
+					1 / N *
+
+					// alpha_i (3) = 1 / (|c_j| * |C|)
+					// 1 / (instanceCounter[j] * 2) *
 
                     // p(w_t|d_i)
                     instance[kv.first] / insLenArr[i] *

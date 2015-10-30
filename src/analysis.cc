@@ -59,9 +59,9 @@ void testFeatureSelection() {
     all->addDataset(*nonSpammerDS);
     delete nonSpammerDS;
 
-    FeatureSelector *selector = new BiClassMutualInformation();
+    FeatureSelector *selector = new BIClassWAPMI();
     selector->train(all);
-    selector->save(PATH + "selected-feature-mi.txt");
+    selector->save(PATH + "selected-feature-wapmi-a2.txt");
 
     delete selector;
     delete all;
@@ -75,21 +75,19 @@ void testFeatureRelation() {
     Evaluator eval;
 
     eval.featureSelectionValidate(spammerDS, nonSpammerDS,
-    		PATH + "selected-feature-wapmi.txt",
-			PATH + "wapmi-test.txt",
-			100, 10000);
+                                  PATH + "selected-feature-wapmi-a2.txt",
+                                  PATH + "wapmi-a2-test.txt", 100, 10000);
 
     eval.featureSelectionValidate(spammerDS, nonSpammerDS,
-    		PATH + "selected-feature-mi.txt",
-			PATH + "mi-test.txt",
-			100, 10000);
+                                  PATH + "selected-feature-wapmi-a3.txt",
+                                  PATH + "wapmi-a3-test.txt", 100, 10000);
 
     delete spammerDS;
     delete nonSpammerDS;
 }
 
 int main(int argc, char const *argv[]) {
-	testFeatureRelation();
+    testFeatureSelection();
 
     return 0;
 }
