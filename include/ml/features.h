@@ -52,7 +52,13 @@ class BiClassMutualInformation : public FeatureSelector {
 
 class BIClassWAPMI : public FeatureSelector {
   public:
+    BIClassWAPMI(int mode = 1) { this->mode = mode; }
     void train(Dataset *dataset);
+    void setMode(int mode) { this->mode = mode; }
+    int getMode() { return mode; }
+
+  private:
+    int mode = 1;
 };
 
 unordered_set<string> *loadFeatures(const string &filename);

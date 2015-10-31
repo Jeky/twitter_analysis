@@ -187,25 +187,30 @@ void BIClassWAPMI::train(Dataset *dataset) {
         for (auto &instance : dataset->instances) {
             double j = instance.getClassValue();
             if (instance.hasAttribute(kv.first) && instance[kv.first] != 0) {
-                score +=
-                    1.0 *
+                double a = 1.0;
+                switch (mode) {
+                case 1:
                     // alpha_i (1) = p(c_j) * |d_i| /\sum_{d_i \in c_j}{|d_i|}
-                    // instanceCounter[j] / N * insLenArr[i] /
-                    // totalInstanceLen[j] *
-
+                    a *= instanceCounter[j] / N * insLenArr[i] /
+                         totalInstanceLen[j];
+                    break;
+                case 2:
                     // alpha_i (2) = 1 / \sum_{j=1}^{C}{|c_j|}
-                    1 / N *
-
+                    a *= 1 / N;
+                    break;
+                case 3:
                     // alpha_i (3) = 1 / (|c_j| * |C|)
-                    // 1 / (instanceCounter[j] * 2) *
+                    a *= 1 / (instanceCounter[j] * 2);
+                    break;
+                }
+                score += a *
+                         // p(w_t|d_i)
+                         instance[kv.first] / insLenArr[i] *
 
-                    // p(w_t|d_i)
-                    instance[kv.first] / insLenArr[i] *
-
-                    // (log2(p(w_t,c_j)) - log2(p(w_t)) - log(p(c_j)))
-                    (log2(N) + log2(kv.second[j]) -
-                     log2(kv.second[0] + kv.second[1]) -
-                     log2(instanceCounter[j]));
+                         // (log2(p(w_t,c_j)) - log2(p(w_t)) - log(p(c_j)))
+                         (log2(N) + log2(kv.second[j]) -
+                          log2(kv.second[0] + kv.second[1]) -
+                          log2(instanceCounter[j]));
             }
         }
         featureScoreMap[kv.first] = score;

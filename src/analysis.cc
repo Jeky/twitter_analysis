@@ -70,10 +70,10 @@ void analyzeDataset(unordered_map<long, User> *users, bool isSpammer) {
             retweetCount[index]++;
         }
         if (isMention) {
-            mentionCount[index] ++;
+            mentionCount[index]++;
         }
         if (isURL) {
-            urlCount[index] ++;
+            urlCount[index]++;
         }
         index++;
     };
@@ -138,12 +138,22 @@ void testFeatureSelection() {
     auto *all = spammerDS;
     all->addDataset(*nonSpammerDS);
     delete nonSpammerDS;
-
-    FeatureSelector *selector = new BIClassWAPMI();
+    FeatureSelector *selector;
+    // mi
+    selector = new BiClassMutualInformation();
     selector->train(all);
-    selector->save(PATH + "selected-feature-wapmi-a2.txt");
-
+    selector->save(PATH + "selected-feature-mi.txt");
     delete selector;
+
+    // wapmi
+    for (int i = 1; i <= 3; i++) {
+        FeatureSelector *selector = new BIClassWAPMI(i);
+        selector->train(all);
+        selector->save(PATH + "selected-feature-wapmi-a" + to_string(i) +
+                       ".txt");
+
+        delete selector;
+    }
     delete all;
 }
 
@@ -155,19 +165,25 @@ void testFeatureRelation() {
     Evaluator eval;
 
     eval.featureSelectionValidate(spammerDS, nonSpammerDS,
-                                  PATH + "selected-feature-wapmi-a2.txt",
-                                  PATH + "wapmi-a2-test.txt", 100, 10000);
+                                  PATH + "selected-feature-mi.txt",
+                                  PATH + "mi-test.txt", 10, 1000001);
 
-    eval.featureSelectionValidate(spammerDS, nonSpammerDS,
-                                  PATH + "selected-feature-wapmi-a3.txt",
-                                  PATH + "wapmi-a3-test.txt", 100, 10000);
+    for (int i = 1; i <= 3; i++) {
+        eval.reset();
+        eval.featureSelectionValidate(
+            spammerDS, nonSpammerDS,
+            PATH + "selected-feature-wapmi-a" + to_string(i) + ".txt",
+            PATH + "wapmi-a" + to_string(i) + "-test.txt", 10, 1000001);
+    }
 
     delete spammerDS;
     delete nonSpammerDS;
 }
 
 int main(int argc, char const *argv[]) {
-	analyzeAll();
-
+    //	analyzeAll();
+    testClassification();
+    testFeatureSelection();
+    testFeatureRelation();
     return 0;
 }
