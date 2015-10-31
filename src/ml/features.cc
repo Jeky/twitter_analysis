@@ -194,10 +194,10 @@ void BIClassWAPMI::train(Dataset *dataset) {
                     // totalInstanceLen[j] *
 
                     // alpha_i (2) = 1 / \sum_{j=1}^{C}{|c_j|}
-					1 / N *
+                    1 / N *
 
-					// alpha_i (3) = 1 / (|c_j| * |C|)
-					// 1 / (instanceCounter[j] * 2) *
+                    // alpha_i (3) = 1 / (|c_j| * |C|)
+                    // 1 / (instanceCounter[j] * 2) *
 
                     // p(w_t|d_i)
                     instance[kv.first] / insLenArr[i] *

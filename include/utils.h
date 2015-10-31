@@ -14,34 +14,51 @@
 
 using namespace std;
 
-static const string PATH = string("/Users/jeky/data/thesis/ctweets/");
+static const string PATH = string("/Users/jeky/data/thesis/ctweets-sample/");
+static const string SUSPENDED_PREFIX = string("suspended");
+static const string NON_SUSPENDED_PREFIX = string("non-suspended");
+
 static const string SPAMMER_TWEET_PATH = PATH + string("suspended-tweets/");
 static const string NON_SPAMMER_TWEET_PATH =
     PATH + string("non-suspended-tweets/");
-static const string SAMPLED_NON_SPAMMER_ID_LIST =
-    PATH + string("sampled-non-suspended-id.txt");
 static const string NON_SPAMMER_ID_LIST =
     PATH + string("non-suspended-ids.txt");
 static const string SPAMMER_ID_LIST = PATH + string("suspended-ids.txt");
 
-static const string SPAMMER_DATA_PATH = PATH + string("suspendeds.obj");
-static const string NON_SPAMMER_DATA_PATH = PATH + string("non-suspendeds.obj");
-
-static const string SPAMMER_TOKEN_COUNTER =
-    PATH + string("suspended-token-counter.obj");
-static const string NON_SPAMMER_TOKEN_COUNTER =
-    PATH + string("non-suspended-token-counter.obj");
-
-static const string SPAMMER_TOKEN_FREQ =
-    PATH + string("suspended-token-frequency.txt");
-static const string NON_SPAMMER_TOKEN_FREQ =
-    PATH + string("non-suspended-token-frequency.txt");
-static const string ALL_TOKEN_FREQ = PATH + string("all-token-frequency.txt");
-
-static const string STOP_WORDS_LIST = PATH + string("stops.txt");
+static const string SPAMMER_DATA_PATH =
+    PATH + SUSPENDED_PREFIX + string(".obj");
+static const string NON_SPAMMER_DATA_PATH =
+    PATH + NON_SUSPENDED_PREFIX + string(".obj");
 
 static const string SPAMMER_DS = PATH + string("suspended.dat");
 static const string NON_SPAMMER_DS = PATH + string("non-suspended.dat");
+
+static const string SUSPENDED_TOKEN_FREQ =
+    PATH + SUSPENDED_PREFIX + "-token-freq.txt";
+static const string NON_SUSPENDED_TOKEN_FREQ =
+    PATH + NON_SUSPENDED_PREFIX + "-token-freq.txt";
+static const string SUSPENDED_TWEET_COUNT =
+    PATH + SUSPENDED_PREFIX + "-tweet-count.txt";
+static const string NON_SUSPENDED_TWEET_COUNT =
+    PATH + NON_SUSPENDED_PREFIX + "-tweet-count.txt";
+static const string SUSPENDED_RETWEET_COUNT =
+    PATH + SUSPENDED_PREFIX + "-retweet-count.txt";
+static const string NON_SUSPENDED_RETWEET_COUNT =
+    PATH + NON_SUSPENDED_PREFIX + "-retweet-count.txt";
+static const string SUSPENDED_MENTION_COUNT =
+    PATH + SUSPENDED_PREFIX + "-mention-count.txt";
+static const string NON_SUSPENDED_MENTION_COUNT =
+    PATH + NON_SUSPENDED_PREFIX + "-mention-count.txt";
+static const string SUSPENDED_URL_COUNT =
+    PATH + SUSPENDED_PREFIX + "-url-count.txt";
+static const string NON_SUSPENDED_URL_COUNT =
+    PATH + NON_SUSPENDED_PREFIX + "-url-count.txt";
+static const string SUSPENDED_TWEET_LEN =
+    PATH + SUSPENDED_PREFIX + "-tweet-len.txt";
+static const string NON_SUSPENDED_TWEET_LEN =
+    PATH + NON_SUSPENDED_PREFIX + "-tweet-len.txt";
+
+static const string STOP_WORDS_LIST = PATH + string("stops.txt");
 
 static const double SPAMMER_VALUE = 1.0;
 static const double NON_SPAMMER_VALUE = 0.0;
@@ -175,6 +192,18 @@ template <typename T> class Counter {
         }
 
         return keySet;
+    }
+
+    void save(const string &path) {
+        auto *top = getTop();
+
+        writeFile(path, [&](ofstream &out) {
+            for (auto &&kv : *top) {
+                out << kv.first << "\t" << kv.second << endl;
+            }
+        });
+
+        delete top;
     }
 
     void saveFrequency(const string &path) {
