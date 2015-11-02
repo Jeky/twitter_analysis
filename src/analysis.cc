@@ -22,9 +22,14 @@ void analyzeDataset(unordered_map<long, User> *users, bool isSpammer) {
     int gramLen = 1;
     Counter<string> tokenFreq;
     int *tweetCount = new int[users->size()];
+    fill_n(tweetCount, users->size(), 0);
     int *retweetCount = new int[users->size()];
+    fill_n(retweetCount, users->size(), 0);
     int *mentionCount = new int[users->size()];
+    fill_n(mentionCount, users->size(), 0);
     int *urlCount = new int[users->size()];
+    fill_n(urlCount, users->size(), 0);
+
     vector<int> tweetLens;
     string urlPrefix = "http://";
 
