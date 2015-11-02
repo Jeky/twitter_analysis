@@ -40,15 +40,15 @@ void analyzeDataset(unordered_map<long, User> *users, bool isSpammer) {
         }
         Instance ins;
         ins.setClassValue(isSpammer ? SPAMMER_VALUE : NON_SPAMMER_VALUE);
-        bool isRetweet = false;
-        bool isMention = false;
-        bool isURL = false;
-
         for (auto &&t : kv.second.getTweets()) {
-            vector<string> *grams = toGrams(t.getText(), gramLen);
-            vector<string> *tokens = filterSpecialWords(grams);
+            vector<string> *tokens = toGrams(t.getText(), gramLen);
+//            vector<string> *tokens = filterSpecialWords(grams);
             tokenFreq.count(tokens);
             tweetLens.push_back(tokens->size());
+            bool isRetweet = false;
+            bool isMention = false;
+            bool isURL = false;
+
 
             for (auto &&g : *tokens) {
                 ins[g] += 1.0;
@@ -61,25 +61,22 @@ void analyzeDataset(unordered_map<long, User> *users, bool isSpammer) {
             };
 
             if (t.isRetweet()) {
-                isRetweet = true;
+                retweetCount[index]++;
+            }
+            if (isMention) {
+                mentionCount[index]++;
+            }
+            if (isURL) {
+                urlCount[index]++;
             }
 
             delete tokens;
-            delete grams;
+//            delete grams;
         };
 
         dataset->addInstance(ins);
 
         tweetCount[index] += kv.second.getTweets().size();
-        if (isRetweet) {
-            retweetCount[index]++;
-        }
-        if (isMention) {
-            mentionCount[index]++;
-        }
-        if (isURL) {
-            urlCount[index]++;
-        }
         index++;
     };
 
@@ -186,9 +183,9 @@ void testFeatureRelation() {
 }
 
 int main(int argc, char const *argv[]) {
-    //	analyzeAll();
-    testClassification();
-    testFeatureSelection();
-    testFeatureRelation();
+    analyzeAll();
+//    testClassification();
+//    testFeatureSelection();
+//    testFeatureRelation();
     return 0;
 }
