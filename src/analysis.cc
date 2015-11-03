@@ -205,6 +205,35 @@ void testFeatureRelation() {
     delete nonSpammerDS;
 }
 
+void toUserMatrix(int size = 100){
+    auto *spammerDS = Dataset::loadDataset(SPAMMER_DS, SPAMMER_VALUE);
+    auto *nonSpammerDS =
+        Dataset::loadDataset(NON_SPAMMER_DS, NON_SPAMMER_VALUE);
+
+    FeatureSelector *selector = new BiClassMutualInformation();
+    selector->loadTopFeatureList(PATH + "selected-feature-tokenmi.txt");
+    auto *top = selector->getTopFeatureList();
+    writeFile(PATH + "user-matrix.txt", [&](ofstream &out){
+    	for(auto &instance : spammerDS->instances){
+    		for(int i = 0; i < size; i++){
+    			out << instance[top->at(i).first] << "\t";
+    		}
+    		out << endl;
+    	}
+    	for(auto &instance : nonSpammerDS->instances){
+    		for(int i = 0; i < size; i++){
+    			out << instance[top->at(i).first] << "\t";
+    		}
+    		out << endl;
+    	}
+    });
+
+    delete selector;
+    delete top;
+    delete spammerDS;
+    delete nonSpammerDS;
+}
+
 int main(int argc, char const *argv[]) {
 //    analyzeAll();
 //    testClassification();
