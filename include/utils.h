@@ -53,6 +53,10 @@ static const string SUSPENDED_URL_COUNT =
     PATH + SUSPENDED_PREFIX + "-url-count.txt";
 static const string NON_SUSPENDED_URL_COUNT =
     PATH + NON_SUSPENDED_PREFIX + "-url-count.txt";
+static const string SUSPENDED_HASHTAG_COUNT =
+    PATH + SUSPENDED_PREFIX + "-hashtag-count.txt";
+static const string NON_SUSPENDED_HASHTAG_COUNT =
+    PATH + NON_SUSPENDED_PREFIX + "-hashtag-count.txt";
 static const string SUSPENDED_TWEET_LEN =
     PATH + SUSPENDED_PREFIX + "-tweet-len.txt";
 static const string NON_SUSPENDED_TWEET_LEN =

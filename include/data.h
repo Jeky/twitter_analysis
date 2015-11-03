@@ -70,4 +70,6 @@ unordered_map<long, User> *loadNonSpammers();
 
 Dataset *user2Dataset(unordered_map<long, User> *users, int gramLen = 1);
 
+Dataset *loadPropDataset(bool isSpammer);
+
 #endif

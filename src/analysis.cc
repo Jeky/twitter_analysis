@@ -110,6 +110,29 @@ void analyzeAll() {
     delete nonSpammers;
 }
 
+void testPropClassification() {
+    auto *spammerDS = loadPropDataset(true);
+    auto *nonSpammerDS =loadPropDataset(false);
+
+    Classifier *cls = new NaiveBayes();
+    Evaluator eval;
+
+    eval.crossValidate(10, cls, spammerDS, nonSpammerDS);
+    for (auto &&item : eval.getConfusionMatrixVector()) {
+        LOG(item);
+    }
+    LOG_VAR(eval.getAccuracy());
+    LOG_VAR(eval.getRecall());
+    LOG_VAR(eval.getPrecision());
+    LOG_VAR(eval.getF1());
+
+    delete cls;
+    delete spammerDS;
+    delete nonSpammerDS;
+}
+
+
+
 void testClassification() {
     auto *spammerDS = Dataset::loadDataset(SPAMMER_DS, SPAMMER_VALUE);
     auto *nonSpammerDS =
@@ -187,5 +210,6 @@ int main(int argc, char const *argv[]) {
 //    testClassification();
 //    testFeatureSelection();
 //    testFeatureRelation();
+    testPropClassification();
     return 0;
 }
