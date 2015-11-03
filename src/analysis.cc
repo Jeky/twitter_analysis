@@ -206,30 +206,27 @@ void testFeatureRelation() {
 }
 
 void toUserMatrix(int size = 100){
-    auto *spammerDS = Dataset::loadDataset(SPAMMER_DS, SPAMMER_VALUE);
-    auto *nonSpammerDS =
-        Dataset::loadDataset(NON_SPAMMER_DS, NON_SPAMMER_VALUE);
+    auto *spammerDS = loadPropDataset(true);
+    auto *nonSpammerDS =loadPropDataset(false);
 
-    FeatureSelector *selector = new BiClassMutualInformation();
-    selector->loadTopFeatureList(PATH + "selected-feature-tokenmi.txt");
-    auto *top = selector->getTopFeatureList();
+    vector<string> features {"__COUNT__", "__URL__", "__MENTION__", "__HASHTAG__"};
+    size = feature.size();
+
     writeFile(PATH + "user-matrix.txt", [&](ofstream &out){
     	for(auto &instance : spammerDS->instances){
     		for(int i = 0; i < size; i++){
-    			out << instance[top->at(i).first] << "\t";
+    			out << instance[features[i]] << "\t";
     		}
     		out << endl;
     	}
     	for(auto &instance : nonSpammerDS->instances){
     		for(int i = 0; i < size; i++){
-    			out << instance[top->at(i).first] << "\t";
+    			out << instance[features[i]] << "\t";
     		}
     		out << endl;
     	}
     });
 
-    delete selector;
-    delete top;
     delete spammerDS;
     delete nonSpammerDS;
 }
