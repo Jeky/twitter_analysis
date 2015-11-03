@@ -206,7 +206,7 @@ void testFeatureRelation() {
 }
 
 int main(int argc, char const *argv[]) {
-    analyzeAll();
+//    analyzeAll();
 //    testClassification();
 //    testFeatureSelection();
 //    testFeatureRelation();

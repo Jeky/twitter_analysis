@@ -183,12 +183,10 @@ Dataset *loadPropDataset(bool isSpammer){
 	vector<double> *hashtag = isSpammer ? loadPropRate(SUSPENDED_HASHTAG_COUNT) : loadPropRate(NON_SUSPENDED_HASHTAG_COUNT);
 
 	int size = url->size();
-	// remove 0 count
-	for(auto iter = count->begin(), end = count->end(); iter != end; iter++){
-		if(*iter == 0.0){
-			count->erase(iter);
-		}
-	}
+    LOG_VAR(count->size());
+    LOG_VAR(url->size());
+    LOG_VAR(mention->size());
+    LOG_VAR(hashtag->size());
 
 	for(int i = 0; i < size; i++){
 		Instance ins;
