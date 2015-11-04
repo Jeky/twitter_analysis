@@ -135,7 +135,7 @@ void testClassification() {
     auto *nonSpammerDS =
         Dataset::loadDataset(NON_SPAMMER_DS, NON_SPAMMER_VALUE);
 
-    Classifier *cls = new NaiveBayes();
+    Classifier *cls = new BernoulliNaiveBayes();
     Evaluator eval;
 
     eval.crossValidate(10, cls, spammerDS, nonSpammerDS);

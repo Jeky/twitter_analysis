@@ -123,6 +123,7 @@ void BernoulliNaiveBayes::train(const Dataset *dataset) {
     // compute class probability
     for (auto &kv : clsProb) {
         clsProb[kv.first] = log(kv.second / dataset->size());
+        totalFalseValues[kv.first] = clsProb[kv.first];
     };
 
     // compute class feature probability
@@ -135,6 +136,12 @@ void BernoulliNaiveBayes::train(const Dataset *dataset) {
 
             kv.second[k] = (v + 1.0) / (instanceCounter[kv.first] + 2.0);
         };
+    };
+
+    for (auto &ckv : clsProb) {
+        for (auto &kv : clsFeatureProb[ckv.first]) {
+            totalFalseValues[ckv.first] += log(1 - kv.second);
+        }
     };
 
     //    for (auto &ckv : clsFeatureProb) {
@@ -164,17 +171,12 @@ double BernoulliNaiveBayes::classify(const Instance &ins) {
     double prob = -1.0;
     for (auto &ckv : clsFeatureProb) {
         double thisCls = ckv.first;
-        double thisProb = clsProb[thisCls];
+        double thisProb = totalFalseValues[thisCls];
 
-        for (auto kv = ckv.second.begin(), end = ckv.second.end(); kv != end;
-             kv++) {
-            if (ins.values.find(kv->first) != ins.values.end()) {
-                thisProb += log(clsFeatureProb[thisCls][kv->first]);
-            } else {
-                thisProb += log(1 - clsFeatureProb[thisCls][kv->first]);
-            }
-        };
-        LOG("Classified: CLS = ", thisCls, ", Prob = ", thisProb);
+        for (auto &kv : ins.values) {
+            thisProb = thisProb - log(1 - clsFeatureProb[thisCls][kv.first]) +
+                       log(clsFeatureProb[thisCls][kv.first]);
+        }
         if (thisProb > prob || prob == -1.0) {
             cls = thisCls;
             prob = thisProb;
