@@ -166,43 +166,49 @@ Dataset *user2Dataset(unordered_map<long, User> *users, int gramLen) {
     return dataset;
 }
 
-vector<double> *loadPropRate(const string &path){
-	vector<double> *prop = new vector<double>();
-	readFile(path, [&](int i, string &l){
-		prop->push_back(stof(l));
-		return true;
-	});
-	return prop;
+vector<double> *loadPropRate(const string &path) {
+    vector<double> *prop = new vector<double>();
+    readFile(path, [&](int i, string &l) {
+        prop->push_back(stof(l));
+        return true;
+    });
+    return prop;
 }
 
-Dataset *loadPropDataset(bool isSpammer){
-	Dataset *ds = new Dataset();
-	vector<double> *count = isSpammer ? loadPropRate(SUSPENDED_TWEET_COUNT) : loadPropRate(NON_SUSPENDED_TWEET_COUNT);
-	vector<double> *url = isSpammer ? loadPropRate(SUSPENDED_URL_COUNT) : loadPropRate(NON_SUSPENDED_URL_COUNT);
-	vector<double> *mention = isSpammer ? loadPropRate(SUSPENDED_MENTION_COUNT) : loadPropRate(NON_SUSPENDED_MENTION_COUNT);
-	vector<double> *hashtag = isSpammer ? loadPropRate(SUSPENDED_HASHTAG_COUNT) : loadPropRate(NON_SUSPENDED_HASHTAG_COUNT);
+Dataset *loadPropDataset(bool isSpammer) {
+    Dataset *ds = new Dataset();
+    vector<double> *count = isSpammer ? loadPropRate(SUSPENDED_TWEET_COUNT)
+                                      : loadPropRate(NON_SUSPENDED_TWEET_COUNT);
+    vector<double> *url = isSpammer ? loadPropRate(SUSPENDED_URL_COUNT)
+                                    : loadPropRate(NON_SUSPENDED_URL_COUNT);
+    vector<double> *mention = isSpammer
+                                  ? loadPropRate(SUSPENDED_MENTION_COUNT)
+                                  : loadPropRate(NON_SUSPENDED_MENTION_COUNT);
+    vector<double> *hashtag = isSpammer
+                                  ? loadPropRate(SUSPENDED_HASHTAG_COUNT)
+                                  : loadPropRate(NON_SUSPENDED_HASHTAG_COUNT);
 
-	int size = url->size();
+    int size = url->size();
     LOG_VAR(count->size());
     LOG_VAR(url->size());
     LOG_VAR(mention->size());
     LOG_VAR(hashtag->size());
 
-	for(int i = 0; i < size; i++){
-		Instance ins;
-		ins["__COUNT__"] = count->at(i);
-		ins["__URL__"] = url->at(i);
-		ins["__MENTION__"] = mention->at(i);
-		ins["__HASHTAG__"] = hashtag->at(i);
+    for (int i = 0; i < size; i++) {
+        Instance ins;
+        ins["__COUNT__"] = count->at(i);
+        ins["__URL__"] = url->at(i);
+        ins["__MENTION__"] = mention->at(i);
+        ins["__HASHTAG__"] = hashtag->at(i);
 
-		ins.setClassValue(isSpammer?SPAMMER_VALUE : NON_SPAMMER_VALUE);
-		ds->addInstance(ins);
-	}
+        ins.setClassValue(isSpammer ? SPAMMER_VALUE : NON_SPAMMER_VALUE);
+        ds->addInstance(ins);
+    }
 
-	delete count;
-	delete url;
-	delete mention;
-	delete hashtag;
+    delete count;
+    delete url;
+    delete mention;
+    delete hashtag;
 
-	return ds;
+    return ds;
 }

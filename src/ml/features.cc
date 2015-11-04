@@ -81,30 +81,54 @@ void BiClassMutualInformation::train(Dataset *dataset) {
 
     LOG_VAR(featureMatrix.size());
 
-    int featureCount = 0;
-    for (auto &kv : featureMatrix) {
-        if (featureCount % 1000 == 0) {
-            LOG("Processed ", featureCount, " Features");
+    int count = 0;
+    for (auto &instance : dataset->instances) {
+        if (count % 1000 == 0) {
+            LOG("Processed ", count, " users");
         }
-        for (int i = 0; i < dataset->size(); i++) {
-            if ((*dataset)[i].hasAttribute(kv.first)) {
-                if (cls == (*dataset)[i].getClassValue()) {
-                    kv.second[0] += 1;
-                } else {
-                    kv.second[1] += 1;
-                }
+        for (auto &kv : instance.values) {
+            if (instance.getClassValue() == cls) {
+                featureMatrix[kv.first][0]++;
             } else {
-                if (cls == (*dataset)[i].getClassValue()) {
-                    kv.second[2] += 1;
-                } else {
-                    kv.second[3] += 1;
-                }
+                featureMatrix[kv.first][1]++;
             }
         }
-        featureCount++;
+        count++;
     }
 
     int N = dataset->size();
+    count = 0;
+    for (auto &kv : featureMatrix) {
+        if (count % 1000 == 0) {
+            LOG("Processed ", count, " features");
+        }
+        kv.second[2] = N + 2 - kv.second[0];
+        kv.second[3] = N + 2 - kv.second[1];
+
+        count++;
+    }
+
+    //    for (auto &kv : featureMatrix) {
+    //        if (featureCount % 1000 == 0) {
+    //            LOG("Processed ", featureCount, " Features");
+    //        }
+    //        for (int i = 0; i < dataset->size(); i++) {
+    //            if ((*dataset)[i].hasAttribute(kv.first)) {
+    //                if (cls == (*dataset)[i].getClassValue()) {
+    //                    kv.second[0] += 1;
+    //                } else {
+    //                    kv.second[1] += 1;
+    //                }
+    //            } else {
+    //                if (cls == (*dataset)[i].getClassValue()) {
+    //                    kv.second[2] += 1;
+    //                } else {
+    //                    kv.second[3] += 1;
+    //                }
+    //            }
+    //        }
+    //        featureCount++;
+    //    }
 
     writeFile(PATH + "mi.txt", [&](ofstream &out) {
         for (auto &kv : featureMatrix) {

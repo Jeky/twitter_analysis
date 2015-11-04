@@ -42,13 +42,12 @@ void analyzeDataset(unordered_map<long, User> *users, bool isSpammer) {
         ins.setClassValue(isSpammer ? SPAMMER_VALUE : NON_SPAMMER_VALUE);
         for (auto &&t : kv.second.getTweets()) {
             vector<string> *tokens = toGrams(t.getText(), gramLen);
-//            vector<string> *tokens = filterSpecialWords(grams);
+            //            vector<string> *tokens = filterSpecialWords(grams);
             tokenFreq.count(tokens);
             tweetLens.push_back(tokens->size());
             bool isRetweet = false;
             bool isMention = false;
             bool isURL = false;
-
 
             for (auto &&g : *tokens) {
                 ins[g] += 1.0;
@@ -71,7 +70,7 @@ void analyzeDataset(unordered_map<long, User> *users, bool isSpammer) {
             }
 
             delete tokens;
-//            delete grams;
+            //            delete grams;
         };
 
         dataset->addInstance(ins);
@@ -112,7 +111,7 @@ void analyzeAll() {
 
 void testPropClassification() {
     auto *spammerDS = loadPropDataset(true);
-    auto *nonSpammerDS =loadPropDataset(false);
+    auto *nonSpammerDS = loadPropDataset(false);
 
     Classifier *cls = new NaiveBayes();
     Evaluator eval;
@@ -130,8 +129,6 @@ void testPropClassification() {
     delete spammerDS;
     delete nonSpammerDS;
 }
-
-
 
 void testClassification() {
     auto *spammerDS = Dataset::loadDataset(SPAMMER_DS, SPAMMER_VALUE);
@@ -205,26 +202,27 @@ void testFeatureRelation() {
     delete nonSpammerDS;
 }
 
-void toUserMatrix(int size = 100){
+void toUserMatrix(int size = 100) {
     auto *spammerDS = loadPropDataset(true);
-    auto *nonSpammerDS =loadPropDataset(false);
+    auto *nonSpammerDS = loadPropDataset(false);
 
-    vector<string> features {"__COUNT__", "__URL__", "__MENTION__", "__HASHTAG__"};
-    size = feature.size();
+    vector<string> features{"__COUNT__", "__URL__", "__MENTION__",
+                            "__HASHTAG__"};
+    size = features.size();
 
-    writeFile(PATH + "user-matrix.txt", [&](ofstream &out){
-    	for(auto &instance : spammerDS->instances){
-    		for(int i = 0; i < size; i++){
-    			out << instance[features[i]] << "\t";
-    		}
-    		out << endl;
-    	}
-    	for(auto &instance : nonSpammerDS->instances){
-    		for(int i = 0; i < size; i++){
-    			out << instance[features[i]] << "\t";
-    		}
-    		out << endl;
-    	}
+    writeFile(PATH + "user-matrix.txt", [&](ofstream &out) {
+        for (auto &instance : spammerDS->instances) {
+            for (int i = 0; i < size; i++) {
+                out << instance[features[i]] << "\t";
+            }
+            out << endl;
+        }
+        for (auto &instance : nonSpammerDS->instances) {
+            for (int i = 0; i < size; i++) {
+                out << instance[features[i]] << "\t";
+            }
+            out << endl;
+        }
     });
 
     delete spammerDS;
@@ -232,10 +230,10 @@ void toUserMatrix(int size = 100){
 }
 
 int main(int argc, char const *argv[]) {
-//    analyzeAll();
-//    testClassification();
-//    testFeatureSelection();
-//    testFeatureRelation();
-    testPropClassification();
+    //    analyzeAll();
+    //    testClassification();
+    testFeatureSelection();
+    //    testFeatureRelation();
+    //    testPropClassification();
     return 0;
 }

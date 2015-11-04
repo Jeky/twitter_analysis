@@ -65,4 +65,6 @@ unordered_set<string> *loadFeatures(const string &filename);
 
 void filterDataset(Dataset *ds, unordered_set<string> *features);
 
+void countMI(Dataset *dataset, const string &output);
+
 #endif
