@@ -144,26 +144,27 @@ void BernoulliNaiveBayes::train(const Dataset *dataset) {
         }
     };
 
+
     //    for (auto &ckv : clsFeatureProb) {
     //    	LOG("Class = ", ckv.first, ", Prob = ", clsProb[ckv.first]);
     //    	for(auto &kv : ckv.second){
     //        	LOG(kv.first, " = ", kv.second);
     //    	}
     //    }
-    writeFile(PATH + dataset->name, [&](ofstream &out) {
-        for (auto &kv : clsFeatureProb) {
-            out << "Class Label = " << kv.first << endl;
-            int i = 0;
-            for (auto &fs : kv.second) {
-                out << fs.first << "\t" << fs.second;
-                if (i != kv.second.size() - 1) {
-                    out << "\t";
-                }
-                i++;
-            }
-            out << endl;
-        };
-    });
+//    writeFile(PATH + dataset->name, [&](ofstream &out) {
+//        for (auto &kv : clsFeatureProb) {
+//            out << "Class Label = " << kv.first << endl;
+//            int i = 0;
+//            for (auto &fs : kv.second) {
+//                out << fs.first << "\t" << fs.second;
+//                if (i != kv.second.size() - 1) {
+//                    out << "\t";
+//                }
+//                i++;
+//            }
+//            out << endl;
+//        };
+//    });
 }
 
 double BernoulliNaiveBayes::classify(const Instance &ins) {
@@ -174,9 +175,22 @@ double BernoulliNaiveBayes::classify(const Instance &ins) {
         double thisProb = totalFalseValues[thisCls];
 
         for (auto &kv : ins.values) {
-            thisProb = thisProb - log(1 - clsFeatureProb[thisCls][kv.first]) +
-                       log(clsFeatureProb[thisCls][kv.first]);
+        	if(clsFeatureProb[thisCls].find(kv.first) != clsFeatureProb[thisCls].end()){
+            thisProb = thisProb +
+                       log(clsFeatureProb[thisCls][kv.first]) - log(1 - clsFeatureProb[thisCls][kv.first]) ;
+        	}
         }
+
+        double thisProb1 = clsProb[thisCls];
+        for (auto kv = ckv.second.begin(), end = ckv.second.end(); kv != end;
+             kv++) {
+            if (ins.values.find(kv->first) != ins.values.end()) {
+                thisProb1 += log(clsFeatureProb[thisCls][kv->first]);
+            } else {
+                thisProb1 += log(1 - clsFeatureProb[thisCls][kv->first]);
+            }
+        };
+
         if (thisProb > prob || prob == -1.0) {
             cls = thisCls;
             prob = thisProb;

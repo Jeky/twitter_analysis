@@ -135,7 +135,11 @@ void testClassification() {
     auto *nonSpammerDS =
         Dataset::loadDataset(NON_SPAMMER_DS, NON_SPAMMER_VALUE);
 
+    LOG_VAR(spammerDS->size());
+    LOG_VAR(nonSpammerDS->size());
+
     Classifier *cls = new BernoulliNaiveBayes();
+    LOG("fuck");
     Evaluator eval;
 
     eval.crossValidate(10, cls, spammerDS, nonSpammerDS);
@@ -230,9 +234,9 @@ void toUserMatrix(int size = 100) {
 }
 
 int main(int argc, char const *argv[]) {
-    //    analyzeAll();
-    //    testClassification();
-    testFeatureSelection();
+    //      analyzeAll();
+    testClassification();
+    //    testFeatureSelection();
     //    testFeatureRelation();
     //    testPropClassification();
     return 0;
