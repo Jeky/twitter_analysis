@@ -29,6 +29,8 @@ void analyzeDataset(unordered_map<long, User> *users, bool isSpammer) {
     fill_n(mentionCount, users->size(), 0);
     int *urlCount = new int[users->size()];
     fill_n(urlCount, users->size(), 0);
+    int *hashtagCount = new int[users->size()];
+    fill_n(hashtagCount, users->size(), 0);
 
     vector<int> tweetLens;
     string urlPrefix = "http://";
@@ -48,11 +50,15 @@ void analyzeDataset(unordered_map<long, User> *users, bool isSpammer) {
             bool isRetweet = false;
             bool isMention = false;
             bool isURL = false;
+            bool isHashtag = false;
 
             for (auto &&g : *tokens) {
                 ins[g] += 1.0;
-                if (g[0] == '#') {
+                if (g[0] == '@') {
                     isMention = true;
+                }
+                if(g[0] == '@'){
+                    isHashtag = true;
                 }
                 if (g.compare(0, urlPrefix.size(), urlPrefix) == 0) {
                     isURL = true;
@@ -67,6 +73,9 @@ void analyzeDataset(unordered_map<long, User> *users, bool isSpammer) {
             }
             if (isURL) {
                 urlCount[index]++;
+            }
+            if (isHashtag){
+                hashtagCount[index]++;
             }
 
             delete tokens;
@@ -91,6 +100,8 @@ void analyzeDataset(unordered_map<long, User> *users, bool isSpammer) {
                                                 : NON_SUSPENDED_MENTION_COUNT);
     saveIntArr(urlCount, users->size(),
                isSpammer ? SUSPENDED_URL_COUNT : NON_SUSPENDED_URL_COUNT);
+    saveIntArr(hashtagCount, users->size(),
+               isSpammer ? SUSPENDED_HASHTAG_COUNT : NON_SUSPENDED_HASHTAG_COUNT);
     writeFile(isSpammer ? SUSPENDED_TWEET_LEN : NON_SUSPENDED_TWEET_LEN,
               [&](ofstream &out) {
         for (auto &&len : tweetLens) {
@@ -139,7 +150,6 @@ void testClassification() {
     LOG_VAR(nonSpammerDS->size());
 
     Classifier *cls = new BernoulliNaiveBayes();
-    LOG("fuck");
     Evaluator eval;
 
     eval.crossValidate(10, cls, spammerDS, nonSpammerDS);
@@ -234,8 +244,8 @@ void toUserMatrix(int size = 100) {
 }
 
 int main(int argc, char const *argv[]) {
-    //      analyzeAll();
-    testClassification();
+          analyzeAll();
+    //testClassification();
     //    testFeatureSelection();
     //    testFeatureRelation();
     //    testPropClassification();
