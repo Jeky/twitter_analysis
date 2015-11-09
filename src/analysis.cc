@@ -57,7 +57,7 @@ void analyzeDataset(unordered_map<long, User> *users, bool isSpammer) {
                 if (g[0] == '@') {
                     isMention = true;
                 }
-                if(g[0] == '@'){
+                if (g[0] == '@') {
                     isHashtag = true;
                 }
                 if (g.compare(0, urlPrefix.size(), urlPrefix) == 0) {
@@ -74,7 +74,7 @@ void analyzeDataset(unordered_map<long, User> *users, bool isSpammer) {
             if (isURL) {
                 urlCount[index]++;
             }
-            if (isHashtag){
+            if (isHashtag) {
                 hashtagCount[index]++;
             }
 
@@ -100,8 +100,9 @@ void analyzeDataset(unordered_map<long, User> *users, bool isSpammer) {
                                                 : NON_SUSPENDED_MENTION_COUNT);
     saveIntArr(urlCount, users->size(),
                isSpammer ? SUSPENDED_URL_COUNT : NON_SUSPENDED_URL_COUNT);
-    saveIntArr(hashtagCount, users->size(),
-               isSpammer ? SUSPENDED_HASHTAG_COUNT : NON_SUSPENDED_HASHTAG_COUNT);
+    saveIntArr(hashtagCount, users->size(), isSpammer
+                                                ? SUSPENDED_HASHTAG_COUNT
+                                                : NON_SUSPENDED_HASHTAG_COUNT);
     writeFile(isSpammer ? SUSPENDED_TWEET_LEN : NON_SUSPENDED_TWEET_LEN,
               [&](ofstream &out) {
         for (auto &&len : tweetLens) {
@@ -244,8 +245,8 @@ void toUserMatrix(int size = 100) {
 }
 
 int main(int argc, char const *argv[]) {
-          analyzeAll();
-    //testClassification();
+    //          analyzeAll();
+    testClassification();
     //    testFeatureSelection();
     //    testFeatureRelation();
     //    testPropClassification();

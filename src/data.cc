@@ -197,9 +197,9 @@ Dataset *loadPropDataset(bool isSpammer) {
     for (int i = 0; i < size; i++) {
         Instance ins;
         ins["__COUNT__"] = count->at(i);
-        ins["__URL__"] = url->at(i);
-        ins["__MENTION__"] = mention->at(i);
-        ins["__HASHTAG__"] = hashtag->at(i);
+        ins["__URL__"] = url->at(i) / count->at(i);
+        ins["__MENTION__"] = mention->at(i) / count->at(i);
+        ins["__HASHTAG__"] = hashtag->at(i) / count->at(i);
 
         ins.setClassValue(isSpammer ? SPAMMER_VALUE : NON_SPAMMER_VALUE);
         ds->addInstance(ins);
