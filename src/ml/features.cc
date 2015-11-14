@@ -59,6 +59,8 @@ void BiClassMutualInformation::train(Dataset *dataset) {
     LOG("Training Mutual Information Feature Selector");
 
     unordered_map<string, array<double, 4>> featureMatrix;
+    int NP = 0;
+    int NN = 0;
 
     LOG("Initialize Feature Matrix");
     // initialize feature matrix
@@ -86,6 +88,11 @@ void BiClassMutualInformation::train(Dataset *dataset) {
         if (count % 1000 == 0) {
             LOG("Processed ", count, " users");
         }
+        if(instance.getClassValue() == cls){
+            NP++;
+        }else{
+            NN++;
+        }
         for (auto &kv : instance.values) {
             if (instance.getClassValue() == cls) {
                 featureMatrix[kv.first][0]++;
@@ -102,8 +109,8 @@ void BiClassMutualInformation::train(Dataset *dataset) {
         if (count % 1000 == 0) {
             LOG("Processed ", count, " features");
         }
-        kv.second[2] = N + 2 - kv.second[0];
-        kv.second[3] = N + 2 - kv.second[1];
+        kv.second[2] = NP + 2 - kv.second[0];
+        kv.second[3] = NN + 2 - kv.second[1];
 
         count++;
     }

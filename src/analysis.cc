@@ -57,7 +57,7 @@ void analyzeDataset(unordered_map<long, User> *users, bool isSpammer) {
                 if (g[0] == '@') {
                     isMention = true;
                 }
-                if (g[0] == '@') {
+                if (g[0] == '#') {
                     isHashtag = true;
                 }
                 if (g.compare(0, urlPrefix.size(), urlPrefix) == 0) {
@@ -218,12 +218,27 @@ void testFeatureRelation() {
 }
 
 void toUserMatrix(int size = 100) {
-    auto *spammerDS = loadPropDataset(true);
+    /*auto *spammerDS = loadPropDataset(true);
     auto *nonSpammerDS = loadPropDataset(false);
 
     vector<string> features{"__COUNT__", "__URL__", "__MENTION__",
                             "__HASHTAG__"};
     size = features.size();
+*/
+
+    auto *spammerDS = Dataset::loadDataset(SPAMMER_DS, SPAMMER_VALUE);
+    auto *nonSpammerDS =
+                           Dataset::loadDataset(NON_SPAMMER_DS, NON_SPAMMER_VALUE);
+    vector<string> features;
+
+    readFile(PATH + "selected-feature-mi.txt", [&](int i, string &l){
+        stringstream ss(l);
+        string t;
+        double s;
+        ss >> t >> s;
+        features.push_back(t);
+        return features.size() <= size;
+    });
 
     writeFile(PATH + "user-matrix.txt", [&](ofstream &out) {
         for (auto &instance : spammerDS->instances) {
@@ -245,10 +260,17 @@ void toUserMatrix(int size = 100) {
 }
 
 int main(int argc, char const *argv[]) {
-    //          analyzeAll();
-    testClassification();
+              analyzeAll();
+    // testClassification();
     //    testFeatureSelection();
     //    testFeatureRelation();
-    //    testPropClassification();
-    return 0;
+    //testPropClassification();
+    //toUserMatrix(1000);
+/*    auto *spammerDS = Dataset::loadDataset(SPAMMER_DS, SPAMMER_VALUE);
+    auto *nonSpammerDS =
+                           Dataset::loadDataset(NON_SPAMMER_DS, NON_SPAMMER_VALUE);
+    LOG(spammerDS->size(), "\t", nonSpammerDS->size());
+    delete spammerDS;
+    delete nonSpammerDS;
+  */  return 0;
 }
