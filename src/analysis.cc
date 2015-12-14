@@ -261,9 +261,9 @@ void toUserMatrix(int size = 100) {
 
 int main(int argc, char const *argv[]) {
     //          analyzeAll();
-    testClassification();
+    // testClassification();
     //    testFeatureSelection();
-        testFeatureRelation();
+        // testFeatureRelation();
     //testPropClassification();
     //toUserMatrix(1000);
 /*    auto *spammerDS = Dataset::loadDataset(SPAMMER_DS, SPAMMER_VALUE);
@@ -272,5 +272,30 @@ int main(int argc, char const *argv[]) {
     LOG(spammerDS->size(), "\t", nonSpammerDS->size());
     delete spammerDS;
     delete nonSpammerDS;
-  */  return 0;
+  */  
+
+    auto *spammerDS = Dataset::loadDataset(SPAMMER_DS, SPAMMER_VALUE);
+    auto *nonSpammerDS =
+        Dataset::loadDataset(NON_SPAMMER_DS, NON_SPAMMER_VALUE);
+    writeFile(PATH + "suspended-token-per-user-count.txt", [&](ofstream &out){
+        for(auto &instance : spammerDS->instances){
+            int count = 0;
+            for(auto &kv : instance.values){
+                count += kv.second;
+            }
+            out << count << endl;
+        }
+    });
+    writeFile(PATH + "non-suspended-token-per-user-count.txt", [&](ofstream &out){
+        for(auto &instance : nonSpammerDS->instances){
+            int count = 0;
+            for(auto &kv : instance.values){
+                count += kv.second;
+            }
+            out << count << endl;
+        }
+    });
+    delete spammerDS;
+    delete nonSpammerDS;
+    return 0;
 }
