@@ -147,8 +147,8 @@ void Evaluator::featureSelectionValidate(Dataset *ds1, Dataset *ds2,
     testingDataset->shuffle();
 
     writeFile(output, [&](ofstream &out) {
-        int m = maxSize == 0 ? topFeatureList->size() : maxSize;
-        for (int i = 1; i < m; i *= step) {
+        int i = maxSize == 0 ? topFeatureList->size() : maxSize;
+        //for (int i = 1; i < m; i *= step) {
             LOG("Evaluating with Feature Size = ", i);
             classifier->setTopSize(i);
             classifier->reset();
@@ -176,7 +176,7 @@ void Evaluator::featureSelectionValidate(Dataset *ds1, Dataset *ds2,
 
             out << i << "\t" << cm["TP"] << "\t" << cm["FP"] << "\t" << cm["FN"]
                 << "\t" << cm["TN"] << endl;
-        }
+        //}
     });
 
     delete folds1;

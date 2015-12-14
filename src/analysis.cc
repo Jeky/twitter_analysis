@@ -112,10 +112,10 @@ void analyzeDataset(unordered_map<long, User> *users, bool isSpammer) {
 }
 
 void analyzeAll() {
-    auto *spammers = loadSpammers();
+    /*auto *spammers = loadSpammers();
     analyzeDataset(spammers, true);
     delete spammers;
-
+*/
     auto *nonSpammers = loadNonSpammers();
     analyzeDataset(nonSpammers, false);
     delete nonSpammers;
@@ -204,7 +204,7 @@ void testFeatureRelation() {
     eval.featureSelectionValidate(spammerDS, nonSpammerDS,
                                   PATH + "selected-feature-mi.txt",
                                   PATH + "mi-test.txt", 10, 1000001);
-
+/*
     for (int i = 1; i <= 3; i++) {
         eval.reset();
         eval.featureSelectionValidate(
@@ -212,7 +212,7 @@ void testFeatureRelation() {
             PATH + "selected-feature-wapmi-a" + to_string(i) + ".txt",
             PATH + "wapmi-a" + to_string(i) + "-test.txt", 10, 1000001);
     }
-
+*/
     delete spammerDS;
     delete nonSpammerDS;
 }
@@ -260,10 +260,10 @@ void toUserMatrix(int size = 100) {
 }
 
 int main(int argc, char const *argv[]) {
-              analyzeAll();
-    // testClassification();
+    //          analyzeAll();
+    testClassification();
     //    testFeatureSelection();
-    //    testFeatureRelation();
+        testFeatureRelation();
     //testPropClassification();
     //toUserMatrix(1000);
 /*    auto *spammerDS = Dataset::loadDataset(SPAMMER_DS, SPAMMER_VALUE);
