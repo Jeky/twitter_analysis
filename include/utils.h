@@ -14,7 +14,7 @@
 
 using namespace std;
 
-static const string PATH = string("/Users/jeky/data/thesis/ctweets/");
+static const string PATH = string("/Users/jeky/data/thesis/final/");
 static const string SUSPENDED_PREFIX = string("suspended");
 static const string NON_SUSPENDED_PREFIX = string("non-suspended");
 
@@ -61,6 +61,10 @@ static const string SUSPENDED_TWEET_LEN =
     PATH + SUSPENDED_PREFIX + "-tweet-len.txt";
 static const string NON_SUSPENDED_TWEET_LEN =
     PATH + NON_SUSPENDED_PREFIX + "-tweet-len.txt";
+static const string SUSPENDED_TOKEN_PER_USER_COUNT =
+    PATH + SUSPENDED_PREFIX + "-token-per-user-count.txt";
+static const string NON_SUSPENDED_TOKEN_PER_USER_COUNT =
+    PATH + NON_SUSPENDED_PREFIX + "-token-per-user-count.txt";
 
 static const string STOP_WORDS_LIST = PATH + string("stops.txt");
 

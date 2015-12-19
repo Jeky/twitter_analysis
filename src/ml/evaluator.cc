@@ -148,34 +148,34 @@ void Evaluator::featureSelectionValidate(Dataset *ds1, Dataset *ds2,
 
     writeFile(output, [&](ofstream &out) {
         int i = maxSize == 0 ? topFeatureList->size() : maxSize;
-        //for (int i = 1; i < m; i *= step) {
-            LOG("Evaluating with Feature Size = ", i);
-            classifier->setTopSize(i);
-            classifier->reset();
-            classifier->train(trainingDataset);
+        // for (int i = 1; i < m; i *= step) {
+        LOG("Evaluating with Feature Size = ", i);
+        classifier->setTopSize(i);
+        classifier->reset();
+        classifier->train(trainingDataset);
 
-            unordered_map<string, double> cm;
-            for (auto instance = testingDataset->instances.begin(),
-                      end = testingDataset->instances.end();
-                 instance != end; instance++) {
-                double cls = classifier->classify(*instance);
-                if (instance->getClassValue() == posCls) {
-                    if (cls == posCls) {
-                        cm["TP"] += 1;
-                    } else {
-                        cm["FP"] += 1;
-                    }
+        unordered_map<string, double> cm;
+        for (auto instance = testingDataset->instances.begin(),
+                  end = testingDataset->instances.end();
+             instance != end; instance++) {
+            double cls = classifier->classify(*instance);
+            if (instance->getClassValue() == posCls) {
+                if (cls == posCls) {
+                    cm["TP"] += 1;
                 } else {
-                    if (cls == posCls) {
-                        cm["FN"] += 1;
-                    } else {
-                        cm["TN"] += 1;
-                    }
+                    cm["FP"] += 1;
                 }
-            };
+            } else {
+                if (cls == posCls) {
+                    cm["FN"] += 1;
+                } else {
+                    cm["TN"] += 1;
+                }
+            }
+        };
 
-            out << i << "\t" << cm["TP"] << "\t" << cm["FP"] << "\t" << cm["FN"]
-                << "\t" << cm["TN"] << endl;
+        out << i << "\t" << cm["TP"] << "\t" << cm["FP"] << "\t" << cm["FN"]
+            << "\t" << cm["TN"] << endl;
         //}
     });
 

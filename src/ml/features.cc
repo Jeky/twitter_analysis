@@ -88,9 +88,9 @@ void BiClassMutualInformation::train(Dataset *dataset) {
         if (count % 1000 == 0) {
             LOG("Processed ", count, " users");
         }
-        if(instance.getClassValue() == cls){
+        if (instance.getClassValue() == cls) {
             NP++;
-        }else{
+        } else {
             NN++;
         }
         for (auto &kv : instance.values) {

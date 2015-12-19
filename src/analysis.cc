@@ -31,6 +31,8 @@ void analyzeDataset(unordered_map<long, User> *users, bool isSpammer) {
     fill_n(urlCount, users->size(), 0);
     int *hashtagCount = new int[users->size()];
     fill_n(hashtagCount, users->size(), 0);
+    int *tokenCount = new int[users->size()];
+    fill_n(tokenCount, users->size(), 0);
 
     vector<int> tweetLens;
     string urlPrefix = "http://";
@@ -46,6 +48,7 @@ void analyzeDataset(unordered_map<long, User> *users, bool isSpammer) {
             vector<string> *tokens = toGrams(t.getText(), gramLen);
             //            vector<string> *tokens = filterSpecialWords(grams);
             tokenFreq.count(tokens);
+            tokenCount[index] += tokens->size();
             tweetLens.push_back(tokens->size());
             bool isRetweet = false;
             bool isMention = false;
@@ -103,6 +106,9 @@ void analyzeDataset(unordered_map<long, User> *users, bool isSpammer) {
     saveIntArr(hashtagCount, users->size(), isSpammer
                                                 ? SUSPENDED_HASHTAG_COUNT
                                                 : NON_SUSPENDED_HASHTAG_COUNT);
+    saveIntArr(tokenCount, users->size(),
+               isSpammer ? SUSPENDED_TOKEN_PER_USER_COUNT
+                         : NON_SUSPENDED_TOKEN_PER_USER_COUNT);
     writeFile(isSpammer ? SUSPENDED_TWEET_LEN : NON_SUSPENDED_TWEET_LEN,
               [&](ofstream &out) {
         for (auto &&len : tweetLens) {
@@ -204,15 +210,15 @@ void testFeatureRelation() {
     eval.featureSelectionValidate(spammerDS, nonSpammerDS,
                                   PATH + "selected-feature-mi.txt",
                                   PATH + "mi-test.txt", 10, 1000001);
-/*
-    for (int i = 1; i <= 3; i++) {
-        eval.reset();
-        eval.featureSelectionValidate(
-            spammerDS, nonSpammerDS,
-            PATH + "selected-feature-wapmi-a" + to_string(i) + ".txt",
-            PATH + "wapmi-a" + to_string(i) + "-test.txt", 10, 1000001);
-    }
-*/
+    /*
+        for (int i = 1; i <= 3; i++) {
+            eval.reset();
+            eval.featureSelectionValidate(
+                spammerDS, nonSpammerDS,
+                PATH + "selected-feature-wapmi-a" + to_string(i) + ".txt",
+                PATH + "wapmi-a" + to_string(i) + "-test.txt", 10, 1000001);
+        }
+    */
     delete spammerDS;
     delete nonSpammerDS;
 }
@@ -228,10 +234,10 @@ void toUserMatrix(int size = 100) {
 
     auto *spammerDS = Dataset::loadDataset(SPAMMER_DS, SPAMMER_VALUE);
     auto *nonSpammerDS =
-                           Dataset::loadDataset(NON_SPAMMER_DS, NON_SPAMMER_VALUE);
+        Dataset::loadDataset(NON_SPAMMER_DS, NON_SPAMMER_VALUE);
     vector<string> features;
 
-    readFile(PATH + "selected-feature-mi.txt", [&](int i, string &l){
+    readFile(PATH + "selected-feature-mi.txt", [&](int i, string &l) {
         stringstream ss(l);
         string t;
         double s;
@@ -263,33 +269,35 @@ int main(int argc, char const *argv[]) {
     //          analyzeAll();
     // testClassification();
     //    testFeatureSelection();
-        // testFeatureRelation();
-    //testPropClassification();
-    //toUserMatrix(1000);
-/*    auto *spammerDS = Dataset::loadDataset(SPAMMER_DS, SPAMMER_VALUE);
-    auto *nonSpammerDS =
-                           Dataset::loadDataset(NON_SPAMMER_DS, NON_SPAMMER_VALUE);
-    LOG(spammerDS->size(), "\t", nonSpammerDS->size());
-    delete spammerDS;
-    delete nonSpammerDS;
-  */  
+    // testFeatureRelation();
+    // testPropClassification();
+    // toUserMatrix(1000);
+    /*    auto *spammerDS = Dataset::loadDataset(SPAMMER_DS, SPAMMER_VALUE);
+        auto *nonSpammerDS =
+                               Dataset::loadDataset(NON_SPAMMER_DS,
+       NON_SPAMMER_VALUE);
+        LOG(spammerDS->size(), "\t", nonSpammerDS->size());
+        delete spammerDS;
+        delete nonSpammerDS;
+      */
 
     auto *spammerDS = Dataset::loadDataset(SPAMMER_DS, SPAMMER_VALUE);
     auto *nonSpammerDS =
         Dataset::loadDataset(NON_SPAMMER_DS, NON_SPAMMER_VALUE);
-    writeFile(PATH + "suspended-token-per-user-count.txt", [&](ofstream &out){
-        for(auto &instance : spammerDS->instances){
+    writeFile(PATH + "suspended-token-per-user-count.txt", [&](ofstream &out) {
+        for (auto &instance : spammerDS->instances) {
             int count = 0;
-            for(auto &kv : instance.values){
+            for (auto &kv : instance.values) {
                 count += kv.second;
             }
             out << count << endl;
         }
     });
-    writeFile(PATH + "non-suspended-token-per-user-count.txt", [&](ofstream &out){
-        for(auto &instance : nonSpammerDS->instances){
+    writeFile(PATH + "non-suspended-token-per-user-count.txt",
+              [&](ofstream &out) {
+        for (auto &instance : nonSpammerDS->instances) {
             int count = 0;
-            for(auto &kv : instance.values){
+            for (auto &kv : instance.values) {
                 count += kv.second;
             }
             out << count << endl;

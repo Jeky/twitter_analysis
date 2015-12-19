@@ -175,18 +175,18 @@ double BernoulliNaiveBayes::classify(const Instance &ins) {
             }
         }
 
-       /* double thisProb1 = clsProb[thisCls];
-        for (auto kv = ckv.second.begin(), end = ckv.second.end(); kv != end;
-             kv++) {
-            if (ins.values.find(kv->first) != ins.values.end()) {
-                thisProb1 += log(clsFeatureProb[thisCls][kv->first]);
-            } else {
-                thisProb1 += log(1 - clsFeatureProb[thisCls][kv->first]);
-            }
-        };
+        /* double thisProb1 = clsProb[thisCls];
+         for (auto kv = ckv.second.begin(), end = ckv.second.end(); kv != end;
+              kv++) {
+             if (ins.values.find(kv->first) != ins.values.end()) {
+                 thisProb1 += log(clsFeatureProb[thisCls][kv->first]);
+             } else {
+                 thisProb1 += log(1 - clsFeatureProb[thisCls][kv->first]);
+             }
+         };
 
-        LOG(thisProb, " = ", thisProb1);
-*/
+         LOG(thisProb, " = ", thisProb1);
+ */
         if (thisProb > prob || prob == -1.0) {
             cls = thisCls;
             prob = thisProb;
