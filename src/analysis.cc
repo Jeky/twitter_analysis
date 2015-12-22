@@ -118,14 +118,14 @@ void analyzeDataset(unordered_map<long, User> *users, bool isSpammer) {
 }
 
 void analyzeAll() {
-    /*auto *spammers = loadSpammers();
+    auto *spammers = loadSpammers();
     analyzeDataset(spammers, true);
     delete spammers;
-*/
+/*
     auto *nonSpammers = loadNonSpammers();
     analyzeDataset(nonSpammers, false);
     delete nonSpammers;
-}
+*/}
 
 void testPropClassification() {
     auto *spammerDS = loadPropDataset(true);
@@ -156,7 +156,7 @@ void testClassification() {
     LOG_VAR(spammerDS->size());
     LOG_VAR(nonSpammerDS->size());
 
-    Classifier *cls = new BernoulliNaiveBayes();
+    Classifier *cls = new NaiveBayes();
     Evaluator eval;
 
     eval.crossValidate(10, cls, spammerDS, nonSpammerDS);
@@ -187,7 +187,7 @@ void testFeatureSelection() {
     selector->train(all);
     selector->save(PATH + "selected-feature-mi.txt");
     delete selector;
-
+/*
     // wapmi
     for (int i = 1; i <= 3; i++) {
         FeatureSelector *selector = new BIClassWAPMI(i);
@@ -196,7 +196,7 @@ void testFeatureSelection() {
                        ".txt");
 
         delete selector;
-    }
+    }*/
     delete all;
 }
 
@@ -266,44 +266,11 @@ void toUserMatrix(int size = 100) {
 }
 
 int main(int argc, char const *argv[]) {
-    //          analyzeAll();
-    // testClassification();
-    //    testFeatureSelection();
+              //analyzeAll();
+     testClassification();
+        testFeatureSelection();
     // testFeatureRelation();
     // testPropClassification();
     // toUserMatrix(1000);
-    /*    auto *spammerDS = Dataset::loadDataset(SPAMMER_DS, SPAMMER_VALUE);
-        auto *nonSpammerDS =
-                               Dataset::loadDataset(NON_SPAMMER_DS,
-       NON_SPAMMER_VALUE);
-        LOG(spammerDS->size(), "\t", nonSpammerDS->size());
-        delete spammerDS;
-        delete nonSpammerDS;
-      */
-
-    auto *spammerDS = Dataset::loadDataset(SPAMMER_DS, SPAMMER_VALUE);
-    auto *nonSpammerDS =
-        Dataset::loadDataset(NON_SPAMMER_DS, NON_SPAMMER_VALUE);
-    writeFile(PATH + "suspended-token-per-user-count.txt", [&](ofstream &out) {
-        for (auto &instance : spammerDS->instances) {
-            int count = 0;
-            for (auto &kv : instance.values) {
-                count += kv.second;
-            }
-            out << count << endl;
-        }
-    });
-    writeFile(PATH + "non-suspended-token-per-user-count.txt",
-              [&](ofstream &out) {
-        for (auto &instance : nonSpammerDS->instances) {
-            int count = 0;
-            for (auto &kv : instance.values) {
-                count += kv.second;
-            }
-            out << count << endl;
-        }
-    });
-    delete spammerDS;
-    delete nonSpammerDS;
     return 0;
 }
