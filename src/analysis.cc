@@ -265,12 +265,55 @@ void toUserMatrix(int size = 100) {
     delete nonSpammerDS;
 }
 
+void outputAll(){
+	writeFile(PATH + "dataset.txt", [&](ofstream &out){
+	    auto *spammers = loadSpammers();
+		int i = 0;
+	    for (auto &kv : *spammers) {
+	        if (i % 1000 == 0) {
+	            LOG("Processed ", i, " users");
+	        }
+	        out << "!" << kv.first << "\t1\n";
+	        for (auto &t : kv.second.getTweets()) {
+	            vector<string> *tokens = toGrams(t.getText(), 1);
+	            for(auto &t : *tokens){
+	            	out << t << " ";
+	            }
+	            out << endl;
+	            delete tokens;
+	        }
+	        i++;
+	    }
+	    delete spammers;
+
+	    auto *nonSpammers = loadNonSpammers();
+		i = 0;
+	    for (auto &kv : *nonSpammers) {
+	        if (i % 1000 == 0) {
+	            LOG("Processed ", i, " users");
+	        }
+	        out << "!" << kv.first << "\t0\n";
+	        for (auto &t : kv.second.getTweets()) {
+	            vector<string> *tokens = toGrams(t.getText(), 1);
+	            for(auto &t : *tokens){
+	            	out << t << " ";
+	            }
+	            out << endl;
+	            delete tokens;
+	        }
+	        i++;
+	    }
+	    delete nonSpammers;
+	});
+}
+
 int main(int argc, char const *argv[]) {
               //analyzeAll();
-     testClassification();
-        testFeatureSelection();
+//     testClassification();
+//        testFeatureSelection();
     // testFeatureRelation();
     // testPropClassification();
     // toUserMatrix(1000);
+	outputAll();
     return 0;
 }
