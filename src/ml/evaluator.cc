@@ -51,8 +51,8 @@ Dataset *mergeTestingDataset(Dataset *ds1, Dataset *ds2, int *folds1,
 
 void Evaluator::crossValidate(int foldN, Classifier *classifier, Dataset *ds1,
                               Dataset *ds2) {
-    //    ds1->shuffle();
-    //    ds2->shuffle();
+    ds1->shuffle();
+    ds2->shuffle();
 
     int *folds1 = computeFolds(ds1->size(), foldN);
     int *folds2 = computeFolds(ds2->size(), foldN);
@@ -118,72 +118,83 @@ void Evaluator::crossValidate(int foldN, Classifier *classifier, Dataset *ds1,
     delete[] folds2;
 }
 
-void Evaluator::featureSelectionValidate(Dataset *ds1, Dataset *ds2,
-                                         const string &path,
-                                         const string &output, int step,
-                                         int maxSize) {
-    LOG("Loading Top Feature List");
-    auto *topFeatureList = new vector<pair<string, double>>();
-    readFile(path, false, [&](int i, string &line) {
-        stringstream ss(line);
-        string k;
-        double v;
-        ss >> k >> v;
-        topFeatureList->push_back(make_pair(k, v));
-        return true;
-    });
+void splitDSByClass(Dataset *all, Dataset &suspended, Dataset &nonSuspended) {
+    for (auto &instance : all->instances) {
+        LOG_VAR(instance.classValue);
+        if (instance.classValue == SPAMMER_VALUE) {
+            suspended.addInstance(instance);
+        } else if (instance.classValue == NON_SPAMMER_VALUE) {
+            nonSuspended.addInstance(instance);
+        }
+    }
+}
 
-    FeaturedNaiveBayes *classifier = new FeaturedNaiveBayes(topFeatureList);
+void Evaluator::featureSelectionValidate(int foldN, FeatureSelector *selector,
+                                         Classifier *classifier, Dataset *ds1,
+                                         Dataset *ds2, const string &output) {
 
-    int foldN = 10;
-    double posCls = (*ds1)[0].getClassValue();
+    ds1->shuffle();
+    ds2->shuffle();
+
     int *folds1 = computeFolds(ds1->size(), foldN);
     int *folds2 = computeFolds(ds2->size(), foldN);
 
-    Dataset *trainingDataset =
-        mergeTrainingDataset(ds1, ds2, folds1, folds2, 1);
-    Dataset *testingDataset = mergeTestingDataset(ds1, ds2, folds1, folds2, 1);
-    trainingDataset->shuffle();
-    testingDataset->shuffle();
+    double posCls = (*ds1)[0].getClassValue();
 
-    writeFile(output, [&](ofstream &out) {
-        int i = maxSize == 0 ? topFeatureList->size() : maxSize;
-        // for (int i = 1; i < m; i *= step) {
-        LOG("Evaluating with Feature Size = ", i);
-        classifier->setTopSize(i);
-        classifier->reset();
-        classifier->train(trainingDataset);
+    for (int i = 0; i < foldN; i++) {
+        LOG("Evaluate ", i + 1, " Time");
+        LOG("Merging Dataset...");
+        Dataset *trainingDataset =
+            mergeTrainingDataset(ds1, ds2, folds1, folds2, i);
+        Dataset *testingDataset =
+            mergeTestingDataset(ds1, ds2, folds1, folds2, i);
 
-        unordered_map<string, double> cm;
-        for (auto instance = testingDataset->instances.begin(),
-                  end = testingDataset->instances.end();
-             instance != end; instance++) {
-            double cls = classifier->classify(*instance);
-            if (instance->getClassValue() == posCls) {
-                if (cls == posCls) {
-                    cm["TP"] += 1;
-                } else {
-                    cm["FP"] += 1;
-                }
-            } else {
-                if (cls == posCls) {
-                    cm["FN"] += 1;
-                } else {
-                    cm["TN"] += 1;
-                }
+        LOG("Training Feature Selector...");
+        selector->reset();
+        selector->train(trainingDataset);
+        auto *features = selector->getTopFeatureList();
+
+        LOG("Writing Features...");
+        writeFile(output + "-features-" + to_string(i) + ".txt",
+                  [&](ofstream &out) {
+            for (auto &f : *features) {
+                out << f.first << "\t" << f.second << endl;
             }
-        };
+        });
 
-        out << i << "\t" << cm["TP"] << "\t" << cm["FP"] << "\t" << cm["FN"]
-            << "\t" << cm["TN"] << endl;
-        //}
-    });
+        LOG("Testing...");
+        writeFile(output + "-results-" + to_string(i) + ".txt",
+                  [&](ofstream &out) {
+            int size = 1;
+            while (size < features->size()) {
+                auto *filteredDS =
+                    selector->filterDataset(testingDataset, size);
+                Dataset fds1;
+                Dataset fds2;
+                splitDSByClass(filteredDS, fds1, fds2);
 
-    delete folds1;
-    delete folds2;
-    delete trainingDataset;
-    delete testingDataset;
-    delete classifier;
+                Evaluator eval;
+                eval.crossValidate(2, classifier, &fds1, &fds2);
+                out << "size = " << size << endl;
+                for (auto &item : eval.getConfusionMatrixVector()) {
+                    out << item << endl;
+                }
+                out << "acc: " << eval.getAccuracy() << endl;
+                out << "rec: " << eval.getRecall() << endl;
+                out << "pre: " << eval.getPrecision() << endl;
+                out << "F1:  " << eval.getF1() << endl;
+
+                size *= 10;
+                delete filteredDS;
+            }
+        });
+
+        delete trainingDataset;
+        delete testingDataset;
+    }
+
+    delete[] folds1;
+    delete[] folds2;
 }
 
 unordered_map<string, double> Evaluator::getConfusionMatrix() {

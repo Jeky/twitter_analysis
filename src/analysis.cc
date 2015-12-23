@@ -121,11 +121,11 @@ void analyzeAll() {
     auto *spammers = loadSpammers();
     analyzeDataset(spammers, true);
     delete spammers;
-/*
+
     auto *nonSpammers = loadNonSpammers();
     analyzeDataset(nonSpammers, false);
     delete nonSpammers;
-*/}
+}
 
 void testPropClassification() {
     auto *spammerDS = loadPropDataset(true);
@@ -178,47 +178,14 @@ void testFeatureSelection() {
     auto *nonSpammerDS =
         Dataset::loadDataset(NON_SPAMMER_DS, NON_SPAMMER_VALUE);
 
-    auto *all = spammerDS;
-    all->addDataset(*nonSpammerDS);
-    delete nonSpammerDS;
-    FeatureSelector *selector;
-    // mi
-    selector = new BiClassMutualInformation();
-    selector->train(all);
-    selector->save(PATH + "selected-feature-mi.txt");
-    delete selector;
-/*
-    // wapmi
-    for (int i = 1; i <= 3; i++) {
-        FeatureSelector *selector = new BIClassWAPMI(i);
-        selector->train(all);
-        selector->save(PATH + "selected-feature-wapmi-a" + to_string(i) +
-                       ".txt");
-
-        delete selector;
-    }*/
-    delete all;
-}
-
-void testFeatureRelation() {
-    auto *spammerDS = Dataset::loadDataset(SPAMMER_DS, SPAMMER_VALUE);
-    auto *nonSpammerDS =
-        Dataset::loadDataset(NON_SPAMMER_DS, NON_SPAMMER_VALUE);
-
+    FeatureSelector *selector = new BiClassMutualInformation();
+    Classifier *classifier = new NaiveBayes();
     Evaluator eval;
+    eval.featureSelectionValidate(10, selector, classifier, spammerDS,
+                                  nonSpammerDS, PATH + "mi");
 
-    eval.featureSelectionValidate(spammerDS, nonSpammerDS,
-                                  PATH + "selected-feature-mi.txt",
-                                  PATH + "mi-test.txt", 10, 1000001);
-    /*
-        for (int i = 1; i <= 3; i++) {
-            eval.reset();
-            eval.featureSelectionValidate(
-                spammerDS, nonSpammerDS,
-                PATH + "selected-feature-wapmi-a" + to_string(i) + ".txt",
-                PATH + "wapmi-a" + to_string(i) + "-test.txt", 10, 1000001);
-        }
-    */
+    delete selector;
+    delete classifier;
     delete spammerDS;
     delete nonSpammerDS;
 }
@@ -265,55 +232,49 @@ void toUserMatrix(int size = 100) {
     delete nonSpammerDS;
 }
 
-void outputAll(){
-	writeFile(PATH + "dataset.txt", [&](ofstream &out){
-	    auto *spammers = loadSpammers();
-		int i = 0;
-	    for (auto &kv : *spammers) {
-	        if (i % 1000 == 0) {
-	            LOG("Processed ", i, " users");
-	        }
-	        out << "!" << kv.first << "\t1\n";
-	        for (auto &t : kv.second.getTweets()) {
-	            vector<string> *tokens = toGrams(t.getText(), 1);
-	            for(auto &t : *tokens){
-	            	out << t << " ";
-	            }
-	            out << endl;
-	            delete tokens;
-	        }
-	        i++;
-	    }
-	    delete spammers;
+void outputAll() {
+    writeFile(PATH + "dataset.txt", [&](ofstream &out) {
+        auto *spammers = loadSpammers();
+        int i = 0;
+        for (auto &kv : *spammers) {
+            if (i % 1000 == 0) {
+                LOG("Processed ", i, " users");
+            }
+            out << "!" << kv.first << "\t1\n";
+            for (auto &t : kv.second.getTweets()) {
+                vector<string> *tokens = toGrams(t.getText(), 1);
+                for (auto &t : *tokens) {
+                    out << t << " ";
+                }
+                out << endl;
+                delete tokens;
+            }
+            i++;
+        }
+        delete spammers;
 
-	    auto *nonSpammers = loadNonSpammers();
-		i = 0;
-	    for (auto &kv : *nonSpammers) {
-	        if (i % 1000 == 0) {
-	            LOG("Processed ", i, " users");
-	        }
-	        out << "!" << kv.first << "\t0\n";
-	        for (auto &t : kv.second.getTweets()) {
-	            vector<string> *tokens = toGrams(t.getText(), 1);
-	            for(auto &t : *tokens){
-	            	out << t << " ";
-	            }
-	            out << endl;
-	            delete tokens;
-	        }
-	        i++;
-	    }
-	    delete nonSpammers;
-	});
+        auto *nonSpammers = loadNonSpammers();
+        i = 0;
+        for (auto &kv : *nonSpammers) {
+            if (i % 1000 == 0) {
+                LOG("Processed ", i, " users");
+            }
+            out << "!" << kv.first << "\t0\n";
+            for (auto &t : kv.second.getTweets()) {
+                vector<string> *tokens = toGrams(t.getText(), 1);
+                for (auto &t : *tokens) {
+                    out << t << " ";
+                }
+                out << endl;
+                delete tokens;
+            }
+            i++;
+        }
+        delete nonSpammers;
+    });
 }
 
 int main(int argc, char const *argv[]) {
-              //analyzeAll();
-//     testClassification();
-//        testFeatureSelection();
-    // testFeatureRelation();
-    // testPropClassification();
-    // toUserMatrix(1000);
-	outputAll();
+    testFeatureSelection();
     return 0;
 }

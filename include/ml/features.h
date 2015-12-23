@@ -4,12 +4,15 @@
 #include "ml.h"
 #include "utils.h"
 #include "math.h"
-#include "evaluator.h"
 #include "classifier.h"
 
 class FeatureSelector {
   public:
-    virtual void reset() { featureScoreMap.clear(); }
+    virtual void reset() {
+        featureScoreMap.clear();
+        delete topFeatureList;
+        topFeatureList = nullptr;
+    }
 
     virtual void train(Dataset *dataset){};
 
@@ -23,19 +26,6 @@ class FeatureSelector {
     void loadTopFeatureList(const string &path);
 
     virtual void save(const string &path);
-    /**
-     * Evaluate feature selection result using given datasets and classifier.
-     * @param cls the Classifier
-     * @param ds1 dataset 1
-     * @param ds2 dataset 2
-     * @param path the path of saving evaluation result
-     * @param foldN the number of folds when evaluating by cross validation
-     * @param step the incremental size of feature set
-     * @param maxCount the max size of feature set
-     */
-    void testDataset(Classifier *cls, Dataset *ds1, Dataset *ds2,
-                     const string &path, int foldN = 10, int step = 1,
-                     int maxSize = 0);
 
     Dataset *filterDataset(Dataset *ds, int top);
 

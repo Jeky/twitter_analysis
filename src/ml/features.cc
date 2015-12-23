@@ -27,6 +27,26 @@ void FeatureSelector::save(const string &path) {
     });
 }
 
+Dataset *FeatureSelector::filterDataset(Dataset *ds, int top) {
+    LOG("Filtering Features");
+    Dataset *filtered = new Dataset();
+    auto *features = getTopFeatureList();
+
+    for (auto &instance : ds->instances) {
+        Instance fi;
+        fi.setClassValue(instance.getClassValue());
+        for (int i = 0; i < top; i++) {
+            string k = features->at(i).first;
+            if (instance.values.find(k) != instance.values.end()) {
+                fi.values[k] = instance.values[k];
+            }
+        }
+        filtered->addInstance(fi);
+    }
+
+    return filtered;
+}
+
 void FeatureSelector::loadTopFeatureList(const string &path) {
     if (topFeatureList != nullptr) {
         delete topFeatureList;
