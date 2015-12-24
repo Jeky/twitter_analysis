@@ -151,6 +151,7 @@ void Evaluator::featureSelectionValidate(int foldN, FeatureSelector *selector,
 
         LOG("Training Feature Selector...");
         selector->reset();
+        trainingDataset->name = "merged-" + to_string(i) + "-ds";
         selector->train(trainingDataset);
         auto *features = selector->getTopFeatureList();
 
@@ -174,7 +175,7 @@ void Evaluator::featureSelectionValidate(int foldN, FeatureSelector *selector,
                 splitDSByClass(filteredDS, fds1, fds2);
 
                 Evaluator eval;
-                eval.crossValidate(2, classifier, &fds1, &fds2);
+                eval.crossValidate(10, classifier, &fds1, &fds2);
                 out << "size = " << size << endl;
                 for (auto &item : eval.getConfusionMatrixVector()) {
                     out << item << endl;

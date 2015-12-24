@@ -157,7 +157,7 @@ void BiClassMutualInformation::train(Dataset *dataset) {
     //        featureCount++;
     //    }
 
-    writeFile(PATH + "mi.txt", [&](ofstream &out) {
+    writeFile(PATH + "mi-" + dataset->name + ".txt", [&](ofstream &out) {
         for (auto &kv : featureMatrix) {
             featureScoreMap[kv.first] = computeScore(N, kv.second);
             out << kv.first << "\t" << kv.second[0] << "\t" << kv.second[1]
