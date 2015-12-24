@@ -19,7 +19,7 @@ void saveIntArr(int *arr, int len, const string &path) {
 void analyzeDataset(unordered_map<long, User> *users, bool isSpammer) {
     LOG("Analyzing");
     Dataset *dataset = new Dataset();
-    int gramLen = 1;
+    int gramLen = 2;
     Counter<string> tokenFreq;
     int *tweetCount = new int[users->size()];
     fill_n(tweetCount, users->size(), 0);

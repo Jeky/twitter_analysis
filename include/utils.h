@@ -14,7 +14,7 @@
 
 using namespace std;
 
-static const string PATH = string("/Users/jeky/data/thesis/sample-final/");
+static const string PATH = string("/Users/jeky/data/thesis/sample-final-bigram/");
 static const string SUSPENDED_PREFIX = string("suspended");
 static const string NON_SUSPENDED_PREFIX = string("non-suspended");
 
