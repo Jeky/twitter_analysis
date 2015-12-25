@@ -178,11 +178,11 @@ void testFeatureSelection() {
     auto *nonSpammerDS =
         Dataset::loadDataset(NON_SPAMMER_DS, NON_SPAMMER_VALUE);
 
-    FeatureSelector *selector = new BiClassMutualInformation();
+    FeatureSelector *selector = new BiClassChi2();
     Classifier *classifier = new NaiveBayes();
     Evaluator eval;
     eval.featureSelectionValidate(10, selector, classifier, spammerDS,
-                                  nonSpammerDS, PATH + "mi");
+                                  nonSpammerDS, PATH + "chi");
 
     delete selector;
     delete classifier;
