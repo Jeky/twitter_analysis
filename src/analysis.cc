@@ -148,7 +148,7 @@ void testPropClassification() {
     delete nonSpammerDS;
 }
 
-void testClassification() {
+void testClassification(Classifier *cls) {
     auto *spammerDS = Dataset::loadDataset(SPAMMER_DS, SPAMMER_VALUE);
     auto *nonSpammerDS =
         Dataset::loadDataset(NON_SPAMMER_DS, NON_SPAMMER_VALUE);
@@ -156,7 +156,6 @@ void testClassification() {
     LOG_VAR(spammerDS->size());
     LOG_VAR(nonSpammerDS->size());
 
-    Classifier *cls = new NaiveBayes();
     Evaluator eval;
 
     eval.crossValidate(10, cls, spammerDS, nonSpammerDS);
@@ -173,16 +172,15 @@ void testClassification() {
     delete nonSpammerDS;
 }
 
-void testFeatureSelection() {
+void testFeatureSelection(FeatureSelector *selector, const string &output) {
     auto *spammerDS = Dataset::loadDataset(SPAMMER_DS, SPAMMER_VALUE);
     auto *nonSpammerDS =
         Dataset::loadDataset(NON_SPAMMER_DS, NON_SPAMMER_VALUE);
 
-    FeatureSelector *selector = new BiClassChi2();
     Classifier *classifier = new NaiveBayes();
     Evaluator eval;
     eval.featureSelectionValidate(10, selector, classifier, spammerDS,
-                                  nonSpammerDS, PATH + "chi");
+                                  nonSpammerDS, PATH + output); 
 
     delete selector;
     delete classifier;
@@ -275,6 +273,12 @@ void outputAll() {
 }
 
 int main(int argc, char const *argv[]) {
-    testFeatureSelection();
+    /*
+    FeatureSelector *selector = new BiClassMutualInformation();
+    testFeatureSelection(selector, "mi");
+    selector = new BiClassChi2();
+    testFeatureSelection(selector, "chi");
+    */
+    outputAll();
     return 0;
 }

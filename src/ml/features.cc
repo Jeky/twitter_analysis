@@ -164,7 +164,7 @@ void BiClassMutualInformation::train(Dataset *dataset) {
     //        featureCount++;
     //    }
 
-    writeFile(PATH + "chi2-" + dataset->name + ".txt", [&](ofstream &out) {
+    writeFile(PATH + "mi-" + dataset->name + ".txt", [&](ofstream &out) {
         for (auto &kv : featureMatrix) {
             featureScoreMap[kv.first] = computeMIScore(N, kv.second);
             out << kv.first << "\t" << kv.second[0] << "\t" << kv.second[1]
@@ -236,7 +236,7 @@ void BiClassChi2::train(Dataset *dataset) {
         count++;
     }
 
-    writeFile(PATH + "mi-" + dataset->name + ".txt", [&](ofstream &out) {
+    writeFile(PATH + "chi2-" + dataset->name + ".txt", [&](ofstream &out) {
         for (auto &kv : featureMatrix) {
             featureScoreMap[kv.first] = computeChi2Score(N, kv.second);
             out << kv.first << "\t" << kv.second[0] << "\t" << kv.second[1]
