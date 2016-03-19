@@ -321,55 +321,52 @@ void BIClassWAPMI::train(Dataset *dataset) {
     int N = dataset->size();
     count = 0;
     for (auto &kv : featureMatrix) {
-        if (count % 1000 == 0) {
-            LOG("Processed ", count, " features");
-        }
         kv.second[2] = NP + 2 - kv.second[0];
         kv.second[3] = NN + 2 - kv.second[1];
 
+        featureScoreMap[kv.first] = 0.0;
         count++;
     }
 
-
-    int featureCount = 0;
-    for (auto &kv : featureMatrix) {
-        if (featureCount % 1000 == 0) {
-            LOG("Processed ", featureCount, " Features");
+    count = 0;
+    for (auto &instance : dataset->instances) {
+        if (count % 1000 == 0) {
+            LOG("Processed ", count, " users");
         }
-        double score = 0.0;
-        for (auto &instance : dataset->instances) {
-            double j = instance.getClassValue();
-            if (instance.hasAttribute(kv.first) && instance[kv.first] != 0) {
-                double a = 1.0;
-                switch (mode) {
-                case 1:
-                    // alpha_i (1) = p(c_j) * |d_i| /\sum_{d_i \in c_j}{|d_i|}
-                    a *= instanceCounter[j] / N * insLenArr[i] /
-                         totalInstanceLen[j];
-                    break;
-                case 2:
-                    // alpha_i (2) = 1 / \sum_{j=1}^{C}{|c_j|}
-                    a *= 1 / N;
-                    break;
-                case 3:
-                    // alpha_i (3) = 1 / (|c_j| * |C|)
-                    a *= 1 / (instanceCounter[j] * 2);
-                    break;
-                }
-                score += a *
-                         // p(w_t|d_i)
-                         instance[kv.first] / insLenArr[i];
 
-                // (log2(p(w_t,c_j)) - log2(p(w_t)) - log(p(c_j)))
-                if(j == SPAMMER_VALUE){
-                    score *= log2(N) + log2(kv.second[0]) - log2(kv.second[0] + kv.second[1]) - log2(kv.second[0] + kv.second[2]);
-                }else{
-                    score *= log2(N) + log2(kv.second[1]) - log2(kv.second[0] + kv.second[1]) - log2(kv.second[1] + kv.second[3]);
-                }
+        double j = instance.getClassValue();
+        for (auto &kv : instance.values) {
+            double score = 0.0;
+            double a = 1.0;
+            switch (mode) {
+            case 1:
+                // alpha_i (1) = p(c_j) * |d_i| /\sum_{d_i \in c_j}{|d_i|}
+                a *= instanceCounter[j] / N * insLenArr[i] /
+                     totalInstanceLen[j];
+                break;
+            case 2:
+                // alpha_i (2) = 1 / \sum_{j=1}^{C}{|c_j|}
+                a *= 1 / N;
+                break;
+            case 3:
+                // alpha_i (3) = 1 / (|c_j| * |C|)
+                a *= 1 / (instanceCounter[j] * 2);
+                break;
             }
+            score = a *
+                    // p(w_t|d_i)
+                    instance[kv.first] / insLenArr[i];
+
+            // (log2(p(w_t,c_j)) - log2(p(w_t)) - log(p(c_j)))
+            if(j == SPAMMER_VALUE){
+                score *= log2(N) + log2(kv.second[0]) - log2(kv.second[0] + kv.second[1]) - log2(kv.second[0] + kv.second[2]);
+            }else{
+                score *= log2(N) + log2(kv.second[1]) - log2(kv.second[0] + kv.second[1]) - log2(kv.second[1] + kv.second[3]);
+            }
+
+            featureScoreMap[kv.first] = featureScoreMap[kv.first] + score;
         }
-        featureScoreMap[kv.first] = score;
-        featureCount++;
+        count++;
     }
     
     writeFile(PATH + "wapmi-" + dataset->name + ".txt", [&](ofstream &out) {
