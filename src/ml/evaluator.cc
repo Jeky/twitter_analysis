@@ -133,8 +133,8 @@ void Evaluator::featureSelectionValidate(int foldN, FeatureSelector *selector,
                                          Classifier *classifier, Dataset *ds1,
                                          Dataset *ds2, const string &output) {
 
-    ds1->shuffle();
-    ds2->shuffle();
+    //ds1->shuffle();
+    //ds2->shuffle();
 
     int *folds1 = computeFolds(ds1->size(), foldN);
     int *folds2 = computeFolds(ds2->size(), foldN);

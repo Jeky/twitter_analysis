@@ -273,12 +273,14 @@ void outputAll() {
 }
 
 int main(int argc, char const *argv[]) {
-    /*
+    
     FeatureSelector *selector = new BiClassMutualInformation();
     testFeatureSelection(selector, "mi");
+    
     selector = new BiClassChi2();
-    testFeatureSelection(selector, "chi");
-    */
-    outputAll();
+    testFeatureSelection(selector, "chi2");
+    
+    //outputAll();
+    
     return 0;
 }
