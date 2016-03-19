@@ -298,7 +298,7 @@ void BIClassWAPMI::train(Dataset *dataset) {
 
     LOG_VAR(featureMatrix.size());
 
-    int featureCount = 0;
+    int count = 0;
     for (auto &instance : dataset->instances) {
         if (count % 1000 == 0) {
             LOG("Processed ", count, " users");
@@ -315,7 +315,7 @@ void BIClassWAPMI::train(Dataset *dataset) {
                 featureMatrix[kv.first][1]++;
             }
         }
-        featureCount++;
+        count++;
     }
 
     int N = dataset->size();
@@ -331,7 +331,7 @@ void BIClassWAPMI::train(Dataset *dataset) {
     }
 
 
-    featureCount = 0;
+    int featureCount = 0;
     for (auto &kv : featureMatrix) {
         if (featureCount % 1000 == 0) {
             LOG("Processed ", featureCount, " Features");
