@@ -249,10 +249,17 @@ void BiClassChi2::train(Dataset *dataset) {
 void BIClassWAPMI::train(Dataset *dataset) {
     LOG("Training Weighted Average Pointwise Mutual Information Feature "
         "Selector");
-    unordered_map<string, array<double, 2>> featureMatrix;
+    unordered_map<string, array<double, 4>> featureMatrix;
+    // map from class label to the instance count
     unordered_map<double, int> instanceCounter;
+    // map from class label to total words count
     unordered_map<double, int> totalInstanceLen;
+    // words in each instance
     int *insLenArr = new int[dataset->size()];
+    // number of S
+    int NP = 0;
+    // number of N
+    int NN = 0;
 
     LOG("Initialize Feature Matrix");
     int i = 0;
@@ -269,6 +276,7 @@ void BIClassWAPMI::train(Dataset *dataset) {
             instanceCounter[instance.getClassValue()] = 0;
         }
         instanceCounter[instance.getClassValue()]++;
+
         if (totalInstanceLen.find(instance.getClassValue()) ==
             totalInstanceLen.end()) {
             totalInstanceLen[instance.getClassValue()] = 0;
@@ -277,9 +285,10 @@ void BIClassWAPMI::train(Dataset *dataset) {
 
         // initialize feature matrix
         // row    = number of features
-        // column = {1.0, 1.0, 1.0, 1.0, |t in d_i|, |d_i|}
+        // column = {1.0, 1.0, 1.0, 1.0}
+        //            S    N
         for (auto &kv : instance.values) {
-            featureMatrix[kv.first] = {1.0, 1.0};
+            featureMatrix[kv.first] = {1.0, 1.0, 1.0, 1.0};
         }
 
         i++;
@@ -290,23 +299,37 @@ void BIClassWAPMI::train(Dataset *dataset) {
     LOG_VAR(featureMatrix.size());
 
     int featureCount = 0;
-    for (auto &kv : featureMatrix) {
-        if (featureCount % 1000 == 0) {
-            LOG("Processed ", featureCount, " Features");
+    for (auto &instance : dataset->instances) {
+        if (count % 1000 == 0) {
+            LOG("Processed ", count, " users");
         }
-        for (auto &instance : dataset->instances) {
-            if (instance.hasAttribute(kv.first)) {
-                if (cls == instance.getClassValue()) {
-                    kv.second[0] += 1;
-                } else {
-                    kv.second[1] += 1;
-                }
+        if (instance.getClassValue() == cls) {
+            NP++;
+        } else {
+            NN++;
+        }
+        for (auto &kv : instance.values) {
+            if (instance.getClassValue() == cls) {
+                featureMatrix[kv.first][0]++;
+            } else {
+                featureMatrix[kv.first][1]++;
             }
         }
         featureCount++;
     }
 
     int N = dataset->size();
+    count = 0;
+    for (auto &kv : featureMatrix) {
+        if (count % 1000 == 0) {
+            LOG("Processed ", count, " features");
+        }
+        kv.second[2] = NP + 2 - kv.second[0];
+        kv.second[3] = NN + 2 - kv.second[1];
+
+        count++;
+    }
+
 
     featureCount = 0;
     for (auto &kv : featureMatrix) {
@@ -335,17 +358,27 @@ void BIClassWAPMI::train(Dataset *dataset) {
                 }
                 score += a *
                          // p(w_t|d_i)
-                         instance[kv.first] / insLenArr[i] *
+                         instance[kv.first] / insLenArr[i];
 
-                         // (log2(p(w_t,c_j)) - log2(p(w_t)) - log(p(c_j)))
-                         (log2(N) + log2(kv.second[j]) -
-                          log2(kv.second[0] + kv.second[1]) -
-                          log2(instanceCounter[j]));
+                // (log2(p(w_t,c_j)) - log2(p(w_t)) - log(p(c_j)))
+                if(j == SPAMMER_VALUE){
+                    score *= log2(N) + log2(kv.second[0]) - log2(kv.second[0] + kv.second[1]) - log2(kv.second[0] + kv.second[2]);
+                }else{
+                    score *= log2(N) + log2(kv.second[1]) - log2(kv.second[0] + kv.second[1]) - log2(kv.second[1] + kv.second[3]);
+                }
             }
         }
         featureScoreMap[kv.first] = score;
         featureCount++;
     }
+    
+    writeFile(PATH + "wapmi-" + dataset->name + ".txt", [&](ofstream &out) {
+        for (auto &kv : featureMatrix) {
+            out << kv.first << "\t" << kv.second[0] << "\t" << kv.second[1]
+                << "\t" << kv.second[2] << "\t" << kv.second[3] << "\t"
+                << featureScoreMap[kv.first] << endl;
+        }
+    });
 
     delete insLenArr;
 }
