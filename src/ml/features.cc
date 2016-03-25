@@ -336,33 +336,43 @@ void BIClassWAPMI::train(Dataset *dataset) {
 
         double j = instance.getClassValue();
         for (auto &kv : instance.values) {
+            auto ns = featureMatrix[kv.first];
+        /*    LOG_VAR(kv.first);
+            LOG_VAR(ns);
+            LOG_VAR(instanceCounter[j]);
+            LOG_VAR(N);
+            LOG_VAR(insLenArr[count]);
+            LOG_VAR(totalInstanceLen[j]);
+*/
             double score = 0.0;
             double a = 1.0;
             switch (mode) {
             case 1:
                 // alpha_i (1) = p(c_j) * |d_i| /\sum_{d_i \in c_j}{|d_i|}
-                a *= instanceCounter[j] / N * insLenArr[i] /
+                a = 1.0 * instanceCounter[j] / N * insLenArr[count] /
                      totalInstanceLen[j];
                 break;
             case 2:
                 // alpha_i (2) = 1 / \sum_{j=1}^{C}{|c_j|}
-                a *= 1 / N;
+                a = 1.0 / N;
                 break;
             case 3:
                 // alpha_i (3) = 1 / (|c_j| * |C|)
-                a *= 1 / (instanceCounter[j] * 2);
+                a = 1.0 / (instanceCounter[j] * 2);
                 break;
             }
             score = a *
                     // p(w_t|d_i)
-                    instance[kv.first] / insLenArr[i];
+                    instance[kv.first] / insLenArr[count];
 
+ //           LOG_VAR(score);
             // (log2(p(w_t,c_j)) - log2(p(w_t)) - log(p(c_j)))
             if(j == SPAMMER_VALUE){
-                score *= log2(N) + log2(kv.second[0]) - log2(kv.second[0] + kv.second[1]) - log2(kv.second[0] + kv.second[2]);
+                score *= log2(N) + log2(ns[0]) - log2(ns[0] + ns[1]) - log2(ns[0] + ns[2]);
             }else{
-                score *= log2(N) + log2(kv.second[1]) - log2(kv.second[0] + kv.second[1]) - log2(kv.second[1] + kv.second[3]);
+                score *= log2(N) + log2(ns[1]) - log2(ns[0] + ns[1]) - log2(ns[1] + ns[3]);
             }
+   //         LOG_VAR(score);
 
             featureScoreMap[kv.first] = featureScoreMap[kv.first] + score;
         }

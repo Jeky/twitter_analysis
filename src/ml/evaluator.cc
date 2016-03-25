@@ -120,7 +120,6 @@ void Evaluator::crossValidate(int foldN, Classifier *classifier, Dataset *ds1,
 
 void splitDSByClass(Dataset *all, Dataset &suspended, Dataset &nonSuspended) {
     for (auto &instance : all->instances) {
-        LOG_VAR(instance.classValue);
         if (instance.classValue == SPAMMER_VALUE) {
             suspended.addInstance(instance);
         } else if (instance.classValue == NON_SPAMMER_VALUE) {
