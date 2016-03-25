@@ -273,17 +273,5 @@ void outputAll() {
 }
 
 int main(int argc, char const *argv[]) {
-    
-    FeatureSelector *selector = new BIClassWAPMI();
-    testFeatureSelection(selector, "wapmi");
-    
-    // FeatureSelector *selector = new BiClassMutualInformation();
-    // testFeatureSelection(selector, "mi");
-    
-    // selector = new BiClassChi2();
-    // testFeatureSelection(selector, "chi2");
-    
-    //outputAll();
-    
     return 0;
 }
