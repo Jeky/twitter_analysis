@@ -16,10 +16,9 @@ void saveIntArr(int *arr, int len, const string &path) {
     delete arr;
 }
 
-void analyzeDataset(unordered_map<long, User> *users, bool isSpammer) {
+void analyzeDataset(unordered_map<long, User> *users, bool isSpammer, int gramLen) {
     LOG("Analyzing");
     Dataset *dataset = new Dataset();
-    int gramLen = 2;
     Counter<string> tokenFreq;
     int *tweetCount = new int[users->size()];
     fill_n(tweetCount, users->size(), 0);
@@ -117,13 +116,13 @@ void analyzeDataset(unordered_map<long, User> *users, bool isSpammer) {
     });
 }
 
-void analyzeAll() {
+void analyzeAll(int gramLen) {
     auto *spammers = loadSpammers();
-    analyzeDataset(spammers, true);
+    analyzeDataset(spammers, true, gramLen);
     delete spammers;
 
     auto *nonSpammers = loadNonSpammers();
-    analyzeDataset(nonSpammers, false);
+    analyzeDataset(nonSpammers, false, gramLen);
     delete nonSpammers;
 }
 
@@ -188,48 +187,6 @@ void testFeatureSelection(FeatureSelector *selector, const string &output) {
     delete nonSpammerDS;
 }
 
-void toUserMatrix(int size = 100) {
-    /*auto *spammerDS = loadPropDataset(true);
-    auto *nonSpammerDS = loadPropDataset(false);
-
-    vector<string> features{"__COUNT__", "__URL__", "__MENTION__",
-                            "__HASHTAG__"};
-    size = features.size();
-*/
-
-    auto *spammerDS = Dataset::loadDataset(SPAMMER_DS, SPAMMER_VALUE);
-    auto *nonSpammerDS =
-        Dataset::loadDataset(NON_SPAMMER_DS, NON_SPAMMER_VALUE);
-    vector<string> features;
-
-    readFile(PATH + "selected-feature-mi.txt", [&](int i, string &l) {
-        stringstream ss(l);
-        string t;
-        double s;
-        ss >> t >> s;
-        features.push_back(t);
-        return features.size() <= size;
-    });
-
-    writeFile(PATH + "user-matrix.txt", [&](ofstream &out) {
-        for (auto &instance : spammerDS->instances) {
-            for (int i = 0; i < size; i++) {
-                out << instance[features[i]] << "\t";
-            }
-            out << endl;
-        }
-        for (auto &instance : nonSpammerDS->instances) {
-            for (int i = 0; i < size; i++) {
-                out << instance[features[i]] << "\t";
-            }
-            out << endl;
-        }
-    });
-
-    delete spammerDS;
-    delete nonSpammerDS;
-}
-
 void outputAll() {
     writeFile(PATH + "dataset.txt", [&](ofstream &out) {
         auto *spammers = loadSpammers();
@@ -273,5 +230,13 @@ void outputAll() {
 }
 
 int main(int argc, char const *argv[]) {
+    analyzeAll(1);
+
+    Classifier *cls = new NaiveBayes();
+    testClassification(cls);
+
+    cls = new BernoulliNaiveBayes();
+    testClassification(cls);
+
     return 0;
 }
