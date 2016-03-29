@@ -27,14 +27,14 @@ void NaiveBayes::train(const Dataset *dataset) {
         }
     }
 
-    LOG_VAR(featureSet.size());
-    LOG_VAR(clsWordCount);
-
     // compute class probability
     for (auto &kv : clsProb) {
         clsProb[kv.first] = log(kv.second / dataset->size());
     };
 
+    LOG_VAR(featureSet.size());
+    LOG_VAR(clsWordCount);
+    LOG_VAR(clsProb);
 
     writeFile(PATH + "MNB-" + dataset->name, [&](ofstream &out) {
         // compute class feature probability
@@ -63,24 +63,36 @@ void NaiveBayes::train(const Dataset *dataset) {
 double NaiveBayes::classify(const Instance &ins) {
     double cls = 0.0;
     double prob = -1.0;
+    counter++;
 
-    for (auto &ckv : clsFeatureProb) {
-        double thisCls = ckv.first;
-        double thisProb = clsProb[thisCls];
+    writeFile(PATH + "mnb/" + to_string(counter) + ".txt", [&](ofstream &out) {
+        for (auto &ckv : clsFeatureProb) {
+            double thisCls = ckv.first;
+            double thisProb = clsProb[thisCls];
 
-        for (auto kv = ins.values.begin(), end = ins.values.end(); kv != end;
-             kv++) {
-            if (clsFeatureProb[thisCls].find(kv->first) !=
-                clsFeatureProb[thisCls].end()) {
-                thisProb += clsFeatureProb[thisCls][kv->first] * kv->second;
+            out << "Label = " << thisCls << endl;
+            out << "Prior = " << thisProb << endl;
+
+            for (auto kv = ins.values.begin(), end = ins.values.end(); kv != end;
+                 kv++) {
+                out << kv->first << "\t";
+                if (clsFeatureProb[thisCls].find(kv->first) !=
+                    clsFeatureProb[thisCls].end()) {
+                    out << kv->second << endl;
+                    thisProb += clsFeatureProb[thisCls][kv->first] * kv->second;
+                }else{
+                    out << "Nan" << endl;
+                }
             }
-        };
 
-        if (thisProb > prob || prob == -1.0) {
-            cls = thisCls;
-            prob = thisProb;
+            out << "Prob = " << prob << endl;
+
+            if (thisProb > prob || prob == -1.0) {
+                cls = thisCls;
+                prob = thisProb;
+            }
         }
-    };
+    });
 
     return cls;
 }
@@ -120,8 +132,9 @@ void BernoulliNaiveBayes::train(const Dataset *dataset) {
         totalFalseValues[kv.first] = clsProb[kv.first];
     };
 
+    LOG_VAR(featureSet.size());
     LOG_VAR(instanceCounter);
-
+    LOG_VAR(clsProb);
 
     writeFile(PATH + "BNB-" + dataset->name, [&](ofstream &out) {
         // compute class feature probability
@@ -141,6 +154,7 @@ void BernoulliNaiveBayes::train(const Dataset *dataset) {
             };
         };
     });
+
     for (auto &ckv : clsProb) {
         for (auto &kv : clsFeatureProb[ckv.first]) {
             totalFalseValues[ckv.first] += log(1 - kv.second);
@@ -151,23 +165,37 @@ void BernoulliNaiveBayes::train(const Dataset *dataset) {
 double BernoulliNaiveBayes::classify(const Instance &ins) {
     double cls = 0.0;
     double prob = -1.0;
-    for (auto &ckv : clsFeatureProb) {
-        double thisCls = ckv.first;
-        double thisProb = totalFalseValues[thisCls];
+    counter++;
 
-        for (auto &kv : ins.values) {
-            if (clsFeatureProb[thisCls].find(kv.first) !=
-                clsFeatureProb[thisCls].end()) {
-                thisProb = thisProb + log(clsFeatureProb[thisCls][kv.first]) -
-                           log(1 - clsFeatureProb[thisCls][kv.first]);
+    writeFile(PATH + "bnb/" + to_string(counter) + ".txt", [&](ofstream &out) {
+        for (auto &ckv : clsFeatureProb) {
+            double thisCls = ckv.first;
+            double thisProb = totalFalseValues[thisCls];
+
+            out << "Label = " << thisCls << endl;
+            out << "Total False = " << thisProb << endl;
+
+            for (auto &kv : ins.values) {
+                out << kv.first << "\t";
+
+                if (clsFeatureProb[thisCls].find(kv.first) !=
+                    clsFeatureProb[thisCls].end()) {
+                    out << clsFeatureProb[thisCls][kv.first] << endl;
+                    thisProb = thisProb + log(clsFeatureProb[thisCls][kv.first]) -
+                               log(1 - clsFeatureProb[thisCls][kv.first]);
+                }else{
+                    out << 1 - clsFeatureProb[thisCls][kv.first] << endl;
+                }
+            }
+
+            out << "Prob = " << prob << endl;
+
+            if (thisProb > prob || prob == -1.0) {
+                cls = thisCls;
+                prob = thisProb;
             }
         }
-
-        if (thisProb > prob || prob == -1.0) {
-            cls = thisCls;
-            prob = thisProb;
-        }
-    };
+    });
 
     return cls;
 }

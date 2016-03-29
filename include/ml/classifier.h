@@ -15,6 +15,8 @@ class Classifier {
     virtual double classify(const Instance &instance) = 0;
 
     virtual ~Classifier(){};
+
+    int counter = 0;
 };
 
 class NaiveBayes : public Classifier {
