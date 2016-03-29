@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.0)
 project(twitter_analysis)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2 -std=c++11")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2 -std=c++11 -stdlib=libc++")
 
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/build)
 set(PROJECT_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/include)
