@@ -11,6 +11,9 @@ int *computeFolds(int totalSize, int foldN) {
     for (int i = 0; i < totalSize % each; i++) {
         folds[i + 1] += i + 1;
     }
+    for (int i = totalSize % each + 1; i < foldN; i++){
+        folds[i] += totalSize % each;
+    }
 
     folds[foldN] = totalSize;
 
@@ -51,11 +54,14 @@ Dataset *mergeTestingDataset(Dataset *ds1, Dataset *ds2, int *folds1,
 
 void Evaluator::crossValidate(int foldN, Classifier *classifier, Dataset *ds1,
                               Dataset *ds2) {
-    ds1->shuffle();
-    ds2->shuffle();
+    //ds1->shuffle();
+    //ds2->shuffle();
 
     int *folds1 = computeFolds(ds1->size(), foldN);
     int *folds2 = computeFolds(ds2->size(), foldN);
+    for(int i = 0; i < 10; i++){
+        cout << folds1[i] << '\t' << folds2[i] << endl;
+    }
 
     double posCls = (*ds1)[0].getClassValue();
 
@@ -94,11 +100,11 @@ void Evaluator::crossValidate(int foldN, Classifier *classifier, Dataset *ds1,
                 if (cls == posCls) {
                     cm["TP"] += 1;
                 } else {
-                    cm["FP"] += 1;
+                    cm["FN"] += 1;
                 }
             } else {
                 if (cls == posCls) {
-                    cm["FN"] += 1;
+                    cm["FP"] += 1;
                 } else {
                     cm["TN"] += 1;
                 }

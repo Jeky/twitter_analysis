@@ -273,5 +273,11 @@ void outputAll() {
 }
 
 int main(int argc, char const *argv[]) {
+
+        Classifier *cls = new NaiveBayes();
+            testClassification(cls);
+
+                cls = new BernoulliNaiveBayes();
+                    testClassification(cls);
     return 0;
 }
