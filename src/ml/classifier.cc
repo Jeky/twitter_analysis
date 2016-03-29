@@ -34,30 +34,29 @@ void NaiveBayes::train(const Dataset *dataset) {
         clsProb[kv.first] = log(kv.second / dataset->size());
     };
 
-    // compute class feature probability
-    int featureSize = featureSet.size();
-    for (auto &kv : clsFeatureProb) {
-        for (auto &k : featureSet) {
-            double v = 0.0;
-            if (kv.second.find(k) != kv.second.end()) {
-                v = kv.second[k];
-            }
 
-            kv.second[k] =
-                log((v + 1.0) / (clsWordCount[kv.first] + featureSize));
+    writeFile(PATH + "MNB-" + dataset->name, [&](ofstream &out) {
+        // compute class feature probability
+        int featureSize = featureSet.size();
+
+        for (auto &kv : clsFeatureProb) {
+            out << "Class Label = " << kv.first << endl;
+
+            for (auto &k : featureSet) {
+                double v = 0.0;
+                if (kv.second.find(k) != kv.second.end()) {
+                    v = kv.second[k];
+                }
+
+                out << k << "\t" << v << "\t";
+
+                kv.second[k] =
+                    log((v + 1.0) / (clsWordCount[kv.first] + featureSize));
+
+                out << kv.second[k] << endl;
+            };
         };
-    };
-
-       writeFile(PATH + "MNB-" + dataset->name, [&](ofstream &out) {
-           for (auto &kv : clsFeatureProb) {
-               out << "Class Label = " << kv.first << endl;
-
-               for (auto &fs : kv.second) {
-                   out << fs.first << "\t" << fs.second << endl;
-               }
-               out << endl;
-           };
-       });
+    });
 }
 
 double NaiveBayes::classify(const Instance &ins) {
@@ -120,34 +119,30 @@ void BernoulliNaiveBayes::train(const Dataset *dataset) {
         totalFalseValues[kv.first] = clsProb[kv.first];
     };
 
-    // compute class feature probability
-    for (auto &kv : clsFeatureProb) {
-        for (auto &k : featureSet) {
-            double v = 0.0;
-            if (kv.second.find(k) != kv.second.end()) {
-                v = kv.second[k];
-            }
 
-            kv.second[k] = (v + 1.0) / (instanceCounter[kv.first] + 2.0);
+    writeFile(PATH + "BNB-" + dataset->name, [&](ofstream &out) {
+        // compute class feature probability
+        for (auto &kv : clsFeatureProb) {
+            out << "Class Label = " << kv.first << endl;
+
+            for (auto &k : featureSet) {
+                double v = 0.0;
+                if (kv.second.find(k) != kv.second.end()) {
+                    v = kv.second[k];
+                }
+                out << k << "\t" << v << "\t";
+
+                kv.second[k] = (v + 1.0) / (instanceCounter[kv.first] + 2.0);
+                
+                out << kv.second[k] << endl;
+            };
         };
-    };
-
+    });
     for (auto &ckv : clsProb) {
         for (auto &kv : clsFeatureProb[ckv.first]) {
             totalFalseValues[ckv.first] += log(1 - kv.second);
         }
     };
-
-    writeFile(PATH + "BNB-" + dataset->name, [&](ofstream &out) {
-        for (auto &kv : clsFeatureProb) {
-            out << "Class Label = " << kv.first << endl;
-
-            for (auto &fs : kv.second) {
-                out << fs.first << "\t" << fs.second << endl;
-            }
-            out << endl;
-        };
-    });
 }
 
 double BernoulliNaiveBayes::classify(const Instance &ins) {
