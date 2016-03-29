@@ -28,6 +28,7 @@ void NaiveBayes::train(const Dataset *dataset) {
     }
 
     LOG_VAR(featureSet.size());
+    LOG_VAR(clsWordCount);
 
     // compute class probability
     for (auto &kv : clsProb) {
@@ -48,7 +49,7 @@ void NaiveBayes::train(const Dataset *dataset) {
                     v = kv.second[k];
                 }
 
-                out << k << "\t" << v << "\t";
+                out << fixed << k << "\t" << v << "\t";
 
                 kv.second[k] =
                     log((v + 1.0) / (clsWordCount[kv.first] + featureSize));
@@ -119,6 +120,8 @@ void BernoulliNaiveBayes::train(const Dataset *dataset) {
         totalFalseValues[kv.first] = clsProb[kv.first];
     };
 
+    LOG_VAR(instanceCounter);
+
 
     writeFile(PATH + "BNB-" + dataset->name, [&](ofstream &out) {
         // compute class feature probability
@@ -130,7 +133,7 @@ void BernoulliNaiveBayes::train(const Dataset *dataset) {
                 if (kv.second.find(k) != kv.second.end()) {
                     v = kv.second[k];
                 }
-                out << k << "\t" << v << "\t";
+                out << fixed << k << "\t" << v << "\t";
 
                 kv.second[k] = (v + 1.0) / (instanceCounter[kv.first] + 2.0);
                 

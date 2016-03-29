@@ -5,7 +5,7 @@ void getTime() {
     std::time_t tt = system_clock::to_time_t(system_clock::now());
 
     struct std::tm *ptm = std::localtime(&tt);
-    *__OUT << "[" << std::put_time(ptm, "%F %T") << "]";
+    *__OUT << std::fixed << "[" << std::put_time(ptm, "%F %T") << "]";
 }
 
 void LOG(bool start) { *__OUT << std::endl; }
