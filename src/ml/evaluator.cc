@@ -65,7 +65,7 @@ void Evaluator::crossValidate(int foldN, Classifier *classifier, Dataset *ds1,
 
     double posCls = (*ds1)[0].getClassValue();
 
-    for (int i = 0; i < foldN; i++) {
+    for (int i = 0; i < 1/*foldN*/; i++) {
         LOG("Evaluate ", i + 1, " Time");
         LOG("Merging Dataset...");
         Dataset *trainingDataset =

@@ -78,14 +78,14 @@ double NaiveBayes::classify(const Instance &ins) {
                 out << kv->first << "\t";
                 if (clsFeatureProb[thisCls].find(kv->first) !=
                     clsFeatureProb[thisCls].end()) {
-                    out << kv->second << endl;
+                    out << kv->second << "\t" << clsFeatureProb[thisCls][kv->first] << endl;
                     thisProb += clsFeatureProb[thisCls][kv->first] * kv->second;
                 }else{
-                    out << "Nan" << endl;
+                    out << "0\t0" << endl;
                 }
             }
 
-            out << "Prob = " << prob << endl;
+            out << "Prob = " << thisProb << endl;
 
             if (thisProb > prob || prob == -1.0) {
                 cls = thisCls;
@@ -188,7 +188,7 @@ double BernoulliNaiveBayes::classify(const Instance &ins) {
                 }
             }
 
-            out << "Prob = " << prob << endl;
+            out << "Prob = " << thisProb << endl;
 
             if (thisProb > prob || prob == -1.0) {
                 cls = thisCls;
