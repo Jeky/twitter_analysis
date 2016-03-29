@@ -48,7 +48,7 @@ void NaiveBayes::train(const Dataset *dataset) {
         };
     };
 
-       writeFile(PATH + dataset->name, [&](ofstream &out) {
+       writeFile(PATH + "MNB-" + dataset->name, [&](ofstream &out) {
            for (auto &kv : clsFeatureProb) {
                out << "Class Label = " << kv.first << endl;
 
@@ -138,10 +138,10 @@ void BernoulliNaiveBayes::train(const Dataset *dataset) {
         }
     };
 
-    writeFile(PATH + dataset->name, [&](ofstream &out) {
+    writeFile(PATH + "BNB-" + dataset->name, [&](ofstream &out) {
         for (auto &kv : clsFeatureProb) {
             out << "Class Label = " << kv.first << endl;
-            
+
             for (auto &fs : kv.second) {
                 out << fs.first << "\t" << fs.second << endl;
             }

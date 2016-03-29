@@ -387,7 +387,7 @@ void BIClassWAPMI::train(Dataset *dataset) {
         }
     });
 
-    delete insLenArr;
+    delete insLenArr[];
 }
 
 unordered_set<string> *loadFeatures(const string &filename) {
