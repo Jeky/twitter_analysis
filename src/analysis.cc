@@ -230,13 +230,29 @@ void outputAll() {
 }
 
 int main(int argc, char const *argv[]) {
+    // Analyze and generate dataset
+    // unigram
+    analyzeAll(1);
 
-        Classifier *cls = new NaiveBayes();
-            testClassification(cls);
+    // bigram
+    // analyzeAll(2);
+    
+    // Test classification
+    Classifier *cls = new NaiveBayes();
+    testClassification(cls);
 
-                cls = new BernoulliNaiveBayes();
-                    testClassification(cls);
+    cls = new BernoulliNaiveBayes();
+    testClassification(cls);
 
+    // Test feature selection
+    FeatureSelector *selector = new BiClassMutualInformation();
+    testFeatureSelection(selector, "mi");
+
+    selector = new BiClassChi2();
+    testFeatureSelection(selector, "chi2");
+
+    selector = new BIClassWAPMI();
+    testFeatureSelection(selector, "wapmi");
 
     return 0;
 }
