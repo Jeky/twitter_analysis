@@ -9,7 +9,6 @@ void NaiveBayes::train(const Dataset *dataset) {
     unordered_map<double, double> clsWordCount;
     unordered_set<string> featureSet;
 
-    // TODO: modify to accept multiply classes
     clsFeatureProb[SPAMMER_VALUE] = unordered_map<string, double, hashString>();
     clsFeatureProb[NON_SPAMMER_VALUE] =
         unordered_map<string, double, hashString>();
@@ -49,20 +48,16 @@ void NaiveBayes::train(const Dataset *dataset) {
         };
     };
 
-    //    writeFile(PATH + dataset->name, [&](ofstream &out) {
-    //        for (auto &kv : clsFeatureProb) {
-    //            out << "Class Label = " << kv.first << endl;
-    //            int i = 0;
-    //            for (auto &fs : kv.second) {
-    //                out << fs.first << "\t" << fs.second;
-    //                if (i != kv.second.size() - 1) {
-    //                    out << "\t";
-    //                }
-    //                i++;
-    //            }
-    //            out << endl;
-    //        };
-    //    });
+       writeFile(PATH + dataset->name, [&](ofstream &out) {
+           for (auto &kv : clsFeatureProb) {
+               out << "Class Label = " << kv.first << endl;
+
+               for (auto &fs : kv.second) {
+                   out << fs.first << "\t" << fs.second << endl;
+               }
+               out << endl;
+           };
+       });
 }
 
 double NaiveBayes::classify(const Instance &ins) {
@@ -99,7 +94,6 @@ void BernoulliNaiveBayes::train(const Dataset *dataset) {
     unordered_set<string> featureSet;
     unordered_map<double, double> instanceCounter;
 
-    // TODO: modify to accept multiply classes
     clsFeatureProb[SPAMMER_VALUE] = unordered_map<string, double, hashString>();
     clsFeatureProb[NON_SPAMMER_VALUE] =
         unordered_map<string, double, hashString>();
@@ -147,13 +141,9 @@ void BernoulliNaiveBayes::train(const Dataset *dataset) {
     writeFile(PATH + dataset->name, [&](ofstream &out) {
         for (auto &kv : clsFeatureProb) {
             out << "Class Label = " << kv.first << endl;
-            int i = 0;
+            
             for (auto &fs : kv.second) {
-                out << fs.first << "\t" << fs.second;
-                if (i != kv.second.size() - 1) {
-                    out << "\t";
-                }
-                i++;
+                out << fs.first << "\t" << fs.second << endl;
             }
             out << endl;
         };
@@ -175,18 +165,6 @@ double BernoulliNaiveBayes::classify(const Instance &ins) {
             }
         }
 
-        /* double thisProb1 = clsProb[thisCls];
-         for (auto kv = ckv.second.begin(), end = ckv.second.end(); kv != end;
-              kv++) {
-             if (ins.values.find(kv->first) != ins.values.end()) {
-                 thisProb1 += log(clsFeatureProb[thisCls][kv->first]);
-             } else {
-                 thisProb1 += log(1 - clsFeatureProb[thisCls][kv->first]);
-             }
-         };
-
-         LOG(thisProb, " = ", thisProb1);
- */
         if (thisProb > prob || prob == -1.0) {
             cls = thisCls;
             prob = thisProb;
