@@ -238,11 +238,11 @@ int main(int argc, char const *argv[]) {
     // analyzeAll(2);
     
     // Test classification
-    Classifier *cls = new NaiveBayes();
-    testClassification(cls);
+    // Classifier *cls = new NaiveBayes();
+    // testClassification(cls);
 
-    cls = new BernoulliNaiveBayes();
-    testClassification(cls);
+    // cls = new BernoulliNaiveBayes();
+    // testClassification(cls);
 
     // Test feature selection
     FeatureSelector *selector = new BiClassMutualInformation();

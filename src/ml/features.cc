@@ -64,21 +64,35 @@ void FeatureSelector::loadTopFeatureList(const string &path) {
     });
 }
 
-double computeMIScore(int N, array<double, 4> &fm) {
-    return fm[0] / N * (log2(N) + log2(fm[0]) - log2(fm[0] + fm[1]) -
-                        log2(fm[0] + fm[2])) +
-           fm[1] / N * (log2(N) + log2(fm[1]) - log2(fm[0] + fm[1]) -
-                        log2(fm[1] + fm[3])) +
-           fm[2] / N * (log2(N) + log2(fm[2]) - log2(fm[2] + fm[3]) -
-                        log2(fm[0] + fm[2])) +
-           fm[3] / N * (log2(N) + log2(fm[3]) - log2(fm[2] + fm[3]) -
-                        log2(fm[1] + fm[3]));
+double computeMIScore(int N1, int N2, array<double, 4> &ns) {
+    double es[4];
+    es[0] = (ns[0] + ns[1]) * N1 / (N1 + N2);
+    es[1] = (ns[0] + ns[1]) * N2 / (N1 + N2);
+    es[2] = (ns[2] + ns[3]) * N1 / (N1 + N2);
+    es[3] = (ns[2] + ns[3]) * N2 / (N1 + N2);
+
+    double s = 0.0;
+    for(int i = 0; i < 4; i++){
+        s += ns[i] / (N1 + N2) * log2(ns[i] / es[i]);
+    }
+
+    return s;
 }
 
 
-double computeChi2Score(int N, array<double, 4> &fm) {
-    return (fm[0] + fm[1] + fm[2] + fm[3]) * (fm[0] * fm[3] - fm[1] * fm[2]) * (fm[0] * fm[3] - fm[1] * fm[2])
-    		/ ((fm[0] + fm[2]) * (fm[0] + fm[1]) * (fm[1] + fm[3]) * (fm[2] + fm[3]));
+double computeChi2Score(int N1, int N2, array<double, 4> &ns) {
+    double es[4];
+    es[0] = (ns[0] + ns[1]) * N1 / (N1 + N2);
+    es[1] = (ns[0] + ns[1]) * N2 / (N1 + N2);
+    es[2] = (ns[2] + ns[3]) * N1 / (N1 + N2);
+    es[3] = (ns[2] + ns[3]) * N2 / (N1 + N2);
+
+    double s = 0.0;
+    for(int i = 0; i < 4; i++){
+        s += (ns[i] - es[i]) * (ns[i] - es[i]) / es[i];
+    }
+    
+    return s;
 }
 
 void BiClassMutualInformation::train(Dataset *dataset) {
@@ -88,47 +102,42 @@ void BiClassMutualInformation::train(Dataset *dataset) {
     int NP = 0;
     int NN = 0;
 
+    double cls = SPAMMER_VALUE;
+
     LOG("Initialize Feature Matrix");
     // initialize feature matrix
     // row    = number of features
     // column = [1.0, 1.0, 1.0, 1.0]
     //           N11, N10, N01, N00
+    int count = 0;
     for (auto i = dataset->instances.begin(), dend = dataset->instances.end();
          i != dend; i++) {
-
-        for (auto kv = i->values.begin(), iend = i->values.end(); kv != iend;
-             kv++) {
-            array<double, 4> score;
-            for (int j = 0; j < 4; j++) {
-                score[j] = 1.0;
-            }
-            featureMatrix[kv->first] = score;
-        };
-    };
-
-    double cls = SPAMMER_VALUE;
-
-    LOG_VAR(featureMatrix.size());
-
-    int count = 0;
-    for (auto &instance : dataset->instances) {
         if (count % 1000 == 0) {
             LOG("Processed ", count, " users");
         }
-        if (instance.getClassValue() == cls) {
-            NP++;
-        } else {
-            NN++;
-        }
-        for (auto &kv : instance.values) {
-            if (instance.getClassValue() == cls) {
-                featureMatrix[kv.first][0]++;
-            } else {
-                featureMatrix[kv.first][1]++;
+
+        for (auto kv = i->values.begin(), iend = i->values.end(); kv != iend;
+             kv++) {
+            if(featureMatrix.find(kv->first) == featureMatrix.end()){
+                array<double, 4> score;
+                for (int j = 0; j < 4; j++) {
+                    score[j] = 1.0;
+                }
+                featureMatrix[kv->first] = score;
+            }else{
+                if(i->getClassValue() == cls){
+                    featureMatrix[kv->first][0] += kv->second;
+                    NP += kv->second;
+                }else{
+                    featureMatrix[kv->first][1] += kv->second;
+                    NN += kv->second;
+                }
             }
         }
         count++;
-    }
+    };
+
+    LOG_VAR(featureMatrix.size());
 
     int N = dataset->size();
     count = 0;
@@ -136,37 +145,15 @@ void BiClassMutualInformation::train(Dataset *dataset) {
         if (count % 1000 == 0) {
             LOG("Processed ", count, " features");
         }
-        kv.second[2] = NP + 2 - kv.second[0];
-        kv.second[3] = NN + 2 - kv.second[1];
+        kv.second[2] = NP - kv.second[0];
+        kv.second[3] = NN - kv.second[1];
 
         count++;
     }
 
-    //    for (auto &kv : featureMatrix) {
-    //        if (featureCount % 1000 == 0) {
-    //            LOG("Processed ", featureCount, " Features");
-    //        }
-    //        for (int i = 0; i < dataset->size(); i++) {
-    //            if ((*dataset)[i].hasAttribute(kv.first)) {
-    //                if (cls == (*dataset)[i].getClassValue()) {
-    //                    kv.second[0] += 1;
-    //                } else {
-    //                    kv.second[1] += 1;
-    //                }
-    //            } else {
-    //                if (cls == (*dataset)[i].getClassValue()) {
-    //                    kv.second[2] += 1;
-    //                } else {
-    //                    kv.second[3] += 1;
-    //                }
-    //            }
-    //        }
-    //        featureCount++;
-    //    }
-
     writeFile(PATH + "mi-" + dataset->name + ".txt", [&](ofstream &out) {
         for (auto &kv : featureMatrix) {
-            featureScoreMap[kv.first] = computeMIScore(N, kv.second);
+            featureScoreMap[kv.first] = computeMIScore(NP, NN, kv.second);
             out << kv.first << "\t" << kv.second[0] << "\t" << kv.second[1]
                 << "\t" << kv.second[2] << "\t" << kv.second[3] << "\t"
                 << featureScoreMap[kv.first] << endl;
@@ -181,48 +168,43 @@ void BiClassChi2::train(Dataset *dataset) {
     unordered_map<string, array<double, 4>> featureMatrix;
     int NP = 0;
     int NN = 0;
+    
+    double cls = SPAMMER_VALUE;
 
     LOG("Initialize Feature Matrix");
     // initialize feature matrix
     // row    = number of features
     // column = [1.0, 1.0, 1.0, 1.0]
     //           N11, N10, N01, N00
+    int count = 0;
     for (auto i = dataset->instances.begin(), dend = dataset->instances.end();
          i != dend; i++) {
-
-        for (auto kv = i->values.begin(), iend = i->values.end(); kv != iend;
-             kv++) {
-            array<double, 4> score;
-            for (int j = 0; j < 4; j++) {
-                score[j] = 1.0;
-            }
-            featureMatrix[kv->first] = score;
-        };
-    };
-
-    double cls = SPAMMER_VALUE;
-
-    LOG_VAR(featureMatrix.size());
-
-    int count = 0;
-    for (auto &instance : dataset->instances) {
         if (count % 1000 == 0) {
             LOG("Processed ", count, " users");
         }
-        if (instance.getClassValue() == cls) {
-            NP++;
-        } else {
-            NN++;
-        }
-        for (auto &kv : instance.values) {
-            if (instance.getClassValue() == cls) {
-                featureMatrix[kv.first][0]++;
-            } else {
-                featureMatrix[kv.first][1]++;
+
+        for (auto kv = i->values.begin(), iend = i->values.end(); kv != iend;
+             kv++) {
+            if(featureMatrix.find(kv->first) == featureMatrix.end()){
+                array<double, 4> score;
+                for (int j = 0; j < 4; j++) {
+                    score[j] = 1.0;
+                }
+                featureMatrix[kv->first] = score;
+            }else{
+                if(i->getClassValue() == cls){
+                    featureMatrix[kv->first][0] += kv->second;
+                    NP += kv->second;
+                }else{
+                    featureMatrix[kv->first][1] += kv->second;
+                    NN += kv->second;
+                }
             }
-        }
+        };
         count++;
-    }
+    };
+
+    LOG_VAR(featureMatrix.size());
 
     int N = dataset->size();
     count = 0;
@@ -230,15 +212,15 @@ void BiClassChi2::train(Dataset *dataset) {
         if (count % 1000 == 0) {
             LOG("Processed ", count, " features");
         }
-        kv.second[2] = NP + 2 - kv.second[0];
-        kv.second[3] = NN + 2 - kv.second[1];
+        kv.second[2] = NP - kv.second[0];
+        kv.second[3] = NN - kv.second[1];
 
         count++;
     }
 
     writeFile(PATH + "chi2-" + dataset->name + ".txt", [&](ofstream &out) {
         for (auto &kv : featureMatrix) {
-            featureScoreMap[kv.first] = computeChi2Score(N, kv.second);
+            featureScoreMap[kv.first] = computeChi2Score(NP, NN, kv.second);
             out << kv.first << "\t" << kv.second[0] << "\t" << kv.second[1]
                 << "\t" << kv.second[2] << "\t" << kv.second[3] << "\t"
                 << featureScoreMap[kv.first] << endl;
