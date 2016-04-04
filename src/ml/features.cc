@@ -66,14 +66,14 @@ void FeatureSelector::loadTopFeatureList(const string &path) {
 
 double computeMIScore(int N1, int N2, array<double, 4> &ns) {
     double es[4];
-    es[0] = (ns[0] + ns[1]) * N1 / (N1 + N2);
-    es[1] = (ns[0] + ns[1]) * N2 / (N1 + N2);
-    es[2] = (ns[2] + ns[3]) * N1 / (N1 + N2);
-    es[3] = (ns[2] + ns[3]) * N2 / (N1 + N2);
+    es[0] = 1.0 * (ns[0] + ns[1]) * N1 / (N1 + N2);
+    es[1] = 1.0 * (ns[0] + ns[1]) * N2 / (N1 + N2);
+    es[2] = 1.0 * (ns[2] + ns[3]) * N1 / (N1 + N2);
+    es[3] = 1.0 * (ns[2] + ns[3]) * N2 / (N1 + N2);
 
     double s = 0.0;
     for(int i = 0; i < 4; i++){
-        s += ns[i] / (N1 + N2) * log2(ns[i] / es[i]);
+        s += ns[i] / (N1 + N2) * log2(1.0 * ns[i] / es[i]);
     }
 
     return s;
@@ -82,10 +82,10 @@ double computeMIScore(int N1, int N2, array<double, 4> &ns) {
 
 double computeChi2Score(int N1, int N2, array<double, 4> &ns) {
     double es[4];
-    es[0] = (ns[0] + ns[1]) * N1 / (N1 + N2);
-    es[1] = (ns[0] + ns[1]) * N2 / (N1 + N2);
-    es[2] = (ns[2] + ns[3]) * N1 / (N1 + N2);
-    es[3] = (ns[2] + ns[3]) * N2 / (N1 + N2);
+    es[0] = 1.0 * (ns[0] + ns[1]) * N1 / (N1 + N2);
+    es[1] = 1.0 * (ns[0] + ns[1]) * N2 / (N1 + N2);
+    es[2] = 1.0 * (ns[2] + ns[3]) * N1 / (N1 + N2);
+    es[3] = 1.0 * (ns[2] + ns[3]) * N2 / (N1 + N2);
 
     double s = 0.0;
     for(int i = 0; i < 4; i++){
