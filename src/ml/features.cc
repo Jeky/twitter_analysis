@@ -154,7 +154,7 @@ void BiClassMutualInformation::train(Dataset *dataset) {
     writeFile(PATH + "mi-" + dataset->name + ".txt", [&](ofstream &out) {
         for (auto &kv : featureMatrix) {
             featureScoreMap[kv.first] = computeMIScore(NP, NN, kv.second);
-            out << kv.first << "\t" << kv.second[0] << "\t" << kv.second[1]
+            out << fixed << kv.first << "\t" << kv.second[0] << "\t" << kv.second[1]
                 << "\t" << kv.second[2] << "\t" << kv.second[3] << "\t"
                 << featureScoreMap[kv.first] << endl;
         }
@@ -221,7 +221,7 @@ void BiClassChi2::train(Dataset *dataset) {
     writeFile(PATH + "chi2-" + dataset->name + ".txt", [&](ofstream &out) {
         for (auto &kv : featureMatrix) {
             featureScoreMap[kv.first] = computeChi2Score(NP, NN, kv.second);
-            out << kv.first << "\t" << kv.second[0] << "\t" << kv.second[1]
+            out << fixed << kv.first << "\t" << kv.second[0] << "\t" << kv.second[1]
                 << "\t" << kv.second[2] << "\t" << kv.second[3] << "\t"
                 << featureScoreMap[kv.first] << endl;
         }
@@ -363,7 +363,7 @@ void BIClassWAPMI::train(Dataset *dataset) {
     
     writeFile(PATH + "wapmi-" + dataset->name + ".txt", [&](ofstream &out) {
         for (auto &kv : featureMatrix) {
-            out << kv.first << "\t" << kv.second[0] << "\t" << kv.second[1]
+            out << fixed << kv.first << "\t" << kv.second[0] << "\t" << kv.second[1]
                 << "\t" << kv.second[2] << "\t" << kv.second[3] << "\t"
                 << featureScoreMap[kv.first] << endl;
         }

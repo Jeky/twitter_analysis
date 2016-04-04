@@ -59,9 +59,9 @@ void Evaluator::crossValidate(int foldN, Classifier *classifier, Dataset *ds1,
 
     int *folds1 = computeFolds(ds1->size(), foldN);
     int *folds2 = computeFolds(ds2->size(), foldN);
-    for(int i = 0; i < 10; i++){
-        cout << folds1[i] << '\t' << folds2[i] << endl;
-    }
+    // for(int i = 0; i < 10; i++){
+    //     cout << folds1[i] << '\t' << folds2[i] << endl;
+    // }
 
     double posCls = (*ds1)[0].getClassValue();
 
@@ -164,7 +164,7 @@ void Evaluator::featureSelectionValidate(int foldN, FeatureSelector *selector,
         writeFile(output + "-features-" + to_string(i) + ".txt",
                   [&](ofstream &out) {
             for (auto &f : *features) {
-                out << f.first << "\t" << f.second << endl;
+                out << fixed << f.first << "\t" << f.second << endl;
             }
         });
 
