@@ -232,7 +232,7 @@ void outputAll() {
 int main(int argc, char const *argv[]) {
     // Analyze and generate dataset
     // unigram
-    analyzeAll(1);
+    // analyzeAll(1);
 
     // bigram
     // analyzeAll(2);

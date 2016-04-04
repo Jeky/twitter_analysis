@@ -181,7 +181,7 @@ void Evaluator::featureSelectionValidate(int foldN, FeatureSelector *selector,
 
                 Evaluator eval;
                 eval.crossValidate(10, classifier, &fds1, &fds2);
-                out << "size = " << size << endl;
+                out << fixed << "size = " << size << endl;
                 for (auto &item : eval.getConfusionMatrixVector()) {
                     out << item << endl;
                 }
