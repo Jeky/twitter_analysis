@@ -79,6 +79,18 @@ double computeMIScore(int N1, int N2, array<double, 4> &ns) {
     return s;
 }
 
+double computePMIScore(int N1, int N2, array<double, 4> &ns) {
+    double es[2];
+    es[0] = 1.0 * (ns[0] + ns[1]) * N1 / (N1 + N2);
+    es[1] = 1.0 * (ns[0] + ns[1]) * N2 / (N1 + N2);
+
+    double s = 0.0;
+    for(int i = 0; i < 2; i++){
+        s += fabs(log2(1.0 * ns[i] / es[i]));
+    }
+
+    return s;
+}
 
 double computeChi2Score(int N1, int N2, array<double, 4> &ns) {
     double es[4];
@@ -161,9 +173,62 @@ void BiClassMutualInformation::train(Dataset *dataset) {
     });
 }
 
+void BiClassPMI::train(Dataset *dataset) {
+    LOG("Training Pointwise Mutual Information Feature Selector");
+
+    unordered_map<string, array<double, 4>> featureMatrix;
+    int NP = 0;
+    int NN = 0;
+
+    double cls = SPAMMER_VALUE;
+
+    LOG("Initialize Feature Matrix");
+    // initialize feature matrix
+    // row    = number of features
+    // column = [1.0, 1.0, 1.0, 1.0]
+    //           N11, N10, N01, N00
+    int count = 0;
+    for (auto i = dataset->instances.begin(), dend = dataset->instances.end();
+         i != dend; i++) {
+        if (count % 1000 == 0) {
+            LOG("Processed ", count, " users");
+        }
+
+        for (auto kv = i->values.begin(), iend = i->values.end(); kv != iend;
+             kv++) {
+            if(featureMatrix.find(kv->first) == featureMatrix.end()){
+                array<double, 4> score;
+                for (int j = 0; j < 4; j++) {
+                    score[j] = 1.0;
+                }
+                featureMatrix[kv->first] = score;
+            }else{
+                if(i->getClassValue() == cls){
+                    featureMatrix[kv->first][0] += kv->second;
+                    NP += kv->second;
+                }else{
+                    featureMatrix[kv->first][1] += kv->second;
+                    NN += kv->second;
+                }
+            }
+        }
+        count++;
+    };
+
+    LOG_VAR(featureMatrix.size());
+
+    writeFile(PATH + "pmi-" + dataset->name + ".txt", [&](ofstream &out) {
+        for (auto &kv : featureMatrix) {
+            featureScoreMap[kv.first] = computePMIScore(NP, NN, kv.second);
+            out << fixed << kv.first << "\t" << kv.second[0] << "\t" << kv.second[1]
+                << "\t" << kv.second[2] << "\t" << kv.second[3] << "\t"
+                << featureScoreMap[kv.first] << endl;
+        }
+    });
+}
 
 void BiClassChi2::train(Dataset *dataset) {
-    LOG("Training Mutual Information Feature Selector");
+    LOG("Training Chi2 Feature Selector");
 
     unordered_map<string, array<double, 4>> featureMatrix;
     int NP = 0;

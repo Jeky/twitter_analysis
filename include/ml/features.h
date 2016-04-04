@@ -41,6 +41,13 @@ class BiClassMutualInformation : public FeatureSelector {
 };
 
 
+class BiClassPMI : public FeatureSelector {
+  public:
+    void train(Dataset *dataset);
+};
+
+
+
 class BiClassChi2 : public FeatureSelector {
   public:
     void train(Dataset *dataset);

@@ -245,14 +245,17 @@ int main(int argc, char const *argv[]) {
     // testClassification(cls);
 
     // Test feature selection
-    FeatureSelector *selector = new BiClassMutualInformation();
-    testFeatureSelection(selector, "mi");
+    // FeatureSelector *selector = new BiClassMutualInformation();
+    // testFeatureSelection(selector, "mi");
 
-    selector = new BiClassChi2();
-    testFeatureSelection(selector, "chi2");
+    FeatureSelector *selector = new BiClassPMI();
+    testFeatureSelection(selector, "pmi");
 
-    selector = new BIClassWAPMI();
-    testFeatureSelection(selector, "wapmi");
+    // selector = new BiClassChi2();
+    // testFeatureSelection(selector, "chi2");
+
+    // selector = new BIClassWAPMI();
+    // testFeatureSelection(selector, "wapmi");
 
     return 0;
 }
