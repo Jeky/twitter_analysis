@@ -161,6 +161,7 @@ void Evaluator::featureSelectionValidate(int foldN, FeatureSelector *selector,
         auto *features = selector->getTopFeatureList();
 
         LOG("Writing Features...");
+        LOG_VAR(features->size());
         writeFile(output + "-features-" + to_string(i) + ".txt",
                   [&](ofstream &out) {
             for (auto &f : *features) {
@@ -173,17 +174,45 @@ void Evaluator::featureSelectionValidate(int foldN, FeatureSelector *selector,
                   [&](ofstream &out) {
             int size = 1;
             while (size < features->size()) {
-                auto *filteredDS =
+                Dataset *filteredTrainingDS =
+                    selector->filterDataset(trainingDataset, size);
+                Dataset *filteredTestingDS =
                     selector->filterDataset(testingDataset, size);
-                Dataset fds1;
-                Dataset fds2;
-                splitDSByClass(filteredDS, fds1, fds2);
+
+                classifier->reset();
+                classifier->train(filteredTrainingDS);
+
+                unordered_map<string, double> cm;
+                int count = 0;
+                for (auto instance = testingDataset->instances.begin(),
+                          end = testingDataset->instances.end();
+                     instance != end; instance++) {
+                    if (count % 100 == 0) {
+                        LOG("Classified ", count, " users");
+                    }
+                    double cls = classifier->classify(*instance);
+                    if (instance->getClassValue() == posCls) {
+                        if (cls == posCls) {
+                            cm["TP"] += 1;
+                        } else {
+                            cm["FN"] += 1;
+                        }
+                    } else {
+                        if (cls == posCls) {
+                            cm["FP"] += 1;
+                        } else {
+                            cm["TN"] += 1;
+                        }
+                    }
+                    count++;
+                };
 
                 Evaluator eval;
-                eval.crossValidate(10, classifier, &fds1, &fds2);
+                eval.result.push_back(cm);
+
                 out << fixed << "size = " << size << endl;
                 for (auto &item : eval.getConfusionMatrixVector()) {
-                    out << item << endl;
+                    out << cm['TP'] << "\t" << cm['FN'] << "\t" << cm['FP'] << "\t" << cm['TN'] << endl;
                 }
                 out << "acc: " << eval.getAccuracy() << endl;
                 out << "rec: " << eval.getRecall() << endl;

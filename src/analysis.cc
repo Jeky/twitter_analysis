@@ -18,6 +18,8 @@ void saveIntArr(int *arr, int len, const string &path) {
 
 void analyzeDataset(unordered_map<long, User> *users, bool isSpammer, int gramLen) {
     LOG("Analyzing");
+    auto stops = loadStops();
+
     Dataset *dataset = new Dataset();
     Counter<string> tokenFreq;
     int *tweetCount = new int[users->size()];
@@ -44,7 +46,9 @@ void analyzeDataset(unordered_map<long, User> *users, bool isSpammer, int gramLe
         Instance ins;
         ins.setClassValue(isSpammer ? SPAMMER_VALUE : NON_SPAMMER_VALUE);
         for (auto &&t : kv.second.getTweets()) {
-            vector<string> *tokens = toGrams(t.getText(), gramLen);
+            vector<string> *alltokens = toGrams(t.getText(), gramLen);
+            vector<string> *tokens = filterStopWords(alltokens, stops);
+            delete alltokens;
             //            vector<string> *tokens = filterSpecialWords(grams);
             tokenFreq.count(tokens);
             tokenCount[index] += tokens->size();
