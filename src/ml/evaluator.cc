@@ -184,6 +184,7 @@ void Evaluator::featureSelectionValidate(int foldN, FeatureSelector *selector,
 
                 unordered_map<string, double> cm;
                 int count = 0;
+                int rand[2] = {0, 0};
                 for (auto instance = testingDataset->instances.begin(),
                           end = testingDataset->instances.end();
                      instance != end; instance++) {
@@ -191,28 +192,39 @@ void Evaluator::featureSelectionValidate(int foldN, FeatureSelector *selector,
                         LOG("Classified ", count, " users");
                     }
                     double cls = classifier->classify(*instance);
-                    if (instance->getClassValue() == posCls) {
-                        if (cls == posCls) {
-                            cm["TP"] += 1;
+                    if (cls == -1){
+                        rand[(int)instance->getClassValue()]++;
+                    }else{
+                        if (instance->getClassValue() == posCls) {
+                            if (cls == posCls) {
+                                cm["TP"] += 1;
+                            } else {
+                                cm["FN"] += 1;
+                            }
                         } else {
-                            cm["FN"] += 1;
-                        }
-                    } else {
-                        if (cls == posCls) {
-                            cm["FP"] += 1;
-                        } else {
-                            cm["TN"] += 1;
+                            if (cls == posCls) {
+                                cm["FP"] += 1;
+                            } else {
+                                cm["TN"] += 1;
+                            }
                         }
                     }
                     count++;
                 };
+                cm["FN"] += rand[1] / 2;
+                cm["TP"] += rand[1] - rand[1] / 2;
+                cm["TN"] += rand[0] / 2;
+                cm["FP"] += rand[0] - rand[0] / 2;
+
+                LOG("%d\t%d", rand[0], rand[1]);
+
 
                 Evaluator eval;
                 eval.result.push_back(cm);
 
                 out << fixed << "size = " << size << endl;
                 for (auto &item : eval.getConfusionMatrixVector()) {
-                    out << cm['TP'] << "\t" << cm['FN'] << "\t" << cm['FP'] << "\t" << cm['TN'] << endl;
+                    out << cm["TP"] << "\t" << cm["FN"] << "\t" << cm["FP"] << "\t" << cm["TN"] << endl;
                 }
                 out << "acc: " << eval.getAccuracy() << endl;
                 out << "rec: " << eval.getRecall() << endl;
@@ -220,7 +232,8 @@ void Evaluator::featureSelectionValidate(int foldN, FeatureSelector *selector,
                 out << "F1:  " << eval.getF1() << endl;
 
                 size *= 10;
-                delete filteredDS;
+                delete filteredTrainingDS;
+                delete filteredTestingDS;
             }
         });
 

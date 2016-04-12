@@ -252,7 +252,7 @@ int main(int argc, char const *argv[]) {
     FeatureSelector *selector = new BiClassMutualInformation();
     testFeatureSelection(selector, "mi");
 
-    FeatureSelector *selector = new BiClassPMI();
+    selector = new BiClassPMI();
     testFeatureSelection(selector, "pmi");
 
     selector = new BiClassChi2();
