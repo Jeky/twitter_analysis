@@ -65,34 +65,34 @@ double NaiveBayes::classify(const Instance &ins) {
     double prob = -1.0;
     counter++;
 
-    //writeFile(PATH + "mnb/" + to_string(counter) + ".txt", [&](ofstream &out) {
+    writeFile(PATH + "mnb/" + to_string(counter) + ".txt", [&](ofstream &out) {
         for (auto &ckv : clsFeatureProb) {
             double thisCls = ckv.first;
             double thisProb = clsProb[thisCls];
 
-      //      out << "Label = " << thisCls << endl;
-        //    out << "Prior = " << thisProb << endl;
+            out << "Label = " << thisCls << endl;
+            out << "Prior = " << thisProb << endl;
 
             for (auto kv = ins.values.begin(), end = ins.values.end(); kv != end;
                  kv++) {
-          //      out << kv->first << "\t";
+                out << kv->first << "\t";
                 if (clsFeatureProb[thisCls].find(kv->first) !=
                     clsFeatureProb[thisCls].end()) {
-            //        out << kv->second << "\t" << clsFeatureProb[thisCls][kv->first] << endl;
+                    out << kv->second << "\t" << clsFeatureProb[thisCls][kv->first] << endl;
                     thisProb += clsFeatureProb[thisCls][kv->first] * kv->second;
                 }else{
-             //       out << "0\t0" << endl;
+                    out << "0\t0" << endl;
                 }
             }
 
-           // out << "Prob = " << thisProb << endl;
+            out << "Prob = " << thisProb << endl;
 
             if (thisProb > prob || prob == -1.0) {
                 cls = thisCls;
                 prob = thisProb;
             }
         }
-   // });
+    });
 
     return cls;
 }
