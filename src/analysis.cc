@@ -242,24 +242,24 @@ int main(int argc, char const *argv[]) {
     // analyzeAll(2);
     
     // Test classification
-     Classifier *cls = new NaiveBayes();
-     testClassification(cls);
+    // Classifier *cls = new NaiveBayes();
+    // testClassification(cls);
 
     // cls = new BernoulliNaiveBayes();
     // testClassification(cls);
 
-    // Test feature selection
-    // FeatureSelector *selector = new BiClassMutualInformation();
-    // testFeatureSelection(selector, "mi");
+    //Test feature selection
+    FeatureSelector *selector = new BiClassMutualInformation();
+    testFeatureSelection(selector, "mi");
 
-    // FeatureSelector *selector = new BiClassPMI();
-    // testFeatureSelection(selector, "pmi");
+    FeatureSelector *selector = new BiClassPMI();
+    testFeatureSelection(selector, "pmi");
 
-    // selector = new BiClassChi2();
-    // testFeatureSelection(selector, "chi2");
+    selector = new BiClassChi2();
+    testFeatureSelection(selector, "chi2");
 
-    // selector = new BIClassWAPMI();
-    // testFeatureSelection(selector, "wapmi");
+    selector = new BIClassWAPMI();
+    testFeatureSelection(selector, "wapmi");
 
     return 0;
 }
