@@ -77,24 +77,34 @@ void Evaluator::sizeValidation(Classifier *classifier, Dataset *ds1, Dataset *ds
             classifier->train(subTrainingDataset);
 
             unordered_map<string, double> cm;
+            int rand[2] = {0, 0};
             for (auto instance = testingDataset->instances.begin(),
                       end = testingDataset->instances.end();
                  instance != end; instance++) {
+
                 double cls = classifier->classify(*instance);
-                if (instance->getClassValue() == posCls) {
-                    if (cls == posCls) {
-                        cm["TP"] += 1;
+                if (cls == -1){
+                    rand[(int)instance->getClassValue()]++;
+                }else{
+                    if (instance->getClassValue() == posCls) {
+                        if (cls == posCls) {
+                            cm["TP"] += 1;
+                        } else {
+                            cm["FN"] += 1;
+                        }
                     } else {
-                        cm["FN"] += 1;
-                    }
-                } else {
-                    if (cls == posCls) {
-                        cm["FP"] += 1;
-                    } else {
-                        cm["TN"] += 1;
+                        if (cls == posCls) {
+                            cm["FP"] += 1;
+                        } else {
+                            cm["TN"] += 1;
+                        }
                     }
                 }
-            }
+            };
+            cm["FN"] += rand[1] / 2;
+            cm["TP"] += rand[1] - rand[1] / 2;
+            cm["TN"] += rand[0] / 2;
+            cm["FP"] += rand[0] - rand[0] / 2;
 
             Evaluator eval;
             eval.result.push_back(cm);

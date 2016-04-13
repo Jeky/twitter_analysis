@@ -233,7 +233,7 @@ void outputAll() {
     });
 }
 
-void testClassificationSizeRelation(Classifier *cls, const string &fname){
+void testClassificationSizeRelation(Classifier *cls, const string &output){
     auto *spammerDS = Dataset::loadDataset(SPAMMER_DS, SPAMMER_VALUE);
     auto *nonSpammerDS =
         Dataset::loadDataset(NON_SPAMMER_DS, NON_SPAMMER_VALUE);
@@ -242,7 +242,6 @@ void testClassificationSizeRelation(Classifier *cls, const string &fname){
     Evaluator eval;
     eval.sizeValidation(classifier, spammerDS, nonSpammerDS, PATH + output); 
 
-    delete selector;
     delete classifier;
     delete spammerDS;
     delete nonSpammerDS;
