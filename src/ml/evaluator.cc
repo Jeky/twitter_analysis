@@ -216,7 +216,7 @@ void Evaluator::featureSelectionValidate(int foldN, FeatureSelector *selector,
                 cm["TN"] += rand[0] / 2;
                 cm["FP"] += rand[0] - rand[0] / 2;
 
-                LOG("%d\t%d", rand[0], rand[1]);
+                LOG(rand[0], "\t", rand[1]);
 
 
                 Evaluator eval;

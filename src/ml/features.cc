@@ -154,9 +154,6 @@ void BiClassMutualInformation::train(Dataset *dataset) {
     int N = dataset->size();
     count = 0;
     for (auto &kv : featureMatrix) {
-        if (count % 1000 == 0) {
-            LOG("Processed ", count, " features");
-        }
         kv.second[2] = NP - kv.second[0];
         kv.second[3] = NN - kv.second[1];
 
@@ -274,9 +271,6 @@ void BiClassChi2::train(Dataset *dataset) {
     int N = dataset->size();
     count = 0;
     for (auto &kv : featureMatrix) {
-        if (count % 1000 == 0) {
-            LOG("Processed ", count, " features");
-        }
         kv.second[2] = NP - kv.second[0];
         kv.second[3] = NN - kv.second[1];
 

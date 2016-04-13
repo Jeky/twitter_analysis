@@ -81,7 +81,6 @@ double NaiveBayes::classify(const Instance &ins) {
             cls = thisCls;
             prob = thisProb;
         }else if (thisProb == prob) {
-            LOG("equal when classifying");
             return -1.0;
         }
     }
