@@ -54,13 +54,15 @@ Dataset *mergeTestingDataset(Dataset *ds1, Dataset *ds2, int *folds1,
 
 
 void Evaluator::sizeValidation(Classifier *classifier, Dataset *ds1, Dataset *ds2, const string& fname){
-    int *folds1 = computeFolds(ds1->size(), foldN);
-    int *folds2 = computeFolds(ds2->size(), foldN);
+    int *folds1 = computeFolds(ds1->size(), 10);
+    int *folds2 = computeFolds(ds2->size(), 10);
 
     Dataset *trainingDataset =
         mergeTrainingDataset(ds1, ds2, folds1, folds2, 0);
     Dataset *testingDataset =
         mergeTestingDataset(ds1, ds2, folds1, folds2, 0);
+
+    double posCls = 1.0;
 
     writeFile(fname, [&](ofstream &out){
         int size = 100;
