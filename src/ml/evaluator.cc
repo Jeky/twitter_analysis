@@ -52,6 +52,85 @@ Dataset *mergeTestingDataset(Dataset *ds1, Dataset *ds2, int *folds1,
     return d;
 }
 
+
+void Evaluator::sizeValidation(Classifier *classifier, Dataset *ds1, Dataset *ds2, const string& fname){
+    int *folds1 = computeFolds(ds1->size(), 10);
+    int *folds2 = computeFolds(ds2->size(), 10);
+
+    Dataset *trainingDataset =
+        mergeTrainingDataset(ds1, ds2, folds1, folds2, 0);
+    Dataset *testingDataset =
+        mergeTestingDataset(ds1, ds2, folds1, folds2, 0);
+
+    double posCls = 1.0;
+
+    writeFile(fname, [&](ofstream &out){
+        int size = 100;
+        while(size < trainingDataset->size()){
+            Dataset *subTrainingDataset = new Dataset();
+            for(int i = 0; i < size / 2; i++){
+                subTrainingDataset->addInstance((*ds1)[i]);
+                subTrainingDataset->addInstance((*ds2)[i]);
+            }
+
+            classifier->reset();
+            classifier->train(subTrainingDataset);
+
+            unordered_map<string, double> cm;
+            int rand[2] = {0, 0};
+            for (auto instance = testingDataset->instances.begin(),
+                      end = testingDataset->instances.end();
+                 instance != end; instance++) {
+
+                double cls = classifier->classify(*instance);
+                if (cls == -1){
+                    rand[(int)instance->getClassValue()]++;
+                }else{
+                    if (instance->getClassValue() == posCls) {
+                        if (cls == posCls) {
+                            cm["TP"] += 1;
+                        } else {
+                            cm["FN"] += 1;
+                        }
+                    } else {
+                        if (cls == posCls) {
+                            cm["FP"] += 1;
+                        } else {
+                            cm["TN"] += 1;
+                        }
+                    }
+                }
+            };
+            cm["FN"] += rand[1] / 2;
+            cm["TP"] += rand[1] - rand[1] / 2;
+            cm["TN"] += rand[0] / 2;
+            cm["FP"] += rand[0] - rand[0] / 2;
+
+            Evaluator eval;
+            eval.result.push_back(cm);
+
+            out << fixed << "size = " << size << endl;
+            for (auto &item : eval.getConfusionMatrixVector()) {
+                out << cm["TP"] << "\t" << cm["FN"] << "\t" << cm["FP"] << "\t" << cm["TN"] << endl;
+            }
+            out << "acc: " << eval.getAccuracy() << endl;
+            out << "rec: " << eval.getRecall() << endl;
+            out << "pre: " << eval.getPrecision() << endl;
+            out << "F1:  " << eval.getF1() << endl;
+
+            delete subTrainingDataset;
+            size += 100;
+        }
+    });
+
+
+    delete trainingDataset;
+    delete testingDataset;
+    delete folds1;
+    delete folds2;
+}
+
+
 void Evaluator::crossValidate(int foldN, Classifier *classifier, Dataset *ds1,
                               Dataset *ds2) {
     //ds1->shuffle();

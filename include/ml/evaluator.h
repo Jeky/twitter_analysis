@@ -15,6 +15,8 @@ class Evaluator {
                                   Classifier *classifier, Dataset *ds1,
                                   Dataset *ds2, const string &output);
 
+    void sizeValidation(Classifier *classifier, Dataset *ds1, Dataset *ds2, const string& fname);
+
     void reset();
 
     unordered_map<string, double> getConfusionMatrix();

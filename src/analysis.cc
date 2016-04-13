@@ -233,6 +233,20 @@ void outputAll() {
     });
 }
 
+void testClassificationSizeRelation(Classifier *cls, const string &output){
+    auto *spammerDS = Dataset::loadDataset(SPAMMER_DS, SPAMMER_VALUE);
+    auto *nonSpammerDS =
+        Dataset::loadDataset(NON_SPAMMER_DS, NON_SPAMMER_VALUE);
+
+    Classifier *classifier = new NaiveBayes();
+    Evaluator eval;
+    eval.sizeValidation(classifier, spammerDS, nonSpammerDS, PATH + output); 
+
+    delete classifier;
+    delete spammerDS;
+    delete nonSpammerDS;
+}
+
 int main(int argc, char const *argv[]) {
     // Analyze and generate dataset
     // unigram
@@ -248,18 +262,26 @@ int main(int argc, char const *argv[]) {
     // cls = new BernoulliNaiveBayes();
     // testClassification(cls);
 
+    // Test classification
+    Classifier *cls = new NaiveBayes();
+    testClassificationSizeRelation(cls, PATH + "mnb_size_result.txt");
+
+    cls = new BernoulliNaiveBayes();
+    testClassificationSizeRelation(cls, PATH + "bnb_size_result.txt");
+
+
     //Test feature selection
-    FeatureSelector *selector = new BiClassMutualInformation();
-    testFeatureSelection(selector, "mi");
+    // FeatureSelector *selector = new BiClassMutualInformation();
+    // testFeatureSelection(selector, "mi");
 
-    selector = new BiClassPMI();
-    testFeatureSelection(selector, "pmi");
+    // selector = new BiClassPMI();
+    // testFeatureSelection(selector, "pmi");
 
-    selector = new BiClassChi2();
-    testFeatureSelection(selector, "chi2");
+    // selector = new BiClassChi2();
+    // testFeatureSelection(selector, "chi2");
 
-    selector = new BIClassWAPMI();
-    testFeatureSelection(selector, "wapmi");
+    // selector = new BIClassWAPMI();
+    // testFeatureSelection(selector, "wapmi");
 
     return 0;
 }
